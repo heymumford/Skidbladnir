@@ -1,0 +1,31 @@
+name: "Skíðblaðnir CodeQL Configuration"
+
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+paths:
+  - cmd
+  - internal
+  - pkg
+  - packages
+  - infra
+  - tests
+
+paths-ignore:
+  - '**/node_modules/**'
+  - '**/vendor/**'
+  - '**/dist/**'
+  - '**/build/**'
+  - '**/*.test.ts'
+  - '**/*.test.js'
+  - '**/*.test.py'
+  - '**/*.test.go'
+  - '**/test/**'
+  - '**/tests/mocks/**'
+
+query-filters:
+  - exclude:
+      id: js/unused-local-variable
+  - exclude:
+      id: py/empty-except-block

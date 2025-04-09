@@ -4,7 +4,6 @@
 
 ### Phase 0: Test Infrastructure (Highest Priority)
 
-- [ ] Set up CodeQL for security analysis (Medium)
 
 ### Phase 1: Provider Adapters (High Priority)
 
@@ -82,6 +81,7 @@
 
 ## In Review
 
+- [x] Set up CodeQL for security analysis (Medium)
 - [x] Create XML Schema validation tests (Medium)
 - [x] Create architecture validation test helpers (High)
 - [x] Define test documentation standards (High)
