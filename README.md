@@ -1,5 +1,7 @@
 # Skíðblaðnir
 
+Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. It provides a reliable bridge between systems like Jira/Zephyr, qTest, ALM, Azure DevOps, and Rally by implementing clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components. The platform features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
+
 ## Purpose
 
 **GOAL**: To eliminate the engineering toil and data loss associated with migrating test assets between different test management systems by providing a reliable, automated, and self-healing migration platform.

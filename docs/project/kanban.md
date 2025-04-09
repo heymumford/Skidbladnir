@@ -4,8 +4,6 @@
 
 ### Phase 0: Test Infrastructure (Highest Priority)
 
-- [ ] Create architecture validation test helpers (High)
-- [ ] Create XML Schema validation tests (Medium) 
 - [ ] Set up CodeQL for security analysis (Medium)
 
 ### Phase 1: Provider Adapters (High Priority)
@@ -84,6 +82,8 @@
 
 ## In Review
 
+- [x] Create XML Schema validation tests (Medium)
+- [x] Create architecture validation test helpers (High)
 - [x] Define test documentation standards (High)
 - [x] Implement performance and load testing with Karate (Critical)
 - [x] Create cross-service API contract testing with Karate (Critical)
