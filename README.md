@@ -1,4 +1,4 @@
-# Skíðblaðnir
+# Skíðblaðnir - Test Management Bridge
 
 A universal test asset migration platform for transferring test data between various test management systems.
 
@@ -59,6 +59,36 @@ All components are containerized using Podman for consistent development and dep
 
 The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate between API specifications and provide self-healing capabilities.
 
+## Folder Structure
+
+The project follows a structured organization based on clean architecture principles:
+
+```
+skidbladnir/
+├── cmd/                      # Entry points for applications
+│   ├── api/                  # API server entry point (TypeScript)
+│   ├── orchestrator/         # Orchestration service entry point (Python)
+│   ├── binary-processor/     # Binary processor entry point (Go)
+│   ├── ui/                   # UI application entry point (TypeScript)
+│   └── cli/                  # CLI tools entry point
+│
+├── pkg/                      # Domain and application logic (shared by all languages)
+│   ├── domain/               # Core domain layer (Language-agnostic interfaces)
+│   ├── usecases/             # Application use cases
+│   └── interfaces/           # Interface adapters
+│
+├── internal/                 # Implementation-specific code
+│   ├── typescript/           # TypeScript implementations
+│   ├── python/               # Python implementations
+│   └── go/                   # Go implementations
+│
+├── web/                      # Web assets and client-side code
+├── scripts/                  # Scripts for development and deployment
+├── infra/                    # Infrastructure configuration
+├── docs/                     # Documentation
+└── tests/                    # Tests
+```
+
 ## Getting Started
 
 ### Prerequisites
@@ -106,15 +136,13 @@ cd Skidbladnir
 cat docs/laptop-friendly-guide.md
 ```
 
-### Quick Start with Docker/Podman
+### API Services
 
-```bash
-# Build and start the application
-./scripts/master-build.sh qa
+The following services are available in development mode:
 
-# Access the application
-open http://localhost:3000
-```
+- **API**: http://localhost:3000
+- **Orchestrator**: http://localhost:8000
+- **Binary Processor**: http://localhost:9000
 
 ## Development
 
@@ -139,47 +167,6 @@ Run the tests:
 ./scripts/master-build.sh prod
 ```
 
-## Project Structure
-
-```
-skidbladnir/
-├── docs/                   # Documentation
-│   ├── adrs/              # Architecture Decision Records
-│   ├── archive/           # Historical migration documents
-│   └── project/           # Project management documents
-├── infra/                 # Infrastructure configurations
-│   ├── compose/           # Docker/Podman compose files
-│   ├── dev/               # Development environment
-│   ├── prod/              # Production deployment
-│   └── qa/                # QA/Testing environment
-├── packages/              # Core packages
-│   ├── api-bridge/        # API integration framework
-│   ├── binary-processor/  # Go-based binary/image processor 
-│   ├── common/            # Shared utilities and models
-│   ├── core/              # Core domain entities and rules
-│   ├── llm-advisor/       # LLM for API translation with optimization
-│   ├── llm-assistant/     # Self-contained LLM assistant
-│   ├── orchestrator/      # Migration workflow orchestration
-│   ├── providers/         # Test management system providers
-│   │   ├── zephyr/        # Jira/Zephyr provider
-│   │   ├── qtest/         # qTest provider
-│   │   ├── hp-alm/        # HP ALM/Quality Center provider
-│   │   ├── azure-devops/  # Azure DevOps provider
-│   │   ├── rally/         # Rally provider
-│   │   └── excel/         # Excel import/export provider
-│   ├── qtest-loader/      # qTest specific data loader
-│   ├── transformer/       # Data transformation services
-│   ├── translation-layer/ # Universal translation services
-│   ├── ui/                # LCARS-inspired user interface
-│   └── zephyr-extractor/  # Zephyr specific data extractor
-├── scripts/               # Build and deployment scripts
-│   └── util/              # Utility scripts
-└── tests/                 # Test suite
-    ├── integration/       # Integration tests
-    ├── providers/         # Provider-specific tests
-    └── unit/              # Unit tests
-```
-
 ## Documentation
 
 ### Architecture & Design
@@ -195,19 +182,12 @@ skidbladnir/
 - [Provider Interface](./docs/provider-interface.md) - Provider implementation details
 - [Local LLM Assistant](./docs/local-llm-assistant.md) - LLM integration and usage
 - [Containerization Strategy](./docs/containerization.md) - Container setup details
+- [Laptop-Friendly Guide](./docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
 
 ### Development & Testing
 - [Development Guide](./docs/development-guide.md) - Guide for developers
-- [Laptop-Friendly Guide](./docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
 - [TDD Approach](./docs/project/tdd-approach.md) - Test-Driven Development methodology
-- [LLM Advisor Tests](./docs/llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](./docs/security-audit-guidelines.md) - Security practices
-- [Project Kanban](./docs/project/kanban.md) - Project task board
-
-### User Interface
-- [UI Requirements](./docs/ui-requirements.md) - UI specifications and requirements
-- [UI Implementation Summary](./docs/ui-implementation-summary.md) - Overview of UI implementation
-- [UI Test Plan](./docs/ui-test-plan.md) - Testing plan for the UI
 
 ## License
 
