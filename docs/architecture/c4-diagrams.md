@@ -242,7 +242,16 @@
 │  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐     │
 │  │Jest Test       │  │Go Test         │  │Python Test     │  │Resource        │     │
 │  │Runner          │  │Runner          │  │Runner          │  │Monitor         │     │
-│  └────────────────┘  └────────────────┘  └────────────────┘  └────────────────┘     │
+│  └─────────┬──────┘  └────────────────┘  └────────────────┘  └────────────────┘     │
+│            │                                                                         │
+│            ▼                                                                         │
+│  ┌─────────────────────────────┐  ┌─────────────────────────────┐                   │
+│  │Provider API Testing Suite   │  │Provider Integration Testing │                   │
+│  │- Zephyr API Test Script     │  │- XML Schema Validation      │                   │
+│  │- qTest API Validation       │  │- Architecture Validation    │                   │
+│  │- Rally API Test Suite       │  │- Contract Testing           │                   │
+│  │- ALM API Validation         │  │- Performance Testing        │                   │
+│  └─────────────────────────────┘  └─────────────────────────────┘                   │
 │                                                                                      │
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```

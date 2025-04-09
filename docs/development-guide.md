@@ -108,10 +108,12 @@ skidbladnir/
 1. **Unit Tests**: Test individual functions and classes
 2. **Component Tests**: Test bounded contexts
 3. **API Tests**: Test API interfaces and contracts using Karate
-4. **Integration Tests**: Test cross-component interactions
-5. **Contract Tests**: Test API boundaries
-6. **End-to-End Tests**: Test complete workflows
-7. **Acceptance Tests**: BDD-style tests using Cucumber
+4. **Provider API Tests**: Test connectivity with provider APIs using script tools
+5. **Integration Tests**: Test cross-component interactions
+6. **Contract Tests**: Test API boundaries
+7. **End-to-End Tests**: Test complete workflows
+8. **Acceptance Tests**: BDD-style tests using Cucumber
+9. **Performance Tests**: Test system performance and API rate limiting
 
 ### Running Tests
 
@@ -140,24 +142,35 @@ npm run test:api                # Run all Karate API tests
 npm run test:api:contracts      # Run API contract tests
 npm run test:api:integration    # Run API integration tests
 npm run test:api:performance    # Run API performance tests
+
+# Run Provider API connectivity tests
+npm run test:zephyr             # Test Zephyr Scale API connectivity
+npm run test:zephyr -- --token YOUR_API_TOKEN --project-key YOUR_PROJECT_KEY --verbose
 ```
 
 For more information about our testing frameworks, see:
 - [Acceptance Testing](./acceptance-testing.md)
 - [Karate Testing Strategy](./karate-testing-strategy.md)
+- [API Testing Strategy](./adrs/0012-api-testing-validation-strategy.md)
 
 ## Provider Development
 
 When implementing a new provider, follow the guidelines in [ADR-0002: Provider Interface Design](./adrs/0002-provider-interface-design.md):
 
 1. Create a new package in `packages/providers`
-2. Implement the provider interfaces:
+2. Create API connectivity test script in `scripts/` (e.g., `test-provider-connectivity.js`)
+3. Implement the provider interfaces:
    - `TestManagementProvider` (base)
    - `SourceProvider` (if supporting extraction)
    - `TargetProvider` (if supporting loading)
-3. Register capabilities accurately
-4. Add comprehensive tests
-5. Register with the `ProviderRegistry`
+4. Register capabilities accurately
+5. Add comprehensive tests:
+   - Unit tests for mapping logic
+   - Error handling tests
+   - Data type validation tests
+   - Rate limiting tests
+6. Register with the `ProviderRegistry`
+7. Add npm script for API connectivity testing
 
 ## API Bridge Usage
 

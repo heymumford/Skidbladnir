@@ -97,6 +97,7 @@ npm run test:all         # All tests
 npm run test:unit        # Unit tests
 npm run test:integration # Integration tests
 npm run test:e2e         # End-to-end tests
+npm run test:zephyr      # Test Zephyr Scale API connectivity
 
 # Build the project
 npm run build
@@ -169,7 +170,16 @@ Skidbladnir follows Test-Driven Development (TDD) principles:
 2. Implement the minimum code needed to pass the tests
 3. Refactor the code while keeping tests passing
 
-For more details, see [TDD Approach](docs/project/tdd-approach.md).
+Our testing strategy includes:
+
+- **Unit Testing**: All components and functions have unit tests
+- **Integration Testing**: Test interactions between components
+- **API Testing**: Validate provider API interactions with scripts like `test-zephyr-connectivity.js`
+- **End-to-End Testing**: Full system tests
+- **Performance Testing**: Verify system behavior under load
+- **Architecture Validation**: Enforce clean architecture boundaries
+
+For more details, see [TDD Approach](docs/project/tdd-approach.md) and [API Testing Strategy](docs/adrs/0012-api-testing-validation-strategy.md).
 
 ## License
 
