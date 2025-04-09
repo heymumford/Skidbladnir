@@ -36,6 +36,7 @@ Skíðblaðnir enables seamless migration of test cases, test cycles, executions
 - **Self-Healing Capabilities**: Automatic recovery from API errors and schema changes
 - **LCARS-inspired Interface**: Star Trek styled real-time status displays with TX/RX indicators
 - **Fully Containerized**: Optimized for minimal rebuild and recompile cycles using Podman
+- **Laptop-Friendly**: Memory-optimized containers that work well on 16GB laptops running Windows 10/11
 
 ## Architecture
 
@@ -68,6 +69,7 @@ The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate
 
 ### Development Setup
 
+#### Standard Setup
 ```bash
 # Clone the repository
 git clone https://github.com/heymumford/Skidbladnir.git
@@ -87,6 +89,21 @@ cd Skidbladnir
 
 # Run tests in containers
 ./scripts/test.sh
+```
+
+#### Laptop-Friendly Setup (16GB RAM)
+```bash
+# Start minimal development environment
+./scripts/laptop-dev.sh up minimal
+
+# Start TypeScript development with optimized resources
+./scripts/laptop-dev.sh up typescript
+
+# Monitor resource usage
+./scripts/monitor-resources.sh
+
+# See laptop-friendly guide for more options
+cat docs/laptop-friendly-guide.md
 ```
 
 ### Quick Start with Docker/Podman
@@ -181,6 +198,7 @@ skidbladnir/
 
 ### Development & Testing
 - [Development Guide](./docs/development-guide.md) - Guide for developers
+- [Laptop-Friendly Guide](./docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
 - [TDD Approach](./docs/project/tdd-approach.md) - Test-Driven Development methodology
 - [LLM Advisor Tests](./docs/llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](./docs/security-audit-guidelines.md) - Security practices
