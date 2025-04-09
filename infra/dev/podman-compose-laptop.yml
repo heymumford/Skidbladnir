@@ -1,0 +1,217 @@
+version: '3.8'
+
+# Laptop-friendly compose configuration for Skidbladnir
+# Optimized for Windows 10/11 with 16GB RAM, 4-core CPU
+
+services:
+  # PostgreSQL for state tracking - with memory limits
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: testbridge
+      POSTGRES_USER: testbridge
+      POSTGRES_DB: testbridge
+      # PostgreSQL memory optimization
+      POSTGRES_SHARED_BUFFERS: 128MB
+      POSTGRES_WORK_MEM: 16MB
+      POSTGRES_MAINTENANCE_WORK_MEM: 64MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 256MB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testbridge"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Redis for caching - lightweight configuration
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.3'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # MinIO for object storage - reduced resource usage
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: testbridge
+      MINIO_ROOT_PASSWORD: testbridge
+    command: server /data --console-address ":9001" --quiet
+    volumes:
+      - minio_data:/data
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.2'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Typescript development environment - on-demand container
+  typescript:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/typescript-dev:latest
+    build:
+      context: .
+      dockerfile: typescript.Dockerfile
+    volumes:
+      - ../../packages:/app/packages
+      - ../../package.json:/app/package.json
+      - ../../tsconfig.json:/app/tsconfig.json
+      - node_modules:/app/node_modules
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    environment:
+      - NODE_ENV=development
+      - TS_NODE_PROJECT=/app/tsconfig.json
+      # Nodemon settings for reduced CPU usage
+      - NODEMON_LEGACY_WATCH=true
+      - NODEMON_DELAY=2500
+      - NPM_CONFIG_LOGLEVEL=warn
+    working_dir: /app
+    command: sleep infinity
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    profiles:
+      - typescript
+      - dev
+
+  # Python development environment - on-demand container
+  python:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/python-dev:latest
+    build:
+      context: .
+      dockerfile: python.Dockerfile
+    volumes:
+      - ../../packages:/app/packages
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.2'
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    command: sleep infinity
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    profiles:
+      - python
+      - dev
+
+  # Go development environment - on-demand container
+  go:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/go-dev:latest
+    build:
+      context: .
+      dockerfile: go.Dockerfile
+    volumes:
+      - ../../packages:/app/packages
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.2'
+    environment:
+      - CGO_ENABLED=0
+      - GOCACHE=/tmp/.cache/go-build
+    working_dir: /app
+    command: sleep infinity
+    depends_on:
+      - minio
+    profiles:
+      - go
+      - dev
+
+  # Local LLM Advisor - on-demand service with memory optimization
+  llm-advisor:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/llm-advisor:latest
+    build:
+      context: ../../packages/llm-advisor
+      dockerfile: Dockerfile
+    volumes:
+      - llm_models:/models
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.5'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    environment:
+      - MODEL_PATH=/models/llama-3-8b-q4
+      - QUANTIZATION=4bit
+      - CONTEXT_SIZE=2048
+      - MAX_BATCH_SIZE=8
+    ports:
+      - "8765:8765"
+    profiles:
+      - llm
+      - all
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  node_modules:
+  llm_models:
+
+# Usage:
+# podman-compose -f podman-compose-laptop.yml up postgres redis minio
+# podman-compose -f podman-compose-laptop.yml --profile typescript up
+# podman-compose -f podman-compose-laptop.yml --profile python up
+# podman-compose -f podman-compose-laptop.yml --profile go up
+# podman-compose -f podman-compose-laptop.yml --profile llm up
+# podman-compose -f podman-compose-laptop.yml --profile all up
