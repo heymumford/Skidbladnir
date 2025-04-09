@@ -1,0 +1,158 @@
+version: '3'
+
+services:
+  # API Service
+  api:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/api:${VERSION:-latest}
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: qa
+      DATABASE_URL: postgres://testbridge:testbridge@postgres:5432/testbridge
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      ENABLE_MOCK_PROVIDERS: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Orchestration Service
+  orchestrator:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/orchestrator:${VERSION:-latest}
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: qa
+      DATABASE_URL: postgresql://testbridge:testbridge@postgres:5432/testbridge
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      ENABLE_MOCK_PROVIDERS: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Binary Processor Service
+  binary-processor:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/binary-processor:${VERSION:-latest}
+    depends_on:
+      - minio
+    ports:
+      - "8090:8090"
+    environment:
+      ENVIRONMENT: qa
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      ENABLE_TEST_MODE: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Mock API for Zephyr
+  mock-zephyr:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/mock-zephyr:${VERSION:-latest}
+    ports:
+      - "9100:9100"
+    environment:
+      PORT: 9100
+      LATENCY_MS: 50
+      ERROR_RATE: 0.05
+    restart: unless-stopped
+
+  # Mock API for qTest
+  mock-qtest:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/mock-qtest:${VERSION:-latest}
+    ports:
+      - "9101:9101"
+    environment:
+      PORT: 9101
+      LATENCY_MS: 50
+      ERROR_RATE: 0.05
+    restart: unless-stopped
+
+  # Mock API for HP ALM
+  mock-hpalm:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/mock-hpalm:${VERSION:-latest}
+    ports:
+      - "9102:9102"
+    environment:
+      PORT: 9102
+      LATENCY_MS: 50
+      ERROR_RATE: 0.05
+    restart: unless-stopped
+
+  # PostgreSQL for state tracking
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: testbridge
+      POSTGRES_USER: testbridge
+      POSTGRES_DB: testbridge
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testbridge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and coordination
+  redis:
+    image: redis:7
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO for object storage
+  minio:
+    image: minio/minio
+    environment:
+      MINIO_ROOT_USER: testbridge
+      MINIO_ROOT_PASSWORD: testbridge
+    command: server /data
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

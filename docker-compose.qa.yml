@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  llm-advisor:
+    build:
+      context: .
+      dockerfile: packages/llm-advisor/Dockerfile
+      args:
+        ENV: qa
+        BUILD_ID: ${BUILD_ID:-latest}
+    image: skidbladnir/llm-advisor:${TAG:-latest}
+    container_name: skidbladnir-llm-advisor-qa
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./models/qa:/app/models
+      - ./data/qa:/app/data
+    environment:
+      - NODE_ENV=qa
+      - LOG_LEVEL=debug
+      - API_RATE_LIMIT=500
+      - RETRY_ATTEMPTS=3
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - skidbladnir-network
+
+  api-bridge:
+    build:
+      context: .
+      dockerfile: packages/api-bridge/Dockerfile
+      args:
+        ENV: qa
+        BUILD_ID: ${BUILD_ID:-latest}
+    image: skidbladnir/api-bridge:${TAG:-latest}
+    container_name: skidbladnir-api-bridge-qa
+    restart: unless-stopped
+    ports:
+      - "3002:3000"
+    depends_on:
+      - llm-advisor
+    environment:
+      - NODE_ENV=qa
+      - LOG_LEVEL=debug
+      - LLM_ADVISOR_URL=http://llm-advisor:3000
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - skidbladnir-network
+
+  ui:
+    build:
+      context: .
+      dockerfile: packages/ui/Dockerfile
+      args:
+        ENV: qa
+        BUILD_ID: ${BUILD_ID:-latest}
+    image: skidbladnir/ui:${TAG:-latest}
+    container_name: skidbladnir-ui-qa
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-bridge
+    environment:
+      - NODE_ENV=qa
+      - API_URL=http://api-bridge:3000
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - skidbladnir-network
+
+networks:
+  skidbladnir-network:
+    driver: bridge

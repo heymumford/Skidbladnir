@@ -1,0 +1,76 @@
+# Multi-stage build for optimized test container
+# This Dockerfile is designed for testing with minimal rebuild cycles
+
+# Stage 1: Dependencies
+FROM node:18-alpine AS deps
+WORKDIR /app
+
+# Copy package files for dependency installation
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY packages/llm-advisor/package.json ./packages/llm-advisor/package.json
+COPY packages/api-bridge/package.json ./packages/api-bridge/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+
+# Install dependencies with caching
+RUN npm ci
+
+# Stage 2: Test Runner
+FROM node:18-alpine AS tester
+WORKDIR /app
+
+# Copy dependency layer
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/packages/llm-advisor/node_modules ./packages/llm-advisor/node_modules
+
+# Copy project configuration files (rarely change)
+COPY tsconfig.json jest.config.js ./
+COPY packages/llm-advisor/tsconfig.json ./packages/llm-advisor/
+COPY packages/llm-advisor/jest.config.js ./packages/llm-advisor/
+COPY packages/shared/tsconfig.json ./packages/shared/
+
+# Copy shared libraries
+COPY packages/shared/ ./packages/shared/
+
+# Copy test-specific utilities (rarely change)
+COPY packages/llm-advisor/__tests__/utils/ ./packages/llm-advisor/__tests__/utils/
+COPY packages/llm-advisor/__tests__/mocks/ ./packages/llm-advisor/__tests__/mocks/
+
+# Copy source code (structured by change frequency)
+# 1. Configuration (rarely changes)
+COPY packages/llm-advisor/src/config/ ./packages/llm-advisor/src/config/
+
+# 2. Utilities (change occasionally)
+COPY packages/llm-advisor/src/utils/ ./packages/llm-advisor/src/utils/
+
+# 3. Core services (change more frequently)
+COPY packages/llm-advisor/src/services/ ./packages/llm-advisor/src/services/
+
+# 4. API and controllers (change most frequently)
+COPY packages/llm-advisor/src/api/ ./packages/llm-advisor/src/api/
+COPY packages/llm-advisor/src/controllers/ ./packages/llm-advisor/src/controllers/
+
+# 5. Any remaining source files
+COPY packages/llm-advisor/src/ ./packages/llm-advisor/src/
+
+# 6. Add test files (kept separate to optimize layer caching)
+COPY packages/llm-advisor/__tests__/unit/ ./packages/llm-advisor/__tests__/unit/
+COPY packages/llm-advisor/__tests__/integration/ ./packages/llm-advisor/__tests__/integration/
+COPY packages/llm-advisor/__tests__/system/ ./packages/llm-advisor/__tests__/system/
+
+# Add test helper scripts
+COPY packages/llm-advisor/scripts/ ./packages/llm-advisor/scripts/
+
+# Create directories for test results
+RUN mkdir -p /app/test-results
+VOLUME ["/app/test-results"]
+
+# Install required system utilities for tests
+RUN apk add --no-cache docker-cli curl bash
+
+# Set test environment
+ENV NODE_ENV=test
+ENV JEST_JUNIT_OUTPUT_DIR=/app/test-results
+ENV JEST_JUNIT_OUTPUT_NAME=junit.xml
+
+# Default command runs tests based on TEST_TYPE environment variable
+CMD ["sh", "-c", "npm run test:${TEST_TYPE:-all}"]
