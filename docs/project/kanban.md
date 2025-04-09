@@ -112,9 +112,11 @@
 
 ## In Review
 
-- [x] Create acceptance test framework with Cucumber
+- [ ] *Empty at this time*
 
 ## Completed
+
+- [x] Create acceptance test framework with Cucumber
 
 - [x] Develop custom Copilot Extensions for provider integrations
 - [x] Set up Copilot Edits (Agent Mode) for refactoring tasks
