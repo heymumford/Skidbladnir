@@ -40,6 +40,26 @@ class ContractTests {
     Karate testWorkflowContract() {
         return Karate.run("workflow-contract").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testApiContractValidation() {
+        return Karate.run("api-contract-validation").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testCrossServiceSchema() {
+        return Karate.run("cross-service-schema").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testApiVersionCompatibility() {
+        return Karate.run("api-version-compatibility").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testSecurityHeaders() {
+        return Karate.run("security-headers").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
