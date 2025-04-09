@@ -4,7 +4,6 @@
 
 ### Phase 0: Test Infrastructure (Critical)
 
-- [ ] Configure Pytest for Python components
 - [ ] Create acceptance test framework with Cucumber
 - [ ] Define test documentation standards
 - [ ] Create architecture validation test helpers
@@ -91,7 +90,6 @@
 ## In Progress
 
 - [ ] Implement remaining tests for core components
-- [ ] Complete Python test setup and workflow integration
 - [ ] Add API contract tests to integration suite
 
 ## In Review
@@ -109,6 +107,8 @@
 - [x] Placeholder test files and structure
 - [x] Set up Jest for TypeScript components
 - [x] Set up Go testing frameworks
+- [x] Configure Pytest for Python components
+- [x] Complete Python test setup and workflow integration
 - [x] Establish test coverage reporting
 - [x] Configure CI integration for tests
 - [x] Create test fixture framework
