@@ -19,6 +19,19 @@ module.exports = {
     '<rootDir>/pkg',
     '<rootDir>/packages'
   ],
+  // Simple configuration without projects to fix setupFilesAfterEnv issue
+  setupFilesAfterEnv: [
+    '<rootDir>/tests/jest.setup.js'
+  ],
+  moduleNameMapper: {
+    // Handle CSS imports (with CSS modules)
+    '\\.module\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
+    // Handle CSS imports (without CSS modules)
+    '\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
+    // Handle static assets
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/__mocks__/fileMock.js'
+  },
   testMatch: [
     '**/?(*.)+(spec|test).+(ts|tsx|js)'
   ],
@@ -62,9 +75,6 @@ module.exports = {
       tsconfig: path.resolve(__dirname, 'tsconfig.json')
     }]
   },
-  setupFilesAfterEnv: [
-    '<rootDir>/tests/jest.setup.js'
-  ],
   globals: {
     'ts-jest': {
       isolatedModules: true

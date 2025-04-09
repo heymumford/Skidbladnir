@@ -10,12 +10,12 @@
 - [x] Test: qTest loader manages all error scenarios correctly (Critical)
 - [x] Test: Zephyr Scale API connectivity script (Critical)
 - [x] Implement qTest Manager API adapter for test case migration (Critical)
-- [ ] Implement qTest Parameters API adapter for parameterized testing (Critical)
-- [ ] Implement qTest Scenario API adapter for BDD scenarios (High)
+- [x] Implement qTest Parameters API adapter for parameterized testing (Critical)
+- [x] Implement qTest Scenario API adapter for BDD scenarios (High)
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
-- [ ] Implement qTest Data Export utility for backup/archiving (Medium)
+- [x] Implement qTest Data Export utility for backup/archiving (Medium)
 - [x] Create unified qTest provider facade to coordinate across product APIs (Critical)
-- [ ] Test: Validate qTest Manager test case field mapping (Critical)
+- [x] Test: Validate qTest Manager test case field mapping (Critical)
 - [ ] Test: Validate qTest Parameters data handling (Critical)
 - [ ] Test: Validate qTest Scenario Gherkin syntax preservation (High)
 - [ ] Test: Validate qTest Pulse metrics extraction (Medium)
@@ -87,7 +87,8 @@
 - [ ] Configure LLM models for containerized deployment (Medium)
 
 ## In Progress
-- [ ] Implement qTest Parameters API adapter for parameterized testing (Critical)
+- [ ] Implement qTest Pulse API adapter for test insights (Medium)
+- [x] Test: Validate qTest Manager test case field mapping (Critical)
 
 ## In Review
 
@@ -107,6 +108,9 @@
 - [x] Test: qTest loader manages all error scenarios correctly (Critical)
 - [x] Test: Zephyr Scale API connectivity script (Critical)
 - [x] Implement qTest Manager API adapter for test case migration (Critical)
+- [x] Implement qTest Parameters API adapter for parameterized testing (Critical)
+- [x] Implement qTest Scenario API adapter for BDD scenarios (High)
+- [x] Implement qTest Data Export utility for backup/archiving (Medium)
 - [x] Create unified qTest provider facade to coordinate across product APIs (Critical)
 - [x] Create acceptance test framework with Cucumber
 - [x] Develop custom Copilot Extensions for provider integrations
