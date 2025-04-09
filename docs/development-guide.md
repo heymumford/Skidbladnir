@@ -187,6 +187,13 @@ The containerization strategy is defined in [ADR-0005: Containerization Strategy
 - Follow golangci-lint rules
 - Implement comprehensive error handling
 
+### XML
+
+- Follow the XML formatting guidelines in [XML Cleanup Guide](./xml-cleanup-guide.md)
+- Use 2-space indentation for XML files
+- Use XMLStarlet for validation and formatting (runs automatically every 10 builds)
+- Ensure consistent dependency versions in POM files
+
 ## Review Process
 
 1. Create a feature branch from `develop`
@@ -196,9 +203,53 @@ The containerization strategy is defined in [ADR-0005: Containerization Strategy
 5. Merge to `develop` when approved
 6. Periodically merge `develop` to `main` for releases
 
+## GitHub Copilot Integration
+
+Skidbladnir leverages GitHub Copilot to enhance developer productivity across our polyglot architecture. For detailed guidelines, see [Copilot Integration Guide](./project/copilot-integration.md).
+
+### Copilot Features Used
+
+- **Code Completion**: Optimized for Clean Architecture and our polyglot environment
+- **Copilot Chat**: For architectural guidance and cross-language development
+- **Code Review**: Automated reviews focusing on architectural boundaries
+- **PR Summaries**: AI-generated summaries with cross-component impact analysis
+- **Copilot Edits (Agent Mode)**: For repetitive implementation tasks
+
+### Copilot Setup
+
+1. Install the GitHub Copilot extension for your IDE
+2. Configure using the settings in `.vscode/settings.json`
+3. Reference prompt templates in `.github/copilot/prompt-templates.md`
+
+### Effective Usage
+
+- Use language-specific prompts for consistent implementations
+- Reference architectural boundaries in comments
+- Follow the prompt templates for common tasks
+- Use Copilot Chat for cross-language development questions
+- Leverage Copilot for test case generation
+
+## Maintenance Tasks
+
+### Code Quality Checks
+
+We have several automated maintenance tasks:
+
+- **XML Validation**: Run every 10 builds to check XML files (`./scripts/util/xml-cleanup.sh`)
+- **License Header Check**: Run with `./scripts/util/update_license_headers.sh`
+- **Dependency Updates**: Recommended weekly with `npm audit` and similar tools
+
+### Manual Quality Tasks
+
+- Run `./scripts/util/xml-cleanup.sh --validate` before committing XML files
+- Check for dependency consistency across projects
+- Periodically run security scans with OWASP tools
+
 ## Troubleshooting
 
 - **Container Issues**: Use `./scripts/dev-env.sh restart` to restart containers
 - **Dependency Problems**: Container caches may need clearing with `--no-cache`
 - **Test Failures**: Check for race conditions in async tests
 - **IDE Integration**: Use VS Code Remote Containers for seamless integration
+- **Copilot Issues**: Ensure you're logged in with a GitHub account with Copilot access
+- **XML Issues**: Run validation with `./scripts/util/xml-cleanup.sh --verbose` to see detailed errors
