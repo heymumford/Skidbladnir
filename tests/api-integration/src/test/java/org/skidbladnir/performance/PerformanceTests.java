@@ -35,6 +35,26 @@ class PerformanceTests {
     Karate testMigrationPerformance() {
         return Karate.run("migration-performance").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testApiPerformance() {
+        return Karate.run("api-performance").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testLoadTest() {
+        return Karate.run("load-test").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testStressTest() {
+        return Karate.run("stress-test").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testSoakTest() {
+        return Karate.run("soak-test").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
