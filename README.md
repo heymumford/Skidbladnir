@@ -1,23 +1,24 @@
-# Skíðblaðnir - Test Management Bridge
+# Skíðblaðnir
 
-A universal test asset migration platform for transferring test data between various test management systems.
+## Purpose
+
+**GOAL**: To eliminate the engineering toil and data loss associated with migrating test assets between different test management systems by providing a reliable, automated, and self-healing migration platform.
+
+**PROBLEMS SOLVED**:
+1. **Manual Migration Burden**: Organizations waste thousands of engineering hours manually copying test cases between systems
+2. **Data Loss and Corruption**: Manual transfers lose critical metadata, relationships, and attachments
+3. **API Complexity**: Different test management systems use inconsistent APIs with poor documentation
+4. **Schema Incompatibility**: Test artifacts have different structures across systems with no standard mapping
+5. **Migration Reliability**: Existing migration tools fail silently or have high error rates
+6. **Resource Constraints**: Current solutions require expensive infrastructure or cloud services
+
+**WHAT IT IS**: Skíðblaðnir is a containerized, polyglot platform that provides an intelligent bridge between disparate test management systems. It automates the extraction, transformation, and loading of test cases, test cycles, executions, and artifacts while preserving data integrity. The platform uses local LLM assistance for self-healing capabilities, operates locally with minimal resources, and provides a clean interface for monitoring and controlling the migration process.
 
 [![Skíðblaðnir CI](https://github.com/heymumford/Skidbladnir/actions/workflows/ci.yml/badge.svg)](https://github.com/heymumford/Skidbladnir/actions/workflows/ci.yml)
 
 > **About the name**: In Norse mythology, Skíðblaðnir (pronounced "skith-blath-nir") was a magical ship crafted by the dwarven brothers Brokkr and Sindri for the god Freyr. This extraordinary vessel could carry all the Æsir gods and their war gear across seas and skies, yet magically fold small enough to fit in a pocket when not in use. The ship always had a favorable wind and could sail on land, sea, or through the air.
 >
 > Skíðblaðnir symbolizes perfect engineering, adaptability, and the balance between capacity and efficiency. Like its mythological namesake, our platform transports your test assets across different systems with speed and reliability, adapting to various environments while maintaining the integrity of what it carries.
-
-## Overview
-
-Skíðblaðnir enables seamless migration of test cases, test cycles, executions, and attachments between test management platforms while preserving data integrity and relationships. The platform features:
-
-- Universal API translation layer
-- Star Trek LCARS-inspired interface with TX/RX indicators
-- Local LLM advisor for self-healing API translations
-- Container-based deployment with minimal rebuild cycles
-- Test-Driven Development (TDD) approach
-- Plugin-based, polyglot architecture
 
 ## Supported Systems
 
@@ -59,36 +60,6 @@ All components are containerized using Podman for consistent development and dep
 
 The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate between API specifications and provide self-healing capabilities.
 
-## Folder Structure
-
-The project follows a structured organization based on clean architecture principles:
-
-```
-skidbladnir/
-├── cmd/                      # Entry points for applications
-│   ├── api/                  # API server entry point (TypeScript)
-│   ├── orchestrator/         # Orchestration service entry point (Python)
-│   ├── binary-processor/     # Binary processor entry point (Go)
-│   ├── ui/                   # UI application entry point (TypeScript)
-│   └── cli/                  # CLI tools entry point
-│
-├── pkg/                      # Domain and application logic (shared by all languages)
-│   ├── domain/               # Core domain layer (Language-agnostic interfaces)
-│   ├── usecases/             # Application use cases
-│   └── interfaces/           # Interface adapters
-│
-├── internal/                 # Implementation-specific code
-│   ├── typescript/           # TypeScript implementations
-│   ├── python/               # Python implementations
-│   └── go/                   # Go implementations
-│
-├── web/                      # Web assets and client-side code
-├── scripts/                  # Scripts for development and deployment
-├── infra/                    # Infrastructure configuration
-├── docs/                     # Documentation
-└── tests/                    # Tests
-```
-
 ## Getting Started
 
 ### Prerequisites
@@ -99,7 +70,6 @@ skidbladnir/
 
 ### Development Setup
 
-#### Standard Setup
 ```bash
 # Clone the repository
 git clone https://github.com/heymumford/Skidbladnir.git
@@ -121,73 +91,31 @@ cd Skidbladnir
 ./scripts/test.sh
 ```
 
-#### Laptop-Friendly Setup (16GB RAM)
+For laptop-friendly development (optimized for 16GB RAM machines):
+
 ```bash
 # Start minimal development environment
 ./scripts/laptop-dev.sh up minimal
-
-# Start TypeScript development with optimized resources
-./scripts/laptop-dev.sh up typescript
-
-# Monitor resource usage
-./scripts/monitor-resources.sh
-
-# See laptop-friendly guide for more options
-cat docs/laptop-friendly-guide.md
 ```
 
-### API Services
+### Local Services
 
-The following services are available in development mode:
+All services are hosted locally either within containers or on the development machine:
 
 - **API**: http://localhost:3000
 - **Orchestrator**: http://localhost:8000
 - **Binary Processor**: http://localhost:9000
-
-## Development
-
-### Test-Driven Development
-
-We follow a strict TDD approach:
-
-1. Write failing tests for new features
-2. Implement the minimum code to pass tests
-3. Refactor while keeping tests passing
-
-Run the tests:
-
-```bash
-./scripts/test.sh
-```
-
-### Building for Production
-
-```bash
-# Build and deploy for production
-./scripts/master-build.sh prod
-```
+- **Web UI**: http://localhost:3001
 
 ## Documentation
 
-### Architecture & Design
-- [ADRs](./docs/adrs/) - Architecture Decision Records
-- [Architecture Overview](./docs/architecture.md) - High-level architecture documentation
-- [Architecture Diagrams (C4)](./docs/c4-diagrams.md) - System visualizations with C4 model
-- [Clean Architecture Guide](./docs/clean-architecture-guide.md) - Implementation details of clean architecture
-- [Project Strategy](./docs/project/strategy.md) - High-level project strategy and vision
+Comprehensive documentation is available in the `docs/` directory:
 
-### Component Documentation
-- [API Bridge Architecture](./docs/api-bridge-architecture.md) - Integration details
-- [API Comparison](./docs/api-comparison.md) - Compare test management system APIs
-- [Provider Interface](./docs/provider-interface.md) - Provider implementation details
-- [Local LLM Assistant](./docs/local-llm-assistant.md) - LLM integration and usage
-- [Containerization Strategy](./docs/containerization.md) - Container setup details
-- [Laptop-Friendly Guide](./docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
-
-### Development & Testing
-- [Development Guide](./docs/development-guide.md) - Guide for developers
-- [TDD Approach](./docs/project/tdd-approach.md) - Test-Driven Development methodology
-- [Security Audit Guidelines](./docs/security-audit-guidelines.md) - Security practices
+- [Architecture](docs/architecture.md) - Architecture documentation and diagrams
+- [Development Guide](docs/development-guide.md) - Guide for developers
+- [Build System](docs/build-system.md) - Build system documentation
+- [Container Strategy](docs/containerization.md) - Container setup details
+- [Laptop-Friendly Guide](docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
 
 ## License
 
