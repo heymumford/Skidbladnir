@@ -21,27 +21,29 @@ mkdir -p "${TEST_RESULTS_DIR}"
 
 echo "🧪 Running Skíðblaðnir test suites"
 
-# Run unit tests for all packages in parallel
-echo "🔬 Running unit tests..."
-npm run test:unit -- --ci --coverage
+# Run tests by component with specific environment setup for each language
+echo "🔬 Running TypeScript tests..."
+npm run test:ts
 
-# Run LLM advisor specific tests
-echo "🧠 Running LLM advisor tests..."
-cd "${PROJECT_ROOT}/packages/llm-advisor"
-./run-tests-containerized.sh
+echo "🔬 Running Python tests..."
+npm run test:py
 
-# Run API integration tests
-echo "🔌 Running API integration tests..."
-cd "${PROJECT_ROOT}"
+echo "🔬 Running Go tests..."
+npm run test:go
+
+# Run integration tests 
+echo "🔌 Running integration tests..."
 npm run test:integration
 
 # Check test coverage
 echo "📊 Checking test coverage..."
 npm run coverage:check
 
-# Run linting
+# Run linting for all components
 echo "🧹 Linting code..."
-npm run lint
+npm run lint:ts
+npm run lint:py
+npm run lint:go
 
 # Run type checking
 echo "🔍 Running type checks..."

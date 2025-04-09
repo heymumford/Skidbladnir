@@ -8,100 +8,128 @@
 # it under the terms of the MIT License as published in the LICENSE file.
 #
 
-#!/bin/bash
-# run-integration-tests.sh - Run integration tests with containers
-
 set -e
 
 ENV=${1:-"qa"}
 PROJECT_ROOT=$(pwd)
 TEST_RESULTS_DIR="${PROJECT_ROOT}/test-results/integration"
-COMPOSE_FILE="docker-compose.${ENV}.yml"
 
 # Create output directory
 mkdir -p "${TEST_RESULTS_DIR}"
 
 echo "🔄 Running Skíðblaðnir integration tests in ${ENV} environment"
 
-# Ensure we have the environment variables
-source "${PROJECT_ROOT}/.env.${ENV}"
+# Set environment variables - try to use .env.{ENV} if it exists
+if [ -f "${PROJECT_ROOT}/.env.${ENV}" ]; then
+  echo "📝 Loading environment variables from .env.${ENV}"
+  export $(grep -v '^#' "${PROJECT_ROOT}/.env.${ENV}" | xargs)
+fi
 
-# Start test containers
-echo "🚀 Starting test containers..."
-docker compose -f "${COMPOSE_FILE}" up -d
+# For integration tests, set the flag to use mocks in development
+# but use real implementations in QA/prod
+if [ "${ENV}" = "dev" ]; then
+  export USE_MOCKS="true"
+else
+  export USE_MOCKS="false"
+fi
 
-# Wait for services to be ready
-echo "⏳ Waiting for services to be ready..."
-# Custom function to check if services are ready
-check_services_ready() {
-  local max_attempts=30
-  local attempt=1
-  local all_ready=false
+echo "📣 Running with USE_MOCKS=${USE_MOCKS}"
+
+# Start test containers if not already running
+if [ "${ENV}" != "dev" ]; then
+  echo "🚀 Starting containers for ${ENV} environment..."
   
-  while [ $attempt -le $max_attempts ]; do
-    echo "Checking services (attempt $attempt/$max_attempts)..."
-    
-    # Check if all services are healthy
-    local unhealthy_count=$(docker compose -f "${COMPOSE_FILE}" ps --format "{{.Health}}" | grep -v "healthy" | wc -l)
-    
-    if [ $unhealthy_count -eq 0 ]; then
-      all_ready=true
-      break
-    fi
-    
-    attempt=$((attempt + 1))
-    sleep 5
-  done
+  # Determine the compose file based on environment
+  case "${ENV}" in
+    "qa")
+      COMPOSE_FILE="${PROJECT_ROOT}/infra/qa/podman-compose.yml"
+      ;;
+    "prod")
+      COMPOSE_FILE="${PROJECT_ROOT}/infra/prod/podman-compose.yml"
+      ;;
+    *)
+      echo "❌ Unknown environment: ${ENV}"
+      exit 1
+      ;;
+  esac
   
-  if [ "$all_ready" = true ]; then
-    echo "✅ All services are ready"
-    return 0
+  # Check if containers are already running
+  CONTAINERS_RUNNING=$(podman ps --format '{{.Names}}' | grep -c "testbridge" || echo "0")
+  
+  if [ "${CONTAINERS_RUNNING}" -eq "0" ]; then
+    echo "🐳 Starting containers..."
+    podman-compose -f "${COMPOSE_FILE}" up -d
+    
+    # Wait for services to be ready
+    echo "⏳ Waiting for services to be ready..."
+    TIMEOUT=60
+    START_TIME=$(date +%s)
+    
+    while true; do
+      CURRENT_TIME=$(date +%s)
+      ELAPSED_TIME=$((CURRENT_TIME - START_TIME))
+      
+      if [ "${ELAPSED_TIME}" -gt "${TIMEOUT}" ]; then
+        echo "❌ Timeout reached waiting for healthy services"
+        podman-compose -f "${COMPOSE_FILE}" ps
+        exit 1
+      fi
+      
+      # Check container health using podman
+      UNHEALTHY_COUNT=$(podman ps --filter "name=testbridge" --format "{{.Status}}" | grep -v "healthy" | wc -l)
+      
+      if [ "${UNHEALTHY_COUNT}" -eq 0 ]; then
+        echo "✅ All services are healthy!"
+        break
+      fi
+      
+      echo "🔄 Waiting for services to be ready... (${ELAPSED_TIME}s elapsed)"
+      sleep 5
+    done
   else
-    echo "❌ Some services failed to start properly"
-    docker compose -f "${COMPOSE_FILE}" ps
-    return 1
+    echo "✅ Containers already running"
   fi
-}
-
-# Check if services are ready
-check_services_ready
+else
+  # For dev, we'll use the local dev services
+  echo "🚀 Using local development services"
+  # We could start the dev services here if needed
+fi
 
 # Run the integration tests
 echo "🧪 Running integration tests..."
-docker compose -f "${COMPOSE_FILE}" exec -T llm-advisor npm run test:integration -- \
+mkdir -p "${TEST_RESULTS_DIR}/reports"
+
+# Run tests with Jest
+npx jest --testPathPattern='tests/integration' \
+  --config=jest.config.js \
+  --runInBand \
   --ci \
-  --reporters=default --reporters=jest-junit \
-  --outputFile="${TEST_RESULTS_DIR}/junit.xml"
+  --forceExit \
+  --json --outputFile="${TEST_RESULTS_DIR}/results.json"
 
-# Run the API contract tests
-echo "📝 Running API contract tests..."
-docker compose -f "${COMPOSE_FILE}" exec -T api-bridge npm run test:contract
+TEST_EXIT_CODE=$?
 
-# Run the end-to-end tests
-echo "🌐 Running end-to-end tests..."
-docker compose -f "${COMPOSE_FILE}" exec -T ui npm run test:e2e -- \
-  --headless \
-  --reporter=junit \
-  --reporter-options="outputFile=${TEST_RESULTS_DIR}/e2e-junit.xml"
+# Generate summary
+echo "📊 Integration Test Summary:"
+if [ -f "${TEST_RESULTS_DIR}/results.json" ]; then
+  PASSED=$(grep -o '"numPassedTests":[0-9]*' "${TEST_RESULTS_DIR}/results.json" | cut -d':' -f2)
+  FAILED=$(grep -o '"numFailedTests":[0-9]*' "${TEST_RESULTS_DIR}/results.json" | cut -d':' -f2)
+  TOTAL=$(grep -o '"numTotalTests":[0-9]*' "${TEST_RESULTS_DIR}/results.json" | cut -d':' -f2)
+  
+  echo "  - Total Tests  : ${TOTAL}"
+  echo "  - Passed Tests : ${PASSED}"
+  echo "  - Failed Tests : ${FAILED}"
+  echo "  - Success      : $([ ${FAILED} -eq 0 ] && echo 'Yes' || echo 'No')"
+fi
 
-# Generate combined test report
-echo "📊 Generating combined test report..."
-docker compose -f "${COMPOSE_FILE}" exec -T llm-advisor node scripts/generate-test-report.js \
-  --input="${TEST_RESULTS_DIR}" \
-  --output="${TEST_RESULTS_DIR}/integration-report.html"
-
-# Collect container logs for debugging
-echo "📝 Collecting container logs..."
-docker compose -f "${COMPOSE_FILE}" logs > "${TEST_RESULTS_DIR}/container-logs.txt"
-
-# Stop containers
-echo "🛑 Stopping test containers..."
-docker compose -f "${COMPOSE_FILE}" down
+# Cleanup containers if we started them, but only if explicitly requested
+if [ "${ENV}" != "dev" ] && [ "${2}" = "cleanup" ] && [ "${CONTAINERS_RUNNING}" -eq "0" ]; then
+  echo "🧹 Stopping containers..."
+  podman-compose -f "${COMPOSE_FILE}" down
+fi
 
 echo "✅ Integration tests completed"
-
-# Display summary
-echo "📋 Integration Test Summary:"
 echo "  - Results Directory: ${TEST_RESULTS_DIR}"
-echo "  - Test Report: ${TEST_RESULTS_DIR}/integration-report.html"
-echo "  - Container Logs: ${TEST_RESULTS_DIR}/container-logs.txt"
+
+# Exit with the test exit code
+exit ${TEST_EXIT_CODE}

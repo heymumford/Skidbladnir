@@ -1,62 +1,53 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
-
-	"github.com/gorilla/mux"
-	"github.com/rs/cors"
-
-	"github.com/skidbladnir/binary-processor/handlers"
-	"github.com/skidbladnir/binary-processor/storage"
 )
 
+// HealthResponse represents the health check response
+type HealthResponse struct {
+	Status    string    `json:"status"`
+	Timestamp time.Time `json:"timestamp"`
+	Service   string    `json:"service"`
+}
+
 func main() {
-	// Configure logger
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	log.Println("Starting Skidbladnir Binary Processor...")
-
-	// Get port from environment or use default
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "9000"
-	}
-
-	// Create router
-	router := mux.NewRouter()
-
-	// Create in-memory storage
-	testCaseStorage := storage.NewInMemoryTestCaseStorage()
-
-	// Create test case handler
-	testCaseHandler := handlers.NewTestCaseHandler(testCaseStorage)
-
-	// Register routes
-	testCaseHandler.RegisterRoutes(router)
-
-	// Health check endpoint
-	router.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok","timestamp":"` + time.Now().Format(time.RFC3339) + `"}`))
-	}).Methods("GET")
-
-	// Configure CORS
-	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"*"},
-		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
-		ExposedHeaders:   []string{"Link"},
-		AllowCredentials: true,
-		MaxAge:           300,
-	})
-
-	// Use CORS middleware
-	handler := c.Handler(router)
+	// Routes
+	http.HandleFunc("/health", healthCheckHandler)
+	http.HandleFunc("/", homeHandler)
 
 	// Start server
-	log.Printf("Server starting on port %s...\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	port := 8090
+	log.Printf("Binary Processor service starting on port %d", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err \!= nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// healthCheckHandler returns the current service health
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	resp := HealthResponse{
+		Status:    "ok",
+		Timestamp: time.Now(),
+		Service:   "binary-processor",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
+}
+
+// homeHandler returns basic service information
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+	resp := map[string]string{
+		"service": "Skidbladnir Binary Processor",
+		"version": "0.1.0",
+		"status":  "operational",
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(resp)
 }

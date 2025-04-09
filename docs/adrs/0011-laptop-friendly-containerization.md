@@ -1,4 +1,4 @@
-# ADR 0011: Laptop-Friendly Containerization Strategy
+# ADR 0011: Laptop-Friendly Containerization with Build System Integration
 
 ## Status
 
@@ -10,22 +10,24 @@ Accepted
 
 ## Context
 
-Skidbladnir needs to be usable on laptops with moderate hardware specifications, specifically:
-- 16GB RAM
-- 4-core 3GHz processor (e.g., Dell laptops)
-- Windows 10/11 operating system
-- Using Docker Desktop or Podman Desktop for Windows
+As a polyglot project with TypeScript, Go, and Python components, Skidbladnir has complex build, test, and run requirements. Developers often work on laptops with limited resources (particularly 16GB RAM Windows machines), which can struggle when running multiple containers. 
 
-The containerization strategy needs to be optimized for this environment to prevent the application from consuming excessive resources, which could impact developer productivity and user experience.
+We need a development environment solution that:
+1. Works efficiently on laptops with limited resources (16GB RAM)
+2. Supports all three languages without requiring developers to install local toolchains
+3. Integrates with our test-driven development approach
+4. Allows rapid iteration during development
+5. Closely mirrors our production deployment model
+6. Provides consistent artifacts across development, testing, and production
 
 ## Decision
 
-We will implement a resource-optimized containerization strategy with the following principles:
+We will implement a laptop-friendly containerization strategy with an integrated build system that optimizes for both development experience and resource usage. This approach has these key components:
 
-### 1. Memory-Constrained Container Design
+### 1. Resource-Optimized Container Strategy
 
-- **Hard Resource Limits**: Explicitly set memory limits on all containers
-- **Service-Level Memory Budget**:
+- **Use Podman** instead of Docker for better resource usage on Windows via WSL2
+- **Configure memory limits** for all development containers:
   - API service: 256MB (max 512MB)
   - Orchestrator service: 256MB (max 512MB)
   - Binary processor: 128MB (max 256MB)
@@ -34,103 +36,206 @@ We will implement a resource-optimized containerization strategy with the follow
   - MinIO: 256MB (max 512MB)
   - LLM Advisor: 1GB (max 2GB) with dynamic scaling
   - UI service: 128MB (max 256MB)
-  - **Total nominal usage**: ~2.4GB
-  - **Total maximum usage**: ~4.8GB
+- **Use on-demand container starting** - only start containers when needed
+- **Implement shared volume strategy** to reduce duplication
+- **Use quantized LLM models** with 4-bit precision for advisor components
 
-### 2. Optimized Container Images
+### 2. Integrated Build System 
+
+- **Create a unified master build script** that coordinates builds across all languages
+- **Implement language-specific build scripts** that can be run independently
+- **Support incremental builds** to avoid rebuilding unchanged components
+- **Configure source maps** and debugging support in all containers
+- **Create single-command container builds** for all components
+
+### 3. Test Integration
+
+- **Configure Jest for TypeScript** with comprehensive test configuration
+- **Implement Go testing** with proper mocks and helpers
+- **Set up Python testing** with pytest and coverage
+- **Create cross-language integration tests** with coordinated test runners
+- **Support test-driven development** with rapid test feedback loops
+
+### 4. Developer Experience
+
+- **Implement hot-reload** for TypeScript components
+- **Provide consistent access** to logs from all containers
+- **Create development shortcuts** for common operations
+- **Support optional local development** outside containers
+- **Configure minimal container sets** for specific development tasks
+
+## Implementation Details
+
+### 1. Optimized Container Images
 
 - **Alpine-based Images**: Use Alpine Linux as the base for all containers
 - **Multi-stage Builds**: Implement multi-stage builds to minimize final image size
 - **Dependency Pruning**: Remove development dependencies in production images
 - **Layer Optimization**: Minimize layer count and size through careful ordering
 
-### 3. Lazy Loading and Dynamic Service Startup
+### 2. Windows-specific Optimizations
 
-- **On-demand Services**: Start services only when needed
-- **Service Orchestration**: Implement a dynamic service manager for the development environment
-- **Lazy LLM Loading**: Load the LLM model into memory only when needed for translation tasks
-
-### 4. Windows-specific Optimizations
-
-- **WSL2 Memory Configuration**: Provide a recommended WSL2 configuration limiting memory consumption
+- **WSL2 Memory Configuration** (in `.wslconfig`):
+  ```
+  [wsl2]
+  memory=8GB
+  processors=3
+  swap=2GB
+  ```
 - **Volume Mount Performance**: Use named volumes instead of bind mounts where possible
 - **Filesystem Optimization**: Minimize disk I/O through caching and batched operations
 
-### 5. Development vs. Production Tradeoffs
+### 3. Build Command Structure
 
-- **Development Environment**:
-  - Modular containers with hot reloading capabilities
-  - Separable services that can be selectively started
-  - Shared node_modules to reduce duplication
+Master build script that coordinates builds across languages:
 
-- **Production Environment**:
-  - Fully optimized container images
-  - Bundled dependencies with tree-shaking
-  - Just-in-time service startup
+```bash
+#!/bin/bash
+ENV=${1:-"dev"}
 
-### 6. File Watchers and CPU Usage Optimization
+# Build TypeScript components
+echo "Building TypeScript components..."
+npm run build:ts
 
-- **Limited File Watching**: Restrict file watching to necessary directories only
-- **Polling Intervals**: Increase polling intervals in development to reduce CPU usage
-- **Throttled Rebuilds**: Implement debouncing for file change detection
+# Build Python components
+echo "Building Python components..."
+npm run build:py
 
-### 7. Memory Monitoring and Management
+# Build Go components
+echo "Building Go components..."
+npm run build:go
 
-- **Runtime Monitoring**: Implement a lightweight memory usage monitor
-- **Automatic Resource Recovery**: Release unused memory when possible
-- **Warning System**: Display warnings when approaching resource limits
+# Build containers if requested
+if [ "$2" == "containers" ]; then
+  echo "Building containers..."
+  ./scripts/build-containers.sh "$ENV"
+fi
+
+# Run tests if requested
+if [ "$2" == "test" ] || [ "$3" == "test" ]; then
+  echo "Running tests..."
+  ./scripts/run-tests.sh
+fi
+```
+
+### 4. Testing Infrastructure
+
+The Jest configuration will support our TDD approach with polyglot testing:
+
+```javascript
+// jest.config.js
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: [
+    '<rootDir>/tests',
+    '<rootDir>/pkg'
+  ],
+  testMatch: [
+    '**/?(*.)+(spec|test).+(ts|tsx|js)'
+  ],
+  collectCoverageFrom: [
+    'pkg/**/*.{ts,tsx}',
+    'internal/typescript/**/*.{ts,tsx}',
+    'cmd/api/**/*.{ts,tsx}',
+    '!**/node_modules/**',
+    '!**/dist/**'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 75,
+      lines: 80,
+      statements: 80
+    }
+  }
+};
+```
+
+### 5. Package Scripts Integration
+
+Package.json will include unified scripts for all operations:
+
+```json
+{
+  "scripts": {
+    "dev:all": "concurrently \"npm run dev:api\" \"npm run dev:orchestrator\" \"npm run dev:binary\"",
+    "dev:api": "nodemon --exec ts-node cmd/api/index.ts",
+    "dev:orchestrator": "cd cmd/orchestrator && python -m uvicorn main:app --reload",
+    "dev:binary": "cd cmd/binary-processor && go run main.go",
+    "containers:up": "./scripts/start-containers.sh",
+    "containers:down": "./scripts/stop-containers.sh",
+    "containers:up:minimal": "./scripts/start-containers.sh minimal",
+    "containers:build": "./scripts/build-containers.sh",
+    "test": "jest",
+    "test:ts": "jest --testPathPattern='.*\\.(test|spec)\\.tsx?$'",
+    "test:py": "cd cmd/orchestrator && python -m pytest",
+    "test:go": "cd cmd/binary-processor && go test ./...",
+    "test:integration": "jest --testPathPattern='tests/integration'",
+    "build": "npm run build:clean && npm run build:ts && npm run build:py && npm run build:go",
+    "build:ts": "tsc -p tsconfig.build.json",
+    "build:py": "cd cmd/orchestrator && python -m build",
+    "build:go": "cd cmd/binary-processor && go build -o ../../dist/binary-processor",
+    "master-build": "./scripts/master-build.sh",
+    "master-build:qa": "./scripts/master-build.sh qa",
+    "master-build:prod": "./scripts/master-build.sh prod"
+  }
+}
+```
+
+### 6. Memory Monitoring
+
+Resource monitoring script for development:
+
+```bash
+#!/bin/bash
+# monitor-resources.sh
+
+# Monitor container resource usage
+podman stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+
+# Check WSL2 memory usage if on Windows
+if grep -q Microsoft /proc/version; then
+  echo "WSL2 Memory Usage:"
+  free -h
+fi
+```
 
 ## Consequences
 
 ### Positive
 
-- Enables development on machines with limited resources (16GB RAM)
-- Improves performance on Windows 10/11 environments
-- Reduces resource contention between containers
-- Provides more predictable performance across different machines
-- Creates a better developer experience on laptop hardware
+- **Laptop-friendly development** - developers can work on 16GB Windows machines
+- **Consistent environments** - all developers have the same environment
+- **Improved build pipeline** - builds are faster and more reliable
+- **Better testing support** - tests run consistently in containers
+- **Flexible development options** - developers can choose resource usage based on their needs
+- **Production-like environment** - development environment closely mirrors production
+- **TDD workflow support** - fast test feedback loops enable test-driven development
 
 ### Negative
 
-- Adds complexity to container configuration
-- Requires more sophisticated orchestration
-- May slightly increase development setup time
-- Creates additional configuration between development and production
+- **More complex setup** - additional configuration needed
+- **Learning curve** - developers need to learn containerization concepts
+- **Potential performance overhead** - containerization adds some overhead
+- **More build scripts to maintain** - multiple build scripts add maintenance burden
 
 ### Neutral
 
-- Requires developers to be more aware of resource constraints
-- May require periodic tuning of resource limits as the application evolves
-- Introduces additional documentation requirements
+- **Requires developers to be more aware of resource constraints**
+- **May require periodic tuning of resource limits** as the application evolves
+- **Introduces additional documentation requirements**
 
-## Implementation Notes
+## Implementation Plan
 
-1. **Docker Desktop Configuration**:
-   ```
-   memory=6GB
-   swap-size=2GB
-   cpu-count=3
-   ```
+1. Create optimized container definitions for each service
+2. Implement the master-build.sh script for coordinated builds
+3. Set up Jest configuration for TypeScript testing
+4. Create test mocks for Go and Python components
+5. Implement cross-language integration tests
+6. Add resource monitoring tooling for development
+7. Document laptop-friendly development workflow
 
-2. **WSL2 Configuration** in `.wslconfig`:
-   ```
-   [wsl2]
-   memory=8GB
-   processors=3
-   swap=2GB
-   ```
+## Conclusion
 
-3. **Service Startup Script**:
-   Develop a script that allows selective service startup:
-   ```bash
-   ./scripts/dev-env.sh up --services api,postgres,redis
-   ```
-
-4. **Memory Monitoring**:
-   Add a status dashboard for container resource usage:
-   ```bash
-   ./scripts/monitor-resources.sh
-   ```
-
-5. **LLM Model Optimization**:
-   Implement 4-bit quantization and attention caching for the LLM model to reduce memory footprint.
+This laptop-friendly containerization approach with integrated build system will enable efficient development on resource-constrained laptops while maintaining a consistent, production-like environment across the team. The integrated test support will facilitate our test-driven development approach, ensuring high-quality code while optimizing the development experience.

@@ -75,37 +75,79 @@ The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate
 git clone https://github.com/heymumford/Skidbladnir.git
 cd Skidbladnir
 
-# Start development environment with Podman
-./scripts/dev-env.sh up
+# Install dependencies
+npm install
 
-# Access development container for TypeScript work
-./scripts/dev-container.sh typescript
+# Start all services in development mode
+npm run dev:all
 
-# Access development container for Python work
-./scripts/dev-container.sh python
+# Run TypeScript API only
+npm run dev:api
 
-# Access development container for Go work
-./scripts/dev-container.sh go
+# Run Python orchestrator only
+npm run dev:orchestrator
 
-# Run tests in containers
-./scripts/test.sh
+# Run Go binary processor only
+npm run dev:binary
+
+# Run tests
+npm run test:all         # All tests
+npm run test:unit        # Unit tests
+npm run test:integration # Integration tests
+npm run test:e2e         # End-to-end tests
+
+# Build the project
+npm run build
+
+# Run the master build pipeline (tests, build, containers)
+npm run master-build
+
+# Start containerized environment
+npm run containers:up
+
+# Stop containerized environment
+npm run containers:down
 ```
 
 For laptop-friendly development (optimized for 16GB RAM machines):
 
 ```bash
-# Start minimal development environment
-./scripts/laptop-dev.sh up minimal
+# Start minimal development environment with laptop-optimized containers
+./scripts/laptop-dev.sh
+```
+
+### Project Structure
+
+```
+skidbladnir/
+├── cmd/                    # Entry points for each component
+│   ├── api/                # TypeScript API
+│   ├── binary-processor/   # Go binary processor
+│   └── orchestrator/       # Python orchestrator
+├── pkg/                    # Core domain code (language-agnostic)
+│   ├── domain/             # Domain entities
+│   ├── usecases/           # Application use cases
+│   └── interfaces/         # Interface adapters
+├── internal/               # Language-specific implementations
+│   ├── go/
+│   ├── python/
+│   └── typescript/
+├── infra/                  # Infrastructure configurations
+│   ├── dev/
+│   ├── qa/
+│   └── prod/
+├── tests/                  # Test suites
+├── scripts/                # Build and automation scripts
+└── web/                    # Web UI
 ```
 
 ### Local Services
 
-All services are hosted locally either within containers or on the development machine:
+When running in development mode, services are available at:
 
-- **API**: http://localhost:3000
+- **API**: http://localhost:8080
 - **Orchestrator**: http://localhost:8000
-- **Binary Processor**: http://localhost:9000
-- **Web UI**: http://localhost:3001
+- **Binary Processor**: http://localhost:8090
 
 ## Documentation
 
@@ -116,6 +158,16 @@ Comprehensive documentation is available in the `docs/` directory:
 - [Build System](docs/build-system.md) - Build system documentation
 - [Container Strategy](docs/containerization.md) - Container setup details
 - [Laptop-Friendly Guide](docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
+
+## Testing Approach
+
+Skidbladnir follows Test-Driven Development (TDD) principles:
+
+1. Write tests first
+2. Implement the minimum code needed to pass the tests
+3. Refactor the code while keeping tests passing
+
+For more details, see [TDD Approach](docs/project/tdd-approach.md).
 
 ## License
 

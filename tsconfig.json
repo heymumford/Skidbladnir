@@ -12,20 +12,28 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "composite": true,
-    "incremental": true
+    "incremental": true,
+    "jsx": "react",
+    "lib": ["es2020", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["pkg/domain/*"],
+      "@usecases/*": ["pkg/usecases/*"],
+      "@interfaces/*": ["pkg/interfaces/*"],
+      "@infrastructure/*": ["internal/*"]
+    }
   },
   "include": [
-    "packages/*/src/**/*"
+    "cmd/**/*",
+    "pkg/**/*",
+    "internal/**/*",
+    "domain/**/*",
+    "packages/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.test.ts"
-  ],
-  "references": [
-    { "path": "./packages/core" },
-    { "path": "./packages/api-bridge" },
-    { "path": "./packages/llm-assistant" },
-    { "path": "./packages/providers" }
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }
