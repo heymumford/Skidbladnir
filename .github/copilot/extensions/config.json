@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "extensions": {
+    "provider-generator": {
+      "name": "Provider Generator",
+      "description": "Generates provider adapters based on API specifications",
+      "repo": "https://github.com/heymumford/skidbladnir",
+      "entrypoint": "provider-generator.js",
+      "models": ["gpt-4"],
+      "apis": ["api-schemas", "test-generation"],
+      "settings": {
+        "baseUrl": "https://api.example.com/provider-generator"
+      }
+    },
+    "test-factory-generator": {
+      "name": "Test Factory Generator",
+      "description": "Creates test data factories for domain entities",
+      "repo": "https://github.com/heymumford/skidbladnir",
+      "entrypoint": "test-factory-generator.js",
+      "models": ["gpt-4"],
+      "apis": ["object-factories", "test-generation"],
+      "settings": {
+        "baseUrl": "https://api.example.com/test-factory-generator"
+      }
+    },
+    "schema-mapper": {
+      "name": "Schema Mapper",
+      "description": "Maps between different provider schemas",
+      "repo": "https://github.com/heymumford/skidbladnir",
+      "entrypoint": "schema-mapper.js",
+      "models": ["gpt-4"],
+      "apis": ["schema-transformation"],
+      "settings": {
+        "baseUrl": "https://api.example.com/schema-mapper"
+      }
+    }
+  }
+}
