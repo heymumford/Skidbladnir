@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "edits": {
+    "modes": {
+      "refactoring": {
+        "name": "Refactoring Agent",
+        "description": "Assists with automated code refactoring operations",
+        "systemPrompt": "You are a refactoring assistant specialized in Clean Architecture principles and polyglot development (TypeScript, Python, Go). Your task is to help refactor code according to the project standards and architecture guidelines. Follow these principles: 1) Respect Clean Architecture layers and dependency rules, 2) Maintain consistent patterns across languages while respecting idioms, 3) Improve code quality without changing behavior, 4) Ensure tests pass after refactoring."
+      },
+      "testGeneration": {
+        "name": "Test Generation Agent",
+        "description": "Creates comprehensive tests before refactoring",
+        "systemPrompt": "You are a test generation specialist focusing on behavior preservation during refactoring. Your task is to create comprehensive tests that verify the current behavior of code before it's refactored. Follow these guidelines: 1) Identify all key behaviors and edge cases, 2) Create tests using the project's testing frameworks, 3) Ensure high coverage of functionality, 4) Focus especially on areas that will be refactored."
+      },
+      "batchRefactoring": {
+        "name": "Batch Refactoring Agent",
+        "description": "Coordinates related changes across multiple files",
+        "systemPrompt": "You are a batch refactoring coordinator specializing in multi-file, cross-language refactoring operations. Your task is to plan and execute coordinated changes across related files while maintaining consistency and architectural integrity. Follow these guidelines: 1) Identify all related files that need changes, 2) Develop a step-by-step refactoring plan, 3) Apply changes consistently across languages, 4) Verify each step before continuing."
+      }
+    },
+    "templates": [
+      {
+        "name": "Clean Architecture Alignment",
+        "description": "Refactor code to better align with Clean Architecture",
+        "mode": "refactoring",
+        "language": "typescript,python,go",
+        "template": "Analyze this code and refactor it to better adhere to Clean Architecture principles. Focus on:\n1. Ensuring proper dependency direction\n2. Extracting interfaces for implementations\n3. Moving domain logic to domain layer\n4. Replacing infrastructure dependencies with abstractions\n5. Applying dependency injection\n\nKeep all existing functionality intact and ensure tests continue to pass."
+      },
+      {
+        "name": "Extract Method",
+        "description": "Extract cohesive code blocks into separate methods",
+        "mode": "refactoring",
+        "language": "typescript,python,go",
+        "template": "Analyze this method and extract cohesive code blocks into separate methods. Focus on:\n1. Identifying code blocks that perform a single logical operation\n2. Creating meaningful method names that describe what they do\n3. Passing only necessary parameters\n4. Returning only required values\n5. Maintaining the original method's functionality and signature"
+      },
+      {
+        "name": "Extract Interface",
+        "description": "Extract an interface from a class implementation",
+        "mode": "refactoring",
+        "language": "typescript",
+        "template": "Extract an interface from this class implementation. Create a properly named interface that captures all public methods. Format the interface following our project conventions and place it where it belongs according to Clean Architecture principles."
+      },
+      {
+        "name": "Test-First Refactoring",
+        "description": "Generate tests before refactoring code",
+        "mode": "testGeneration",
+        "language": "typescript,python,go",
+        "template": "Analyze this code and create a comprehensive suite of tests that verify its current behavior before refactoring. Cover:\n1. Happy path scenarios\n2. Error cases and edge conditions\n3. All public methods and functions\n4. Key behavioral characteristics\nUse the appropriate testing framework for this language and follow the project's testing patterns."
+      },
+      {
+        "name": "Batch Interface Implementation",
+        "description": "Implement interfaces across multiple languages",
+        "mode": "batchRefactoring",
+        "language": "typescript,python,go",
+        "template": "I need to implement this interface/abstract concept across multiple languages. Starting with this reference implementation, create equivalent implementations in other languages that maintain the same contract while following language-specific best practices and project conventions."
+      },
+      {
+        "name": "Simplify Conditionals",
+        "description": "Refactor complex conditional logic",
+        "mode": "refactoring",
+        "language": "typescript,python,go",
+        "template": "Refactor this complex conditional logic to be more maintainable and readable. Consider techniques like:\n1. Extracting conditions to named methods\n2. Using guard clauses instead of nested if statements\n3. Consolidating duplicate conditional code\n4. Using polymorphism instead of type checking where appropriate\n5. Applying the strategy pattern for complex behavior variations"
+      },
+      {
+        "name": "Dependency Inversion",
+        "description": "Apply dependency inversion principle",
+        "mode": "refactoring",
+        "language": "typescript,python,go",
+        "template": "Refactor this code to apply the Dependency Inversion Principle. Focus on:\n1. Identifying direct dependencies on concrete implementations\n2. Creating appropriate abstractions (interfaces/abstract classes)\n3. Injecting dependencies instead of creating them directly\n4. Ensuring the code depends on abstractions rather than details\n5. Using proper dependency injection techniques for the language"
+      }
+    ],
+    "rules": [
+      {
+        "name": "Preserve Tests",
+        "description": "Ensure all existing tests continue to pass",
+        "pattern": "Tests must continue to pass after refactoring. Verify by running the appropriate test command."
+      },
+      {
+        "name": "Follow Architecture",
+        "description": "Maintain Clean Architecture principles",
+        "pattern": "Domain entities must not depend on outer layers. Use cases must orchestrate domain logic. Infrastructure should be behind interfaces."
+      },
+      {
+        "name": "Maintain Consistency",
+        "description": "Keep code style consistent with project",
+        "pattern": "Follow existing code style and patterns. Use similar naming conventions, error handling, and structure as surrounding code."
+      },
+      {
+        "name": "Document Changes",
+        "description": "Document significant refactoring decisions",
+        "pattern": "Add comments explaining major architectural decisions or non-obvious refactoring choices."
+      }
+    ]
+  }
+}

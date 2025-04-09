@@ -1,0 +1,174 @@
+name: GitHub Copilot Integration
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '**.py'
+      - '**.go'
+      - '**.md'
+
+jobs:
+  copilot-review:
+    name: Copilot Code Review
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: GitHub Copilot for PRs
+        uses: github/copilot-for-pull-requests@v0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          review_comment_type: inline
+          add_pr_summary: true
+          
+  copilot-pr-summary:
+    name: Copilot PR Summary
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Generate PR Summary
+        id: copilot-summary
+        uses: github/copilot-for-pull-requests@v0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          template_file: .github/copilot/pr-summary-template.md
+          add_pr_summary: true
+  
+  copilot-edits-check:
+    name: Copilot Edits Architecture Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Check for Clean Architecture violations
+        id: architecture-check
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const { analyzeCleanArchitecture } = require('./.github/copilot/refactoring-scripts.js');
+            
+            // Get changed files
+            const exec = require('child_process').execSync;
+            const changedFiles = exec('git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}')
+              .toString()
+              .split('\n')
+              .filter(file => file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.py') || file.endsWith('.go'));
+            
+            // Read file contents
+            const fileContents = {};
+            changedFiles.forEach(file => {
+              try {
+                fileContents[file] = fs.readFileSync(file, 'utf8');
+              } catch (e) {
+                console.log(`Could not read ${file}: ${e}`);
+              }
+            });
+            
+            // Analyze architecture
+            const analysis = analyzeCleanArchitecture(fileContents);
+            
+            // Output results for GitHub step output
+            fs.writeFileSync('/tmp/architecture-analysis.json', JSON.stringify(analysis));
+            
+            console.log(`Found ${analysis.violations.length} Clean Architecture violations`);
+            
+            // Set output if there are violations
+            if (analysis.violations.length > 0) {
+              console.log('::set-output name=has_violations::true');
+            } else {
+              console.log('::set-output name=has_violations::false');
+            }
+          "
+      
+      - name: Comment on PR with architecture recommendations
+        if: steps.architecture-check.outputs.has_violations == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const analysis = JSON.parse(fs.readFileSync('/tmp/architecture-analysis.json', 'utf8'));
+            
+            let comment = `## Copilot Edits: Clean Architecture Analysis
+            
+            The Copilot Edits agent found ${analysis.violations.length} potential Clean Architecture violations in this PR.
+            
+            ### Recommendations
+            
+            `;
+            
+            analysis.recommendations.forEach(rec => {
+              comment += `- ${rec}\n`;
+            });
+            
+            comment += `
+            
+            Consider using Copilot Edits to refactor these issues. You can use the templates in \`.github/copilot/edits-examples.md\` with the \`/refactor cleanArchitecture\` command in Copilot Chat.`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+          
+  copilot-test-analysis:
+    name: Copilot Test Coverage Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+        
+      - name: Analyze Test Coverage with Copilot
+        uses: github/copilot-for-pull-requests@v0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          coverage_file: 'test-results/coverage/coverage-final.json'
+          suggestion_mode: gap
