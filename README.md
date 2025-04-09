@@ -128,10 +128,13 @@ Run the tests:
 skidbladnir/
 ├── docs/                   # Documentation
 │   ├── adrs/              # Architecture Decision Records
+│   ├── archive/           # Historical migration documents
+│   └── project/           # Project management documents
 ├── infra/                 # Infrastructure configurations
+│   ├── compose/           # Docker/Podman compose files
 │   ├── dev/               # Development environment
-│   ├── qa/                # QA/Testing environment
-│   └── prod/              # Production deployment
+│   ├── prod/              # Production deployment
+│   └── qa/                # QA/Testing environment
 ├── packages/              # Core packages
 │   ├── api-bridge/        # API integration framework
 │   ├── binary-processor/  # Go-based binary/image processor 
@@ -153,6 +156,7 @@ skidbladnir/
 │   ├── ui/                # LCARS-inspired user interface
 │   └── zephyr-extractor/  # Zephyr specific data extractor
 ├── scripts/               # Build and deployment scripts
+│   └── util/              # Utility scripts
 └── tests/                 # Test suite
     ├── integration/       # Integration tests
     ├── providers/         # Provider-specific tests
@@ -166,6 +170,7 @@ skidbladnir/
 - [Architecture Overview](./docs/architecture.md) - High-level architecture documentation
 - [Architecture Diagrams (C4)](./docs/c4-diagrams.md) - System visualizations with C4 model
 - [Clean Architecture Guide](./docs/clean-architecture-guide.md) - Implementation details of clean architecture
+- [Project Strategy](./docs/project/strategy.md) - High-level project strategy and vision
 
 ### Component Documentation
 - [API Bridge Architecture](./docs/api-bridge-architecture.md) - Integration details
@@ -176,9 +181,10 @@ skidbladnir/
 
 ### Development & Testing
 - [Development Guide](./docs/development-guide.md) - Guide for developers
-- [TDD Approach](./docs/tdd-approach.md) - Test-Driven Development methodology
+- [TDD Approach](./docs/project/tdd-approach.md) - Test-Driven Development methodology
 - [LLM Advisor Tests](./docs/llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](./docs/security-audit-guidelines.md) - Security practices
+- [Project Kanban](./docs/project/kanban.md) - Project task board
 
 ### User Interface
 - [UI Requirements](./docs/ui-requirements.md) - UI specifications and requirements
