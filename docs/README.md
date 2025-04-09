@@ -24,6 +24,7 @@ This directory contains comprehensive documentation for the Skidbladnir project,
 
 ### Development & Testing
 - [Development Guide](development-guide.md) - Guide for developers
+- [Laptop-Friendly Guide](laptop-friendly-guide.md) - Optimized for 16GB laptops
 - [LLM Advisor Tests](llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](security-audit-guidelines.md) - Security practices
 

@@ -1,32 +1,37 @@
-# TestBridge Containerization Strategy
+# Skidbladnir Containerization Strategy
 
-This document outlines the containerization approach for TestBridge, ensuring a consistent development and production environment with minimal external dependencies.
+This document outlines the containerization approach for Skidbladnir, ensuring a consistent development and production environment with minimal external dependencies while being resource-efficient for various hardware configurations.
 
 ## Principles
 
 1. **Self-Contained Development Environment**
    - All development happens within containers
-   - No local dependencies beyond Podman
+   - No local dependencies beyond Podman/Docker
    - Reproducible environment across all developers
 
-2. **Minimal Network Dependencies**
+2. **Resource-Efficient Containerization**
+   - Memory-constrained container definitions
+   - Selective service startup for development
+   - Support for laptop development (16GB RAM, Windows 10/11)
+
+3. **Minimal Network Dependencies**
    - Cached build layers to minimize network usage
    - Local registry for development images
    - Versioned base images with infrequent updates
 
-3. **Consistent Build Pipeline**
+4. **Consistent Build Pipeline**
    - Same container definitions for development and production
    - Automated testing in containers
    - Container-based CI/CD pipeline
 
-4. **Efficient Updates**
+5. **Efficient Updates**
    - Layered image architecture for minimal rebuilds
    - Incremental updates to iterative builds
    - Version tagging for release management
 
 ## Container Architecture
 
-TestBridge consists of the following containers:
+Skidbladnir consists of the following containers:
 
 ### Development Environment
 
@@ -71,6 +76,31 @@ TestBridge consists of the following containers:
                                      │  Persistent Storage │
                                      │                     │
                                      └─────────────────────┘
+```
+
+### Laptop-Friendly Environment
+
+For development on laptops with constrained resources (16GB RAM, Windows 10/11):
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Resource-Optimized Network                   │
+├──────────────┬──────────────┬────────────────┬─────────────────┤
+│              │              │                │                 │
+│  TypeScript  │  Database    │ Binary         │ LLM Advisor     │
+│  Developer   │  Services    │ Processor      │ (On-demand)     │
+│  Container   │ (Constrained)│ (On-demand)    │ (4-bit quant.)  │
+│              │              │                │                 │
+└──────────────┴──────────────┴────────────────┴─────────────────┘
+       │              │                                │
+       │ Shared       │ Persistent                     │ Demand-loaded
+       │ Volume       │ Volumes                        │ Models
+       │              │                                │
+┌──────▼──────────────▼────────────────────────────────▼─────────┐
+│                                                                 │
+│                Resource Monitoring & Management                 │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ## Container Images
@@ -128,11 +158,13 @@ TestBridge consists of the following containers:
 
 ## Development Workflow
 
+### Standard Development Environment
+
 1. **Initial Setup**
    ```bash
    # Clone repository
-   git clone https://github.com/yourusername/testbridge.git
-   cd testbridge
+   git clone https://github.com/heymumford/Skidbladnir.git
+   cd Skidbladnir
 
    # Start development environment
    ./scripts/dev-env.sh up
@@ -160,6 +192,42 @@ TestBridge consists of the following containers:
    ```bash
    # Build all containers
    ./scripts/build.sh
+   ```
+
+### Laptop-Friendly Development Environment
+
+For development on laptops with constrained resources (16GB RAM, Windows 10/11):
+
+1. **Initial Setup with Resource Constraints**
+   ```bash
+   # Clone repository
+   git clone https://github.com/heymumford/Skidbladnir.git
+   cd Skidbladnir
+
+   # Start minimal development environment
+   ./scripts/laptop-dev.sh up minimal
+   ```
+
+2. **Selective Service Startup**
+   ```bash
+   # Start TypeScript development with optimized resources
+   ./scripts/laptop-dev.sh up typescript
+
+   # Add LLM services only when needed
+   ./scripts/laptop-dev.sh up llm
+   ```
+
+3. **Resource Monitoring**
+   ```bash
+   # Monitor container resource usage
+   ./scripts/monitor-resources.sh
+   ```
+
+4. **Testing with Resource Awareness**
+   ```bash
+   # Run tests with resource constraints
+   ./scripts/laptop-dev.sh up
+   ./scripts/test.sh --memory-limit=high
    ```
 
 ## Container Build Pipeline
@@ -264,3 +332,43 @@ TestBridge consists of the following containers:
    - Container metrics exposed
    - Resource usage tracking
    - Performance monitoring
+   - Real-time resource dashboard for laptop environments
+
+## Resource Management
+
+1. **Memory Constraints**
+   - Hard memory limits per container
+   - Memory reservations to prevent swapping
+   - Optimized JVM/Node.js memory settings
+
+2. **CPU Allocation**
+   - CPU share limits for balanced allocation
+   - CPU pinning for critical services
+   - Background task throttling
+
+3. **Laptop-Specific Optimizations**
+   - Windows-specific WSL2 configurations
+   - Docker Desktop / Podman Desktop tuning
+   - Service profiles for selective startup
+   - Resource monitoring script
+
+4. **Service Memory Budget**
+   
+   | Service | Standard Allocation | Maximum Allocation |
+   |---------|---------------------|-------------------|
+   | API | 256MB | 512MB |
+   | Orchestrator | 256MB | 512MB |
+   | Binary Processor | 128MB | 256MB |
+   | PostgreSQL | 256MB | 512MB |
+   | Redis | 128MB | 256MB |
+   | MinIO | 256MB | 512MB |
+   | LLM Advisor | 1GB | 2GB |
+   | Dev Container | 512MB | 1GB |
+   
+   **Total:** ~2.8GB nominal, ~5.6GB maximum
+
+5. **Dynamic Resource Management**
+   - On-demand service startup and shutdown
+   - Memory release when services are idle
+   - Lazy-loading of LLM models
+   - Database resource optimization
