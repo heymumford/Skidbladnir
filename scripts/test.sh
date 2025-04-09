@@ -27,6 +27,7 @@ show_usage() {
     echo "  unit          Run only unit tests"
     echo "  integration   Run only integration tests"
     echo "  e2e           Run only end-to-end tests"
+    echo "  api           Run only API integration tests"
     echo ""
     echo "Options:"
     echo "  --verbose     Show detailed test output"
@@ -41,7 +42,7 @@ VERBOSE=0
 # Process arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
-        all|unit|integration|e2e)
+        all|unit|integration|e2e|api)
             TEST_TYPE="$1"
             shift
             ;;
@@ -149,6 +150,26 @@ run_e2e_tests() {
     fi
 }
 
+# Function to run API integration tests
+run_api_tests() {
+    if [ "${TEST_TYPE}" = "all" ] || [ "${TEST_TYPE}" = "api" ]; then
+        echo "Running API integration tests..."
+        
+        ENV="dev"
+        if [ "${VERBOSE}" -eq 1 ]; then
+            ENV="dev"
+        fi
+        
+        podman run \
+            --rm \
+            --network=testbridge_default \
+            -v "${PROJECT_ROOT}:/app:Z" \
+            -w /app \
+            maven:3.8-openjdk-11 \
+            /bin/sh -c "cd /app/tests/api-integration && mvn test -Dkarate.env=${ENV}"
+    fi
+}
+
 # Check if the development containers are built
 if ! podman image exists testbridge/typescript-dev:latest || \
    ! podman image exists testbridge/python-dev:latest || \
@@ -173,6 +194,9 @@ run_go_tests
 
 # Run end-to-end tests
 run_e2e_tests
+
+# Run API integration tests
+run_api_tests
 
 echo "All tests completed."
 exit 0

@@ -6,6 +6,8 @@
 
 - [ ] Define test documentation standards
 - [ ] Create architecture validation test helpers
+- [ ] Implement Karate framework for API integration testing
+- [ ] Create cross-service API contract testing with Karate
 
 ### AI-Assisted Development Integration
 
@@ -69,6 +71,8 @@
 - [ ] Implement resilience pattern for API connections
 - [ ] Implement consistent error handling across providers
 - [ ] Create provider-specific migration workflows
+- [ ] Create Karate tests for provider API interfaces
+- [ ] Implement API mocking with Karate for provider testing
 
 ### Phase 4: Infrastructure & Orchestration
 
@@ -79,6 +83,8 @@
 - [ ] Implement API Bridge based on tests
 - [ ] Implement Orchestrator based on tests
 - [ ] Implement Binary Processor based on tests
+- [ ] Add Karate performance tests for API bridge and rate limiting
+- [ ] Create Karate tests for cross-component communication
 
 ### Phase 5: LLM Components
 
@@ -108,7 +114,7 @@
 
 ## In Progress
 
-- [ ] *Empty at this time*
+- [ ] Implement Karate framework for API integration testing
 
 ## In Review
 

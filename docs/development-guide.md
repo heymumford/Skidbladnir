@@ -94,6 +94,8 @@ skidbladnir/
 - **TypeScript/Node.js**: Jest with ts-jest
 - **Python**: pytest with pytest-asyncio
 - **Go**: standard testing package with testify
+- **API Integration**: Karate framework
+- **Acceptance**: Cucumber.js with TypeScript
 
 ### Test Organization
 
@@ -105,10 +107,11 @@ skidbladnir/
 
 1. **Unit Tests**: Test individual functions and classes
 2. **Component Tests**: Test bounded contexts
-3. **Integration Tests**: Test cross-component interactions
-4. **Contract Tests**: Test API boundaries
-5. **End-to-End Tests**: Test complete workflows
-6. **Acceptance Tests**: BDD-style tests using Cucumber
+3. **API Tests**: Test API interfaces and contracts using Karate
+4. **Integration Tests**: Test cross-component interactions
+5. **Contract Tests**: Test API boundaries
+6. **End-to-End Tests**: Test complete workflows
+7. **Acceptance Tests**: BDD-style tests using Cucumber
 
 ### Running Tests
 
@@ -120,6 +123,7 @@ skidbladnir/
 ./scripts/test.sh unit
 ./scripts/test.sh integration
 ./scripts/test.sh e2e
+./scripts/test.sh api           # Run Karate API tests
 
 # Run tests with verbose output
 ./scripts/test.sh --verbose
@@ -130,9 +134,17 @@ npm run test:acceptance:dev     # Run with more detailed output
 npm run test:acceptance:wip     # Run only WIP tests
 npm run test:acceptance:smoke   # Run only smoke tests
 npm run test:acceptance:ci      # Run optimized for CI
+
+# Run Karate API tests
+npm run test:api                # Run all Karate API tests
+npm run test:api:contracts      # Run API contract tests
+npm run test:api:integration    # Run API integration tests
+npm run test:api:performance    # Run API performance tests
 ```
 
-For more information about the acceptance testing framework, see [Acceptance Testing](./acceptance-testing.md).
+For more information about our testing frameworks, see:
+- [Acceptance Testing](./acceptance-testing.md)
+- [Karate Testing Strategy](./karate-testing-strategy.md)
 
 ## Provider Development
 
