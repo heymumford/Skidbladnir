@@ -15,6 +15,9 @@ An Architecture Decision Record (ADR) is a document that captures an important a
 5. [ADR 0005: Containerization Strategy](0005-containerization-strategy.md) - Container-based deployment approach
 6. [ADR 0006: Web Interface Architecture](0006-web-interface-architecture.md) - React-based UI architecture
 7. [ADR 0007: TDD with Clean Architecture](0007-tdd-clean-architecture.md) - Test-driven development approach
+8. [ADR 0008: LLM Performance Optimization](0008-llm-performance-optimization.md) - Optimizing LLM performance for API operations
+9. [ADR 0009: LLM Stability and Resilience](0009-llm-stability-resilience.md) - Framework for ensuring LLM reliability
+10. [ADR 0010: LLM Security and Compliance](0010-llm-security-compliance.md) - Security and compliance framework for LLM integration
 
 ## ADR Template
 

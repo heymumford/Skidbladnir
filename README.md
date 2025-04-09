@@ -133,7 +133,13 @@ skidbladnir/
 │   ├── qa/                # QA/Testing environment
 │   └── prod/              # Production deployment
 ├── packages/              # Core packages
+│   ├── api-bridge/        # API integration framework
+│   ├── binary-processor/  # Go-based binary/image processor 
 │   ├── common/            # Shared utilities and models
+│   ├── core/              # Core domain entities and rules
+│   ├── llm-advisor/       # LLM for API translation with optimization
+│   ├── llm-assistant/     # Self-contained LLM assistant
+│   ├── orchestrator/      # Migration workflow orchestration
 │   ├── providers/         # Test management system providers
 │   │   ├── zephyr/        # Jira/Zephyr provider
 │   │   ├── qtest/         # qTest provider
@@ -141,31 +147,43 @@ skidbladnir/
 │   │   ├── azure-devops/  # Azure DevOps provider
 │   │   ├── rally/         # Rally provider
 │   │   └── excel/         # Excel import/export provider
-│   ├── api-bridge/        # API integration framework
-│   ├── llm-advisor/       # LLM for API translation
-│   ├── llm-assistant/     # LLM self-contained assistant
-│   ├── orchestrator/      # Migration workflow orchestration
-│   ├── binary-processor/  # Go-based binary/image processor
-│   └── ui/                # LCARS-inspired user interface
+│   ├── qtest-loader/      # qTest specific data loader
+│   ├── transformer/       # Data transformation services
+│   ├── translation-layer/ # Universal translation services
+│   ├── ui/                # LCARS-inspired user interface
+│   └── zephyr-extractor/  # Zephyr specific data extractor
 ├── scripts/               # Build and deployment scripts
-└── tests/                 # End-to-end and integration tests
+└── tests/                 # Test suite
+    ├── integration/       # Integration tests
+    ├── providers/         # Provider-specific tests
+    └── unit/              # Unit tests
 ```
 
 ## Documentation
 
+### Architecture & Design
 - [ADRs](./docs/adrs/) - Architecture Decision Records
-- [TDD Approach](./docs/tdd-approach.md) - Test-Driven Development guide
-- [Clean Architecture Guide](./docs/clean-architecture-guide.md) - Implementation details
-- [Architecture Diagrams (C4)](./docs/c4-diagrams.md) - System visualizations
+- [Architecture Overview](./docs/architecture.md) - High-level architecture documentation
+- [Architecture Diagrams (C4)](./docs/c4-diagrams.md) - System visualizations with C4 model
+- [Clean Architecture Guide](./docs/clean-architecture-guide.md) - Implementation details of clean architecture
+
+### Component Documentation
 - [API Bridge Architecture](./docs/api-bridge-architecture.md) - Integration details
-- [API Comparison](./docs/api-comparison.md) - Compare test management APIs
+- [API Comparison](./docs/api-comparison.md) - Compare test management system APIs
 - [Provider Interface](./docs/provider-interface.md) - Provider implementation details
-- [Local LLM Assistant](./docs/local-llm-assistant.md) - LLM integration
-- [Containerization Strategy](./docs/containerization.md) - Container setup
+- [Local LLM Assistant](./docs/local-llm-assistant.md) - LLM integration and usage
+- [Containerization Strategy](./docs/containerization.md) - Container setup details
+
+### Development & Testing
 - [Development Guide](./docs/development-guide.md) - Guide for developers
+- [TDD Approach](./docs/tdd-approach.md) - Test-Driven Development methodology
 - [LLM Advisor Tests](./docs/llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](./docs/security-audit-guidelines.md) - Security practices
-- [UI Requirements](./docs/ui-requirements.md) - UI specs and requirements
+
+### User Interface
+- [UI Requirements](./docs/ui-requirements.md) - UI specifications and requirements
+- [UI Implementation Summary](./docs/ui-implementation-summary.md) - Overview of UI implementation
+- [UI Test Plan](./docs/ui-test-plan.md) - Testing plan for the UI
 
 ## License
 
