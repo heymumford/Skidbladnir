@@ -4,7 +4,6 @@
 
 ### Phase 0: Test Infrastructure (Critical)
 
-- [ ] Create acceptance test framework with Cucumber
 - [ ] Define test documentation standards
 - [ ] Create architecture validation test helpers
 
@@ -15,7 +14,7 @@
 - [x] Implement Copilot Code Review for cross-language consistency
 - [x] Configure PR summaries for improved collaboration
 - [x] Set up Copilot Edits (Agent Mode) for refactoring tasks
-- [ ] Develop custom Copilot Extensions for provider integrations
+- [x] Develop custom Copilot Extensions for provider integrations
 - [x] Create `.github/copilot/` configuration directory
 - [x] Document AI usage guidelines in development documentation
 - [x] Integrate Copilot code review in CI workflow
@@ -113,10 +112,11 @@
 
 ## In Review
 
-- [ ] *Empty at this time*
+- [x] Create acceptance test framework with Cucumber
 
 ## Completed
 
+- [x] Develop custom Copilot Extensions for provider integrations
 - [x] Set up Copilot Edits (Agent Mode) for refactoring tasks
 - [x] Create AI-specific reference documentation for domain concepts
 - [x] Implement shared utilities based on tests

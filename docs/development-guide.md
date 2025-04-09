@@ -108,6 +108,7 @@ skidbladnir/
 3. **Integration Tests**: Test cross-component interactions
 4. **Contract Tests**: Test API boundaries
 5. **End-to-End Tests**: Test complete workflows
+6. **Acceptance Tests**: BDD-style tests using Cucumber
 
 ### Running Tests
 
@@ -122,7 +123,16 @@ skidbladnir/
 
 # Run tests with verbose output
 ./scripts/test.sh --verbose
+
+# Run acceptance tests
+npm run test:acceptance         # Run all acceptance tests
+npm run test:acceptance:dev     # Run with more detailed output
+npm run test:acceptance:wip     # Run only WIP tests
+npm run test:acceptance:smoke   # Run only smoke tests
+npm run test:acceptance:ci      # Run optimized for CI
 ```
+
+For more information about the acceptance testing framework, see [Acceptance Testing](./acceptance-testing.md).
 
 ## Provider Development
 
