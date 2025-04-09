@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,8 @@
     "test:api:contracts": "mvn test -f tests/api-integration/pom.xml -Dtest=ContractTests",
     "test:api:integration": "mvn test -f tests/api-integration/pom.xml -Dtest=IntegrationTests",
     "test:api:performance": "mvn test -f tests/api-integration/pom.xml -Dtest=PerformanceTests -Dkarate.env=perf",
+    "test:api:mocks": "mvn test -f tests/api-integration/pom.xml -Dtest=MockTests",
+    "test:api:migration": "mvn test -f tests/api-integration/pom.xml -Dtest=MigrationTests",
     "lint": "npm run lint:ts && npm run lint:py && npm run lint:go",
     "lint:ts": "eslint --ext .ts,.tsx .",
     "lint:py": "poetry run flake8 && poetry run black --check .",

@@ -30,7 +30,7 @@ export TEST_ENV="test"
 
 # Run unit tests
 echo "🧪 Running unit tests..."
-python -m pytest tests/unit/python \
+python -m pytest -c config/pytest.ini tests/unit/python \
     -v \
     --junitxml="${TEST_RESULTS_DIR}/unit-results.xml" \
     --cov=internal/python \
@@ -43,7 +43,7 @@ python -m pytest tests/unit/python \
 # Run integration tests (if not skipped)
 if [ "${SKIP_INTEGRATION}" != "true" ]; then
     echo "🔌 Running integration tests..."
-    python -m pytest tests/integration/python \
+    python -m pytest -c config/pytest.ini tests/integration/python \
         -v \
         --junitxml="${TEST_RESULTS_DIR}/integration-results.xml" \
         ${SKIP_SLOW:+"-k 'not slow'"} \

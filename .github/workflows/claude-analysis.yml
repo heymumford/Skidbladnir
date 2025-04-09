@@ -1,0 +1,309 @@
+name: Claude Code Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**.ts'
+      - '**.tsx'
+      - '**.js'
+      - '**.jsx'
+      - '**.py'
+      - '**.go'
+
+jobs:
+  analyze-architecture:
+    name: Claude Architecture Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          
+      - name: Install Claude API Library
+        run: pip install anthropic requests
+        
+      - name: Get changed files
+        id: changed-files
+        run: |
+          echo "::set-output name=files::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(ts|tsx|js|jsx|py|go)$' | xargs)"
+        
+      - name: Analyze architecture with Claude
+        id: claude-analysis
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<EOF
+          import os
+          import sys
+          import json
+          import requests
+          from anthropic import Anthropic
+
+          # Setup
+          anthropic = Anthropic(api_key=os.environ['ANTHROPIC_API_KEY'])
+          repo = os.environ['REPO']
+          pr_number = os.environ['PR_NUMBER']
+          files = "${{ steps.changed-files.outputs.files }}".split()
+          
+          # Read clean architecture principles
+          with open('.github/claude/clean-architecture-principles.md', 'r') as f:
+              principles = f.read()
+          
+          analyses = []
+          
+          # Analyze each file
+          for file_path in files:
+              if not os.path.exists(file_path):
+                  continue
+                  
+              # Read file content
+              with open(file_path, 'r') as f:
+                  content = f.read()
+              
+              # Skip files that are too large
+              if len(content) > 50000:
+                  analyses.append({
+                      "file": file_path,
+                      "summary": "File too large for analysis",
+                      "issues": [],
+                      "recommendations": ["Consider breaking this file into smaller components"]
+                  })
+                  continue
+              
+              # Determine language
+              ext = file_path.split('.')[-1]
+              language_map = {
+                  'ts': 'TypeScript',
+                  'tsx': 'TypeScript (React)',
+                  'js': 'JavaScript',
+                  'jsx': 'JavaScript (React)',
+                  'py': 'Python',
+                  'go': 'Go'
+              }
+              language = language_map.get(ext, 'Unknown')
+              
+              # Determine architectural layer
+              layer = "Unknown"
+              if '/domain/' in file_path:
+                  layer = "Domain"
+              elif '/usecases/' in file_path:
+                  layer = "Use Cases"
+              elif '/interfaces/' in file_path:
+                  layer = "Interface Adapters"
+              elif '/infrastructure/' in file_path or '/infra/' in file_path:
+                  layer = "Infrastructure"
+              
+              # Create prompt for Claude
+              prompt = f"""
+              You are an expert in Clean Architecture and polyglot software development.
+              
+              Here are our Clean Architecture principles:
+              
+              {principles}
+              
+              Please analyze this {language} code that is in the {layer} layer:
+              
+              ```{ext}
+              {content}
+              ```
+              
+              Provide analysis in this JSON format:
+              {{
+                "summary": "Brief summary of architectural adherence",
+                "issues": [
+                  {{
+                    "description": "Issue description",
+                    "severity": "high|medium|low",
+                    "principle_violated": "Which clean architecture principle is violated",
+                    "location": "Line number or code block"
+                  }}
+                ],
+                "recommendations": [
+                  "Specific recommendation to fix issues"
+                ]
+              }}
+              
+              Only respond with valid JSON.
+              """
+              
+              # Call Claude
+              response = anthropic.messages.create(
+                  model="claude-3-sonnet-20240229",
+                  max_tokens=4000,
+                  temperature=0,
+                  system="You are an expert code architecture analyst who specializes in Clean Architecture. Output only valid JSON.",
+                  messages=[
+                      {"role": "user", "content": prompt}
+                  ]
+              )
+              
+              try:
+                  # Extract JSON from Claude's response
+                  result = json.loads(response.content[0].text)
+                  result["file"] = file_path
+                  analyses.append(result)
+              except json.JSONDecodeError:
+                  print(f"Error parsing JSON for {file_path}", file=sys.stderr)
+                  print(response.content[0].text, file=sys.stderr)
+                  analyses.append({
+                      "file": file_path,
+                      "summary": "Error analyzing file",
+                      "issues": [],
+                      "recommendations": []
+                  })
+          
+          # Count issues by severity
+          high_issues = sum(len([i for i in a.get("issues", []) if i.get("severity") == "high"]) for a in analyses)
+          medium_issues = sum(len([i for i in a.get("issues", []) if i.get("severity") == "medium"]) for a in analyses)
+          low_issues = sum(len([i for i in a.get("issues", []) if i.get("severity") == "low"]) for a in analyses)
+          
+          # Create analysis markdown
+          markdown = f"""
+          # Claude Clean Architecture Analysis
+
+          Analysis of {len(analyses)} files changed in this PR.
+
+          ## Summary
+
+          - **High Severity Issues**: {high_issues}
+          - **Medium Severity Issues**: {medium_issues}
+          - **Low Severity Issues**: {low_issues}
+
+          ## File Analysis
+          """
+          
+          for analysis in analyses:
+              file_path = analysis["file"]
+              summary = analysis.get("summary", "No summary provided")
+              issues = analysis.get("issues", [])
+              recommendations = analysis.get("recommendations", [])
+              
+              markdown += f"""
+          ### {file_path}
+
+          {summary}
+
+          """
+              
+              if issues:
+                  markdown += "#### Issues\n\n"
+                  for issue in issues:
+                      markdown += f"- **{issue.get('severity', 'unknown').upper()}**: {issue.get('description', 'No description')} - *Violates: {issue.get('principle_violated', 'Unknown principle')}*\n"
+                      if "location" in issue:
+                          markdown += f"  - Location: {issue['location']}\n"
+              
+              if recommendations:
+                  markdown += "\n#### Recommendations\n\n"
+                  for rec in recommendations:
+                      markdown += f"- {rec}\n"
+              
+              markdown += "\n---\n"
+          
+          markdown += "\n\n*Analysis provided by Claude 3 Sonnet*"
+          
+          # Store analysis for GitHub comment
+          with open('/tmp/claude-analysis.md', 'w') as f:
+              f.write(markdown)
+          
+          # Print summary
+          print(f"Found {high_issues} high, {medium_issues} medium, and {low_issues} low severity issues.")
+          EOF
+          
+      - name: Post Claude analysis to PR
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const analysisPath = '/tmp/claude-analysis.md';
+            
+            if (fs.existsSync(analysisPath)) {
+              const analysis = fs.readFileSync(analysisPath, 'utf8');
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: analysis
+              });
+              
+              console.log('Claude analysis posted to PR');
+            } else {
+              console.log('No analysis file found');
+            }
+            
+  analyze-consistency:
+    name: Cross-Language Consistency Check
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Get changed files by language
+        id: changed-files
+        run: |
+          echo "::set-output name=ts::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.(ts|tsx)$' | xargs)"
+          echo "::set-output name=py::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.py$' | xargs)"
+          echo "::set-output name=go::$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep -E '\.go$' | xargs)"
+        
+      - name: Check for cross-language interfaces
+        id: cross-language
+        run: |
+          # This is a simplified check - a real implementation would be more sophisticated
+          TS_FILES="${{ steps.changed-files.outputs.ts }}"
+          PY_FILES="${{ steps.changed-files.outputs.py }}"
+          GO_FILES="${{ steps.changed-files.outputs.go }}"
+          
+          # Count how many languages have changes
+          LANG_COUNT=0
+          [[ -n "$TS_FILES" ]] && LANG_COUNT=$((LANG_COUNT+1))
+          [[ -n "$PY_FILES" ]] && LANG_COUNT=$((LANG_COUNT+1))
+          [[ -n "$GO_FILES" ]] && LANG_COUNT=$((LANG_COUNT+1))
+          
+          # If changes in multiple languages, flag for review
+          if [[ $LANG_COUNT -gt 1 ]]; then
+            echo "::set-output name=needs_review::true"
+          else
+            echo "::set-output name=needs_review::false"
+          fi
+        
+      - name: Notify of cross-language changes
+        if: steps.cross-language.outputs.needs_review == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## Cross-Language Changes Detected 🌐
+              
+              This PR contains changes across multiple programming languages. Please ensure:
+              
+              - Interface contracts are consistent across languages
+              - Error handling follows the same patterns
+              - Domain concepts are represented consistently
+              - The same Clean Architecture boundaries are respected
+              
+              Consider using Claude 3.7 Sonnet to analyze cross-language consistency using the template in \`.github/claude/prompt-templates.md\`.
+              
+              *This is an automated message based on detecting changes in multiple languages.*`
+            });

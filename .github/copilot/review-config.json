@@ -1,0 +1,95 @@
+{
+  "version": 1,
+  "review": {
+    "focusAreas": [
+      {
+        "name": "Clean Architecture",
+        "patterns": [
+          "src/domain/**",
+          "src/usecases/**",
+          "src/interfaces/**",
+          "src/infrastructure/**"
+        ],
+        "rules": [
+          {
+            "id": "dependency-rule",
+            "description": "Domain does not depend on outer layers",
+            "severity": "error",
+            "check": "No imports from domain to outer layers"
+          },
+          {
+            "id": "interface-implementation",
+            "description": "Implementations satisfy their interfaces",
+            "severity": "error",
+            "check": "Implementation matches interface contract"
+          }
+        ]
+      },
+      {
+        "name": "Cross-Language Consistency",
+        "patterns": [
+          "internal/typescript/**",
+          "internal/python/**",
+          "internal/go/**"
+        ],
+        "rules": [
+          {
+            "id": "error-handling",
+            "description": "Consistent error handling across languages",
+            "severity": "warning",
+            "check": "Error patterns should be consistent"
+          },
+          {
+            "id": "naming-conventions",
+            "description": "Consistent naming across languages",
+            "severity": "warning",
+            "check": "Names should follow language conventions while maintaining semantic consistency"
+          }
+        ]
+      },
+      {
+        "name": "Rate Limiting",
+        "patterns": [
+          "**/*rate-limit*",
+          "**/*rateLimiter*"
+        ],
+        "rules": [
+          {
+            "id": "rate-limit-backoff",
+            "description": "Rate limiters should implement backoff",
+            "severity": "error",
+            "check": "Exponential backoff implementation"
+          },
+          {
+            "id": "rate-limit-provider",
+            "description": "Provider-specific rate limits",
+            "severity": "warning",
+            "check": "Provider-specific configurations"
+          }
+        ]
+      },
+      {
+        "name": "Test Coverage",
+        "patterns": [
+          "**/*.test.ts",
+          "**/*_test.go",
+          "**/*_test.py"
+        ],
+        "rules": [
+          {
+            "id": "edge-cases",
+            "description": "Test edge cases",
+            "severity": "warning",
+            "check": "Tests cover edge cases"
+          },
+          {
+            "id": "error-paths",
+            "description": "Test error paths",
+            "severity": "error",
+            "check": "Tests cover error scenarios"
+          }
+        ]
+      }
+    ]
+  }
+}

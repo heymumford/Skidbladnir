@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "refactoring": {
+    "patterns": {
+      "typescript": {
+        "scope": [
+          "**/*.ts",
+          "**/*.tsx"
+        ],
+        "exclude": [
+          "**/*.d.ts",
+          "**/*.test.ts",
+          "**/*.spec.ts",
+          "node_modules/**"
+        ]
+      },
+      "python": {
+        "scope": [
+          "**/*.py"
+        ],
+        "exclude": [
+          "**/*_test.py",
+          "**/__pycache__/**",
+          "venv/**"
+        ]
+      },
+      "go": {
+        "scope": [
+          "**/*.go"
+        ],
+        "exclude": [
+          "**/*_test.go",
+          "**/vendor/**"
+        ]
+      }
+    },
+    "operations": {
+      "cleanArchitecture": {
+        "name": "Clean Architecture Alignment",
+        "description": "Refactor code to better align with Clean Architecture principles",
+        "tasks": [
+          "Ensure proper dependency direction",
+          "Extract interfaces from implementations",
+          "Move domain logic to domain layer",
+          "Replace infrastructure dependencies with abstractions",
+          "Inject dependencies instead of direct instantiation"
+        ]
+      },
+      "extractMethod": {
+        "name": "Extract Method",
+        "description": "Extract cohesive code blocks into separate methods",
+        "tasks": [
+          "Identify cohesive code blocks",
+          "Extract to methods with descriptive names",
+          "Pass necessary parameters and return values",
+          "Update original code to use new methods",
+          "Add documentation to extracted methods"
+        ]
+      },
+      "extractClass": {
+        "name": "Extract Class",
+        "description": "Extract related functionality into new classes",
+        "tasks": [
+          "Identify related fields and methods",
+          "Create new class with appropriate name",
+          "Move fields and methods to new class",
+          "Create relationship between original and new class",
+          "Update references throughout codebase"
+        ]
+      },
+      "renameForClarity": {
+        "name": "Rename for Clarity",
+        "description": "Improve naming for better code readability",
+        "tasks": [
+          "Rename ambiguous variables",
+          "Clarify method names",
+          "Update class names to reflect responsibilities",
+          "Make naming consistent across languages",
+          "Update documentation to match new names"
+        ]
+      },
+      "simplifyConditionals": {
+        "name": "Simplify Conditionals",
+        "description": "Refactor complex conditional logic",
+        "tasks": [
+          "Extract complex conditions to named methods",
+          "Replace nested if statements with guard clauses",
+          "Consolidate duplicate conditional code",
+          "Use polymorphism instead of type checking",
+          "Replace conditional logic with strategy pattern"
+        ]
+      },
+      "polyglotConsistency": {
+        "name": "Polyglot Consistency",
+        "description": "Make implementations consistent across languages",
+        "tasks": [
+          "Align naming conventions while respecting language standards",
+          "Ensure consistent error handling across languages",
+          "Maintain similar structure in equivalent components",
+          "Use language-specific idioms appropriately",
+          "Ensure consistent logging patterns"
+        ]
+      }
+    },
+    "refactoringRules": [
+      {
+        "name": "Keep Tests Passing",
+        "description": "Ensure all tests pass after refactoring",
+        "validation": "Run relevant test suite to confirm behavior hasn't changed"
+      },
+      {
+        "name": "One Operation at a Time",
+        "description": "Perform one logical refactoring operation per commit",
+        "validation": "Each commit should focus on a single refactoring concept"
+      },
+      {
+        "name": "Preserve Interfaces",
+        "description": "Public APIs should remain stable unless explicitly changing them",
+        "validation": "Clients of the refactored code should not need changes"
+      },
+      {
+        "name": "Document Why",
+        "description": "Document the reason for refactoring, not just what was changed",
+        "validation": "Commit messages should explain motivation and benefits"
+      },
+      {
+        "name": "Update Dependent Code",
+        "description": "Update all code that depends on refactored components",
+        "validation": "All references to refactored code should be updated"
+      }
+    ]
+  }
+}

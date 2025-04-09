@@ -29,7 +29,7 @@ case "${ENV}" in
     # In dev, run the Go source directly
     echo "🦫 Running Go binary processor in development mode"
     cd ${PROJECT_ROOT}/cmd/binary-processor
-    go run main.go
+    go run -mod=../config/go.mod main.go
     ;;
   "qa"|"prod")
     # In QA/prod, run the compiled binary from dist directory

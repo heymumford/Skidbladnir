@@ -1,6 +1,9 @@
 import express from 'express';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { TestCaseRepositoryImpl } from '../../internal/typescript/api/repositories/TestCaseRepository';
+import { ValidatedTestCaseRepository } from '../../internal/typescript/api/repositories/ValidatedTestCaseRepository';
+import { ExpressTestCaseController } from '../../internal/typescript/api/controllers/TestCaseController';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -26,6 +29,29 @@ app.get('/api/status', (req, res) => {
     requestId: uuidv4()
   });
 });
+
+// Set up test case repository and controller
+const testCaseRepository = new TestCaseRepositoryImpl();
+// Add sample data for development
+if (process.env.NODE_ENV === 'development') {
+  testCaseRepository.populateSampleData();
+}
+
+// Wrap with validated repository to enforce domain rules
+const validatedRepository = new ValidatedTestCaseRepository(testCaseRepository);
+
+// Set up test case controller
+const testCaseController = new ExpressTestCaseController(
+  validatedRepository, 
+  '/api'
+);
+
+// Create API router
+const apiRouter = express.Router();
+testCaseController.registerRoutes(apiRouter);
+
+// Mount API router
+app.use('/api', apiRouter);
 
 // Start server
 app.listen(port, () => {

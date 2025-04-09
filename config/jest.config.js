@@ -8,12 +8,16 @@
  */
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
+const path = require('path');
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  rootDir: path.resolve(__dirname, '..'),
   roots: [
     '<rootDir>/tests',
-    '<rootDir>/pkg'
+    '<rootDir>/pkg',
+    '<rootDir>/packages'
   ],
   testMatch: [
     '**/?(*.)+(spec|test).+(ts|tsx|js)'
@@ -30,6 +34,7 @@ module.exports = {
     'pkg/**/*.{ts,tsx}',
     'internal/typescript/**/*.{ts,tsx}',
     'cmd/api/**/*.{ts,tsx}',
+    'packages/**/*.{ts,tsx}',
     '!**/node_modules/**',
     '!**/dist/**'
   ],
@@ -54,7 +59,7 @@ module.exports = {
   ],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json'
+      tsconfig: path.resolve(__dirname, 'tsconfig.json')
     }]
   },
   setupFilesAfterEnv: [

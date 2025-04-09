@@ -25,6 +25,10 @@ This directory contains comprehensive documentation for the Skidbladnir project,
 ### Development & Testing
 - [Development Guide](development-guide.md) - Guide for developers
 - [Laptop-Friendly Guide](laptop-friendly-guide.md) - Optimized for 16GB laptops
+- [Test Documentation Standards](test-documentation-standards.md) - Standards for test documentation
+- [Karate Testing Strategy](karate-testing-strategy.md) - API testing with Karate
+- [Karate Test Syntax Guide](karate-test-syntax-guide.md) - Karate syntax reference
+- [Karate API Mocking](karate-api-mocking.md) - API mocking with Karate
 - [LLM Advisor Tests](llm-advisor-tests.md) - LLM component testing
 - [Security Audit Guidelines](security-audit-guidelines.md) - Security practices
 

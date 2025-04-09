@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skidbladnir API</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #3498db;
+      margin-top: 25px;
+    }
+    .endpoint {
+      background-color: #f8f9fa;
+      border-left: 4px solid #3498db;
+      padding: 10px 15px;
+      margin: 15px 0;
+    }
+    .method {
+      font-weight: bold;
+      display: inline-block;
+      width: 60px;
+    }
+    .get { color: #2ecc71; }
+    .post { color: #f39c12; }
+    .put { color: #3498db; }
+    .delete { color: #e74c3c; }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: 'Courier New', Courier, monospace;
+    }
+    .btn {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 5px;
+    }
+    .btn:hover {
+      background-color: #2980b9;
+    }
+    #apiResponse {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+      min-height: 100px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    footer {
+      margin-top: 30px;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+      font-size: 0.8em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Skidbladnir API Documentation</h1>
+  <p>
+    This is the API for Skidbladnir, a test case management system built with Domain-Driven Design principles.
+  </p>
+
+  <h2>API Status</h2>
+  <div class="endpoint">
+    <div><span class="method get">GET</span> /api/status</div>
+    <p>Get the current API status and version.</p>
+    <button class="btn" onclick="testEndpoint('/api/status', 'GET')">Test</button>
+  </div>
+
+  <h2>Test Cases</h2>
+  <div class="endpoint">
+    <div><span class="method get">GET</span> /api/test-cases</div>
+    <p>Get all test cases with optional filtering.</p>
+    <button class="btn" onclick="testEndpoint('/api/test-cases', 'GET')">Test</button>
+  </div>
+
+  <div class="endpoint">
+    <div><span class="method post">POST</span> /api/test-cases</div>
+    <p>Create a new test case.</p>
+    <pre><code>{
+  "title": "Test login functionality",
+  "description": "Verify that users can log in with valid credentials",
+  "status": "DRAFT",
+  "priority": "MEDIUM",
+  "steps": [
+    { 
+      "order": 1, 
+      "description": "Navigate to login page", 
+      "expectedResult": "Login page is displayed" 
+    },
+    { 
+      "order": 2, 
+      "description": "Enter valid credentials", 
+      "expectedResult": "User is logged in" 
+    }
+  ],
+  "tags": ["login", "authentication"]
+}</code></pre>
+    <button class="btn" onclick="testPostEndpoint('/api/test-cases')">Test</button>
+  </div>
+
+  <div class="endpoint">
+    <div><span class="method get">GET</span> /api/test-cases/:id</div>
+    <p>Get a specific test case by ID.</p>
+    <input type="text" id="testCaseId" placeholder="Enter test case ID">
+    <button class="btn" onclick="testEndpoint('/api/test-cases/' + document.getElementById('testCaseId').value, 'GET')">Test</button>
+  </div>
+
+  <div class="endpoint">
+    <div><span class="method put">PUT</span> /api/test-cases/:id</div>
+    <p>Update an existing test case.</p>
+    <input type="text" id="updateTestCaseId" placeholder="Enter test case ID">
+    <pre><code>{
+  "title": "Updated test case title",
+  "description": "Updated description"
+}</code></pre>
+    <button class="btn" onclick="testPutEndpoint('/api/test-cases/' + document.getElementById('updateTestCaseId').value)">Test</button>
+  </div>
+
+  <div class="endpoint">
+    <div><span class="method delete">DELETE</span> /api/test-cases/:id</div>
+    <p>Delete a test case.</p>
+    <input type="text" id="deleteTestCaseId" placeholder="Enter test case ID">
+    <button class="btn" onclick="testEndpoint('/api/test-cases/' + document.getElementById('deleteTestCaseId').value, 'DELETE')">Test</button>
+  </div>
+
+  <h2>Response</h2>
+  <div id="apiResponse">
+    <em>API response will appear here</em>
+  </div>
+
+  <footer>
+    &copy; 2025 Eric C. Mumford. All rights reserved.
+  </footer>
+
+  <script>
+    async function testEndpoint(endpoint, method = 'GET') {
+      const responseElem = document.getElementById('apiResponse');
+      responseElem.innerHTML = 'Loading...';
+      
+      try {
+        const response = await fetch(endpoint, { method });
+        
+        if (method === 'DELETE' && response.status === 204) {
+          responseElem.innerHTML = 'Success: Resource deleted (Status: 204 No Content)';
+          return;
+        }
+        
+        const data = await response.json();
+        responseElem.innerHTML = JSON.stringify(data, null, 2);
+      } catch (error) {
+        responseElem.innerHTML = `Error: ${error.message}`;
+      }
+    }
+    
+    async function testPostEndpoint(endpoint) {
+      const responseElem = document.getElementById('apiResponse');
+      responseElem.innerHTML = 'Loading...';
+      
+      try {
+        const testCase = {
+          title: "Test login functionality",
+          description: "Verify that users can log in with valid credentials",
+          status: "DRAFT",
+          priority: "MEDIUM",
+          steps: [
+            { 
+              order: 1, 
+              description: "Navigate to login page", 
+              expectedResult: "Login page is displayed" 
+            },
+            { 
+              order: 2, 
+              description: "Enter valid credentials", 
+              expectedResult: "User is logged in" 
+            }
+          ],
+          tags: ["login", "authentication"]
+        };
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(testCase)
+        });
+        
+        const data = await response.json();
+        responseElem.innerHTML = JSON.stringify(data, null, 2);
+      } catch (error) {
+        responseElem.innerHTML = `Error: ${error.message}`;
+      }
+    }
+    
+    async function testPutEndpoint(endpoint) {
+      const responseElem = document.getElementById('apiResponse');
+      responseElem.innerHTML = 'Loading...';
+      
+      try {
+        const updates = {
+          title: "Updated test case title",
+          description: "Updated description"
+        };
+        
+        const response = await fetch(endpoint, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updates)
+        });
+        
+        const data = await response.json();
+        responseElem.innerHTML = JSON.stringify(data, null, 2);
+      } catch (error) {
+        responseElem.innerHTML = `Error: ${error.message}`;
+      }
+    }
+  </script>
+</body>
+</html>

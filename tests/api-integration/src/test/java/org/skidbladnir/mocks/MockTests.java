@@ -30,6 +30,16 @@ class MockTests {
     Karate testProviderMocks() {
         return Karate.run("provider-mocks").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testZephyrMock() {
+        return Karate.run("zephyr-api-mock").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testQTestMock() {
+        return Karate.run("qtest-mock").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
