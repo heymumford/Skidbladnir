@@ -89,7 +89,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [ ] Implement real-time migration monitoring dashboard with operation details (Critical)
 - [x] Implement test case structure visualization component for Zephyr/qTest formats (Critical)
 - [x] Implement test execution and attachment preview (Critical)
-- [ ] Create Zephyr→qTest migration workflow UI wizard with connection testing (Critical)
+- [x] Create Zephyr→qTest migration workflow UI wizard with connection testing (Critical)
 - [ ] Test: Data transformation interface handles complex Zephyr to qTest field mappings (Critical)
 - [ ] Test: Test case data viewer renders complex test data correctly (Critical)
 - [ ] Test: Attachment previewer handles different file types (High)
