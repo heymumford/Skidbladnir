@@ -17,7 +17,7 @@
 - [x] Create unified qTest provider facade to coordinate across product APIs (Critical)
 - [x] Test: Validate qTest Manager test case field mapping (Critical)
 - [x] Test: Validate qTest Parameters data handling (Critical)
-- [ ] Test: Validate qTest Scenario Gherkin syntax preservation (High)
+- [x] Test: Validate qTest Scenario Gherkin syntax preservation (High)
 - [ ] Test: Validate qTest Pulse metrics extraction (Medium)
 - [ ] Test: Validate qTest API compatibility across environments (High)
 - [ ] Implement resilience pattern for API connections (High)
@@ -88,7 +88,7 @@
 
 ## In Progress
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
-- [ ] Test: Validate qTest Scenario Gherkin syntax preservation (High)
+- [x] Test: Validate qTest Scenario Gherkin syntax preservation (High)
 
 ## In Review
 
