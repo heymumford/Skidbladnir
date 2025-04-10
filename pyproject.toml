@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skidbladnir-python"
-version = "0.2.6-b52"
+version = "0.3.0-b53"
 description = "Python components for Skidbladnir test asset migration platform"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
@@ -45,7 +45,7 @@ profile = "black"
 line_length = 88
 
 [tool.mypy]
-python_version = "0.2.6-b52"
+python_version = "0.3.0-b53"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true

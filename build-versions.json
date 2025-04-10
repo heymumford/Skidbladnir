@@ -1,16 +1,16 @@
 {
-  "version": "0.2.6-b52",
+  "version": "0.3.0-b53",
   "major": 0,
-  "minor": 2,
-  "patch": 6,
-  "build": 52,
-  "timestamp": "2025-04-10T13:53:47Z",
+  "minor": 3,
+  "patch": 0,
+  "build": 53,
+  "timestamp": "2025-04-10T14:48:35Z",
   "environment": "dev",
   "git": {
     "branch": "feature/build-deploy-tdd",
-    "commit": "b51335b9a1551cb252d9131375ee6a2ba7b51fac",
-    "shortCommit": "b51335b",
-    "timestamp": 1744293220,
-    "tag": "b51335b"
+    "commit": "d56b736ad57314d179403ea79cee03d481a8f473",
+    "shortCommit": "d56b736",
+    "timestamp": 1744293271,
+    "tag": "d56b736"
   }
 }
