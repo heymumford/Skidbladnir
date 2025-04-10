@@ -1,5 +1,6 @@
 import { ResilienceFacade } from './resilience-facade';
 import { getProviderResilienceConfig } from './provider-configs';
+export { getProviderResilienceConfig } from './provider-configs';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { RateLimiter } from '../rate-limiter';
 

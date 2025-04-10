@@ -47,8 +47,8 @@ interface CacheEntry<T> {
 export class Cache<T = any> {
   private cache: Map<string, CacheEntry<T>> = new Map();
   private options: CacheOptions;
-  private hits: number = 0;
-  private misses: number = 0;
+  private hits = 0;
+  private misses = 0;
   private logger = createLogger({ context: 'Cache', level: LogLevel.NONE }); // Disable logging for tests
   
   constructor(options: Partial<CacheOptions> = {}) {

@@ -22,6 +22,7 @@ import { QTestProvider, QTestProviderConfig } from './index';
 import { QTestManagerProvider, QTestManagerProviderConfig } from './manager-provider';
 import { QTestParametersProvider, QTestParametersProviderConfig } from './parameters-provider';
 import { QTestScenarioProvider, QTestScenarioProviderConfig } from './scenario-provider';
+import { QTestPulseProvider, QTestPulseProviderConfig } from './pulse-provider';
 import { QTestDataExportProvider, QTestDataExportProviderConfig } from './data-export-provider';
 
 /**
@@ -71,8 +72,7 @@ export class QTestProviderFactory {
         return new QTestScenarioProvider();
       
       case QTestProductType.PULSE:
-        // Will be implemented in future tasks
-        throw new Error('QTest Pulse provider not yet implemented');
+        return new QTestPulseProvider();
       
       case QTestProductType.DATA_EXPORT:
         return new QTestDataExportProvider();

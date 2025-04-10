@@ -22,10 +22,23 @@ type TestCaseProcessor struct {
 
 // ProcessingOptions contains options for test case processing
 type ProcessingOptions struct {
-	Format       string `json:"format"`
-	IncludeSteps bool   `json:"includeSteps"`
-	ExportImages bool   `json:"exportImages"`
-	ChunkSize    int    `json:"chunkSize"`
+	Format              string            `json:"format"`
+	IncludeSteps        bool              `json:"includeSteps"`
+	ExportImages        bool              `json:"exportImages"`
+	ChunkSize           int               `json:"chunkSize"`
+	TargetProvider      string            `json:"targetProvider"`
+	SourceProvider      string            `json:"sourceProvider"`
+	IncludeAttachments  bool              `json:"includeAttachments"`
+	IncludeMetadata     bool              `json:"includeMetadata"`
+	CustomFields        map[string]string `json:"customFields"`
+	PreserveFormatting  bool              `json:"preserveFormatting"`
+	MaxSizeBytes        int64             `json:"maxSizeBytes"`
+	CompressImages      bool              `json:"compressImages"`
+	ResizeImages        bool              `json:"resizeImages"`
+	MaxImageWidth       int               `json:"maxImageWidth"`
+	MaxImageHeight      int               `json:"maxImageHeight"`
+	DefaultProjectKey   string            `json:"defaultProjectKey"`
+	DefaultOrganization string            `json:"defaultOrganization"`
 }
 
 // ProcessingStats contains statistics about the processing

@@ -15,6 +15,7 @@ export * from './manager-client';
 export * from './parameters-client';
 export * from './scenario-client';
 export * from './data-export-client';
+export * from './pulse-client';
 
 /**
  * Factory to create appropriate qTest client based on target qTest product
@@ -48,8 +49,9 @@ export function getQTestClient(product: QTestProduct, config: any) {
       return new QTestScenarioClient(config);
     
     case QTestProduct.PULSE:
-      // Will be implemented in future tasks
-      throw new Error('QTest Pulse client not yet implemented');
+      // Import here to avoid circular dependencies
+      const { QTestPulseClient } = require('./pulse-client');
+      return new QTestPulseClient(config);
     
     case QTestProduct.DATA_EXPORT:
       // Will be implemented in future tasks

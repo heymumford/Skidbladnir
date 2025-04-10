@@ -12,6 +12,7 @@ import {
   AuthenticationHandler, 
   AuthenticationResult
 } from '../auth/authentication-handler';
+import { HealthStatus } from '../index';
 
 /**
  * Configuration options for the resilient API client
@@ -161,12 +162,12 @@ export class ResilientApiClient {
   /**
    * Get the health status
    */
-  getHealthStatus(): 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' {
+  getHealthStatus(): HealthStatus {
     switch (this.circuitState) {
-      case 'CLOSED': return 'HEALTHY';
-      case 'HALF_OPEN': return 'DEGRADED';
-      case 'OPEN': return 'UNHEALTHY';
-      default: return 'HEALTHY';
+      case 'CLOSED': return HealthStatus.HEALTHY;
+      case 'HALF_OPEN': return HealthStatus.DEGRADED;
+      case 'OPEN': return HealthStatus.UNHEALTHY;
+      default: return HealthStatus.HEALTHY;
     }
   }
   

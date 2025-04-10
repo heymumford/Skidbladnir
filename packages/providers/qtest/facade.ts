@@ -217,13 +217,10 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
       await this.initializeDataExportProvider();
     }
     
-    // The following providers will be implemented in future tasks
-    /*
     // Initialize Pulse provider if configured
     if (config.products?.pulse) {
       await this.initializePulseProvider();
     }
-    */
   }
   
   /**
@@ -282,7 +279,17 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         }
       }
       
-      // Test connection to other products (will be implemented in future tasks)
+      // Test connection to qTest Pulse
+      if (this.pulseProvider) {
+        const pulseStatus = await this.pulseProvider.testConnection();
+        this.productStatus[QTestProductType.PULSE] = pulseStatus.connected;
+        details[QTestProductType.PULSE] = pulseStatus;
+        
+        // Only need one successful connection for facade to be considered connected
+        if (pulseStatus.connected) {
+          connected = true;
+        }
+      }
       
       return {
         connected,
@@ -1228,16 +1235,58 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
     }
   }
   
-  // The following methods will be implemented in future tasks
+  /**
+   * Ensure the Pulse provider is initialized
+   */
+  private ensurePulseProvider(): void {
+    if (!this.pulseProvider) {
+      throw new Error('qTest Pulse provider not initialized');
+    }
+  }
   
-  /*
-  
+  /**
+   * Initialize qTest Pulse provider
+   */
   private async initializePulseProvider(): Promise<void> {
-    // TODO: Implement in future tasks
+    try {
+      // Create and initialize the provider
+      this.pulseProvider = QTestProviderFactory.createProvider({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        product: QTestProductType.PULSE,
+        productConfig: this.config!.products?.pulse || {}
+      });
+      
+      await this.pulseProvider.initialize({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        ...this.config!.products?.pulse
+      });
+    } catch (error) {
+      throw this.handleError(
+        'Failed to initialize qTest Pulse provider',
+        error,
+        {
+          operation: 'initializePulseProvider',
+          additionalInfo: {
+            product: QTestProductType.PULSE,
+            baseUrl: this.config!.baseUrl,
+            defaultProjectId: this.config!.defaultProjectId
+          }
+        }
+      );
+    }
   }
-  
-  private async initializeDataExportProvider(): Promise<void> {
-    // TODO: Implement in future tasks
-  }
-  */
 }

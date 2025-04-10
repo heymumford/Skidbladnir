@@ -24,6 +24,13 @@ import {
 } from '../../../packages/common/src/utils/resilience/resilience-factory';
 import { Logger } from '../../../packages/common/src/utils/logger';
 
+// Health status enum for consistency
+export enum HealthStatus {
+  HEALTHY = 'HEALTHY',
+  DEGRADED = 'DEGRADED',
+  UNHEALTHY = 'UNHEALTHY'
+}
+
 /**
  * Configuration options for the API Bridge
  */
@@ -73,7 +80,7 @@ export class ApiBridge {
 
   constructor(private readonly config: ApiBridgeConfig) {
     this.providerName = config.providerName;
-    this.logger = new Logger(`ApiBridge:${this.providerName}`);
+    this.logger = new Logger({ context: `ApiBridge:${this.providerName}` });
     
     // Initialize authentication handler
     this.authHandler = new AuthenticationHandler();
@@ -245,30 +252,38 @@ export class ApiBridge {
   /**
    * Get the health status of the API client
    */
-  getHealthStatus(): 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' {
+  getHealthStatus(): HealthStatus {
     // Get health status from both internal components and the health monitor
-    const rateLimitStatus = this.rateLimiter.isRateLimited(this.providerName) ? 'DEGRADED' : 'HEALTHY';
+    const rateLimitStatus = this.rateLimiter.isRateLimited(this.providerName) ? HealthStatus.DEGRADED : HealthStatus.HEALTHY;
     const clientStatus = this.apiClient.getHealthStatus();
     
     // Get health status from the monitor if available
     const providerHealth = this.healthMonitor.getProviderHealth(this.providerName);
-    let monitorStatus: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' = 'HEALTHY';
+    let monitorStatus = HealthStatus.HEALTHY;
     if (providerHealth) {
       if (providerHealth.status === 'DOWN') {
-        monitorStatus = 'UNHEALTHY';
+        monitorStatus = HealthStatus.UNHEALTHY;
       } else if (providerHealth.status === 'DEGRADED') {
-        monitorStatus = 'DEGRADED';
+        monitorStatus = HealthStatus.DEGRADED;
       }
     }
     
     // Return the worst status
-    if (rateLimitStatus === 'UNHEALTHY' || clientStatus === 'UNHEALTHY' || monitorStatus === 'UNHEALTHY') {
-      return 'UNHEALTHY';
+    // Check for UNHEALTHY first
+    if (this.isStatus(rateLimitStatus, HealthStatus.UNHEALTHY) || 
+        this.isStatus(clientStatus, HealthStatus.UNHEALTHY) || 
+        this.isStatus(monitorStatus, HealthStatus.UNHEALTHY)) {
+      return HealthStatus.UNHEALTHY;
     }
-    if (rateLimitStatus === 'DEGRADED' || clientStatus === 'DEGRADED' || monitorStatus === 'DEGRADED') {
-      return 'DEGRADED';
+    
+    // Check for DEGRADED
+    if (this.isStatus(rateLimitStatus, HealthStatus.DEGRADED) || 
+        this.isStatus(clientStatus, HealthStatus.DEGRADED) || 
+        this.isStatus(monitorStatus, HealthStatus.DEGRADED)) {
+      return HealthStatus.DEGRADED;
     }
-    return 'HEALTHY';
+    
+    return HealthStatus.HEALTHY;
   }
 
   /**
@@ -317,6 +332,13 @@ export class ApiBridge {
         status: error.response.status
       });
     }
+  }
+  
+  /**
+   * Type-safe helper for health status comparison
+   */
+  private isStatus(status: HealthStatus, targetStatus: HealthStatus): boolean {
+    return status === targetStatus;
   }
 }
 
@@ -372,20 +394,20 @@ export function createApiBridge(config: ApiBridgeConfig): ApiBridge {
 /**
  * Get the health status of all provider connections
  */
-export function getSystemHealth(): 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' {
+export function getSystemHealth(): HealthStatus {
   const healthMonitor = getGlobalHealthMonitor();
   if (!healthMonitor) {
-    return 'HEALTHY'; // No health monitor, assume healthy
+    return HealthStatus.HEALTHY; // No health monitor, assume healthy
   }
   
   const systemHealth = healthMonitor.getSystemHealth();
   
   // Map from health monitor format to API Bridge format
   if (systemHealth === 'DOWN') {
-    return 'UNHEALTHY';
+    return HealthStatus.UNHEALTHY;
   } else if (systemHealth === 'DEGRADED') {
-    return 'DEGRADED';
+    return HealthStatus.DEGRADED;
   } else {
-    return 'HEALTHY';
+    return HealthStatus.HEALTHY;
   }
 }

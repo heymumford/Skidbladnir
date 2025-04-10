@@ -286,6 +286,7 @@ export class Config {
   public loadFromFile(filePath: string): void {
     try {
       // Use dynamic import to avoid dependency on fs
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const fs = require('fs');
       const content = fs.readFileSync(filePath, 'utf8');
       const data = JSON.parse(content);

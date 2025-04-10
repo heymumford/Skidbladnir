@@ -8,8 +8,8 @@
 [![TDD](https://img.shields.io/badge/TDD-Clean%20Architecture-orange.svg)](docs/project/tdd-approach.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/heymumford/Skidbladnir/pulls)
 
-## Beta Readiness: 68% Complete
-![Progress](https://progress-bar.dev/68/?width=500&title=Zephyr→qTest%20Migration)
+## Beta Readiness: 75% Complete
+![Progress](https://progress-bar.dev/75/?width=500&title=Zephyr→qTest%20Migration)
 [📊 Detailed Progress Tracker](docs/project/progress-tracker.md)
 
 Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. Our primary focus is providing a reliable bridge from Atlassian Jira with Zephyr Scale (source) to Tricentis qTest (destination), demonstrating how future providers should be implemented within our extensible architecture. The platform implements clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components and features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
@@ -52,6 +52,9 @@ For details on why we prioritize this migration path, see our [Migration Focus](
 
 - **Zephyr to qTest Migration**: Specialized support for migrating from Zephyr Scale to qTest
 - **Field Mapping**: Intelligent mapping between Zephyr and qTest field structures
+- **Cross-Provider Attachment Handling**: Automatic conversion of attachments between Zephyr and qTest formats
+- **Batch Attachment Processing**: Efficient parallel processing of multiple attachments with detailed statistics
+- **Format Conversion**: Support for converting between XML, JSON, HTML, and Markdown formats
 - **API Operation Dependencies**: Ensures operations execute in the correct order based on dependencies
 - **Multi-Stage API Handling**: Sophisticated management of complex API flows and authentication
 - **Universal Provider Interface**: Standardized adapter system extensible to future platforms

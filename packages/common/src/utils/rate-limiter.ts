@@ -45,7 +45,7 @@ export class RateLimiter {
   private options: RateLimiterOptions;
   private requestTimestamps: number[] = [];
   private currentDelay: number;
-  private isRateLimited: boolean = false;
+  private isRateLimited = false;
   
   constructor(options: Partial<RateLimiterOptions> = {}) {
     // Default options

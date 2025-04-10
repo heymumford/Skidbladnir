@@ -227,17 +227,18 @@ export class XmlSchemaValidator {
   public static validateDirectory(
     xmlDir: string,
     schemaDir: string,
-    pattern: string = '**/*.xml'
+    pattern = '**/*.xml'
   ): { 
     filePath: string; 
     valid: boolean; 
     errors: string[]; 
     usedSchema?: string 
   }[] {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const glob = require('glob');
     const results = [];
     
-    let xmlFiles = glob.sync(pattern, { cwd: xmlDir, absolute: true });
+    const xmlFiles = glob.sync(pattern, { cwd: xmlDir, absolute: true });
     
     // Special handling for tests
     if (xmlDir.includes('test-files')) {

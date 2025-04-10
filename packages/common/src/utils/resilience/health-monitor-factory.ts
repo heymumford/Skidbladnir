@@ -1,4 +1,5 @@
 import { ServiceHealthMonitor } from './service-health-monitor';
+export { ServiceHealthMonitor } from './service-health-monitor';
 import axios from 'axios';
 import { getRateLimiter } from './resilience-factory';
 
@@ -90,7 +91,7 @@ export const registerStandardHealthChecks = (): void => {
  * @returns The service health monitor
  */
 export const createGlobalHealthMonitor = (
-  checkIntervalMs: number = 60000
+  checkIntervalMs = 60000
 ): ServiceHealthMonitor => {
   if (!globalHealthMonitor) {
     // Register standard health checks if not done yet
