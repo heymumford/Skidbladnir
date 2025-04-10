@@ -152,8 +152,15 @@ services:
 
 volumes:
   postgres_data:
+    # Use named volume instead of bind mount to work across platforms
+    name: skidbladnir_postgres_data
   redis_data:
+    name: skidbladnir_redis_data
   minio_data:
+    name: skidbladnir_minio_data
   api_logs:
+    name: skidbladnir_api_logs
 
-# Networks are automatically created and managed by Docker Compose
+# Cross-platform note: 
+# Named volumes are used instead of bind mounts to ensure compatibility
+# across Windows, WSL, and Linux environments without path conversion issues

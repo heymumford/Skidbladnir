@@ -98,14 +98,62 @@ For more advanced setups or troubleshooting, check out:
 - [API Reference](./api/README.md)
 - [Command-Line Interface](./cli.md)
 
+## Platform-Specific Instructions
+
+### Native Ubuntu
+
+On Ubuntu or other Linux distributions, you can use either Docker or Podman:
+
+```bash
+# Using Docker
+sudo apt update
+sudo apt install -y docker.io docker-compose
+sudo systemctl start docker
+sudo usermod -aG docker $USER  # Log out and back in after this
+./scripts/quick-start.sh
+
+# Using Podman
+sudo apt update
+sudo apt install -y podman podman-compose
+./scripts/quick-start.sh -r podman
+```
+
+### Windows Subsystem for Linux (WSL)
+
+For the best experience in WSL:
+
+1. Install Docker Desktop for Windows with WSL integration enabled
+2. In your WSL distribution, run:
+
+```bash
+./scripts/quick-start.sh
+```
+
+The script will automatically detect WSL and use the appropriate configuration.
+
+### Native Windows 10/11
+
+On Windows, you'll need:
+
+1. Docker Desktop for Windows installed and running
+2. Git Bash or Windows Terminal with Bash
+
+```bash
+# In Git Bash or Windows Terminal
+./scripts/quick-start.sh
+```
+
+The script automatically detects Windows and configures the environment appropriately.
+
 ## Common Issues
 
 ### "Cannot connect to Docker daemon"
 
-Make sure Docker is running. Try:
-```bash
-sudo systemctl start docker  # on Linux
-```
+Make sure Docker is running:
+
+- **Linux**: `sudo systemctl start docker`
+- **Windows**: Start Docker Desktop
+- **WSL**: Make sure Docker Desktop is running with WSL integration enabled
 
 ### Web UI doesn't open automatically
 
@@ -118,8 +166,20 @@ http://localhost:8080
 
 Check the logs:
 ```bash
+# If using Docker
 docker-compose -f infra/compose/docker-compose.quickstart.yml logs
+
+# If using Podman
+podman-compose -f infra/compose/docker-compose.quickstart.yml logs
 ```
+
+### Windows path issues
+
+If you see errors related to volume mounts or paths on Windows:
+
+1. Make sure you're running the script from the repository root
+2. Try running from WSL instead of native Windows
+3. Ensure Docker Desktop has permissions to access your files
 
 ## Next Steps
 
