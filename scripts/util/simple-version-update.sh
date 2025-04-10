@@ -46,7 +46,8 @@ echo "Updated package.json"
 
 # Update pyproject.toml if it exists
 if [ -f "$PROJECT_ROOT/pyproject.toml" ]; then
-  sed -i "s/version = \"[^\"]*\"/version = \"${NEW_VERSION}\"/" "$PROJECT_ROOT/pyproject.toml"
+  # Only update the version in the [tool.poetry] section to avoid updating python_version in mypy
+  sed -i "/\[tool\.poetry\]/,/\[.*\]/{s/version = \"[^\"]*\"/version = \"${NEW_VERSION}\"/}" "$PROJECT_ROOT/pyproject.toml"
   echo "Updated pyproject.toml"
 fi
 
