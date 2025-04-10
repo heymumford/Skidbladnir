@@ -11,6 +11,7 @@
     "test": "jest",
     "lint": "eslint --ext .ts src",
     "start": "ts-node src/bin/tdd-metrics.ts",
+    "visualize": "ts-node src/bin/visualize-coverage.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
