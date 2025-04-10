@@ -7,5 +7,6 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-export * from './ProviderConfigPage';
-export * from './FieldMappingPage';
+export * from './FieldMappingSelector';
+export * from './MappingList';
+export * from './FieldMappingPanel';
