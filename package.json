@@ -25,6 +25,7 @@
     "coverage:check": "jest --config=config/jest.config.js --coverage",
     "coverage:check:unified": "bash scripts/check-coverage.sh",
     "coverage:visualize": "ts-node packages/tdd-metrics-tool/src/bin/visualize-coverage.ts --report test-results/tdd-metrics/metrics-report.json --output test-results/coverage-visualization --language-breakdown --file-details --interactive",
+    "tdd-metrics:go": "ts-node packages/tdd-metrics-tool/src/examples/go-collector-example.ts",
     "test:report": "jest --config=config/jest.config.js --json --outputFile=test-results/test-report.json && node scripts/generate-test-report.js",
     "test:ui": "jest --config=config/jest.ui.config.js",
     "test:acceptance": "cucumber-js",
