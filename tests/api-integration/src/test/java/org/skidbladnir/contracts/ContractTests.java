@@ -71,6 +71,21 @@ class ContractTests {
         return Karate.run("cross-component-workflow").relativeTo(getClass());
     }
     
+    @Karate.Test
+    Karate testZephyrApiContract() {
+        return Karate.run("zephyr-api-contract").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testQTestApiContract() {
+        return Karate.run("qtest-api-contract").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testProviderErrorHandling() {
+        return Karate.run("provider-error-handling").relativeTo(getClass());
+    }
+    
     /**
      * Run just the cross-component tests with the crossComponent tag.
      * These tests typically take longer to run as they go through the complete flow.
