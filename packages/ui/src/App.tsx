@@ -10,7 +10,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/Layout/AppLayout';
-import { ProviderConfigPage, FieldMappingPage, ExecutionPage, WizardPage } from './pages';
+import { ProviderConfigPage, FieldMappingPage, ExecutionPage, WizardPage, TransformationPage } from './pages';
 
 // Import pages (placeholders for now)
 const MonitoringPage = () => <div>Monitoring Page</div>;
@@ -26,6 +26,7 @@ function App() {
         <Route path="/monitoring" element={<MonitoringPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/wizard" element={<WizardPage />} />
+        <Route path="/transformation" element={<TransformationPage />} />
         <Route path="/" element={<Navigate replace to="/providers" />} />
       </Routes>
     </AppLayout>

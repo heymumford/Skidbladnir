@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { TransformationPreview, MappingConfig } from '../types';
+import { TransformationPreview, MappingConfig, FieldMapping } from '../types';
 
 /**
  * Service for handling test case transformations.
@@ -31,6 +31,12 @@ export class TransformationService {
     mappingConfig: MappingConfig
   ): Promise<TransformationPreview> {
     try {
+      // In a real implementation, this would call the API
+      // For development/testing, use the mock implementation
+      if (process.env.NODE_ENV === 'development') {
+        return this.getMockTransformationPreview();
+      }
+      
       const response = await fetch(`${this.apiBaseUrl}/transformation/preview`, {
         method: 'POST',
         headers: {
@@ -53,6 +59,142 @@ export class TransformationService {
       return data.data;
     } catch (error) {
       console.error('Error getting transformation preview:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Save a transformation mapping configuration.
+   * 
+   * @param config The mapping configuration to save
+   * @returns A promise that resolves to the saved configuration
+   */
+  async saveTransformationConfig(config: MappingConfig): Promise<MappingConfig> {
+    try {
+      // In a real implementation, this would call the API
+      // For development/testing, return the input
+      if (process.env.NODE_ENV === 'development') {
+        return config;
+      }
+      
+      const response = await fetch(`${this.apiBaseUrl}/transformation/config`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(config),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to save transformation config: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error saving transformation config:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Get all saved transformation configurations.
+   * 
+   * @returns A promise that resolves to a list of mapping configurations
+   */
+  async getTransformationConfigs(): Promise<MappingConfig[]> {
+    try {
+      // In a real implementation, this would call the API
+      // For development/testing, use the mock implementation
+      if (process.env.NODE_ENV === 'development') {
+        return this.getMockTransformationConfigs();
+      }
+      
+      const response = await fetch(`${this.apiBaseUrl}/transformation/configs`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to get transformation configs: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error getting transformation configs:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Apply a transformation to a set of test cases.
+   * 
+   * @param testCaseIds The IDs of the test cases to transform
+   * @param mappingConfigId The ID of the mapping configuration to use
+   * @returns A promise that resolves to a status object
+   */
+  async applyTransformation(
+    testCaseIds: string[],
+    mappingConfigId: string
+  ): Promise<Record<string, any>> {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/transformation/apply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          testCaseIds,
+          mappingConfigId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to apply transformation: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error applying transformation:', error);
+      throw error;
+    }
+  }
+  
+  /**
+   * Analyze field compatibility between source and target providers.
+   * 
+   * @param sourceProviderId The source provider ID
+   * @param targetProviderId The target provider ID
+   * @returns A promise that resolves to a compatibility analysis
+   */
+  async analyzeFieldCompatibility(
+    sourceProviderId: string,
+    targetProviderId: string
+  ): Promise<Record<string, any>> {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/transformation/analyze-compatibility`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sourceProviderId,
+          targetProviderId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to analyze field compatibility: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error analyzing field compatibility:', error);
       throw error;
     }
   }
@@ -159,4 +301,43 @@ export class TransformationService {
       ]
     };
   }
+  
+  /**
+   * For development/demo purposes - generate mock transformation configs
+   */
+  getMockTransformationConfigs(): MappingConfig[] {
+    return [
+      {
+        name: 'Zephyr to qTest - Basic Mapping',
+        sourceProviderId: 'zephyr',
+        targetProviderId: 'qtest',
+        fieldMappings: [
+          { sourceId: 'name', targetId: 'name', transformation: null },
+          { sourceId: 'description', targetId: 'description', transformation: null },
+          { sourceId: 'steps', targetId: 'testSteps', transformation: null },
+          { sourceId: 'priority', targetId: 'priority', transformation: null },
+          { sourceId: 'status', targetId: 'status', transformation: null }
+        ]
+      },
+      {
+        name: 'Zephyr to qTest - Complete Mapping',
+        sourceProviderId: 'zephyr',
+        targetProviderId: 'qtest',
+        fieldMappings: [
+          { sourceId: 'name', targetId: 'name', transformation: null },
+          { sourceId: 'description', targetId: 'description', transformation: null },
+          { sourceId: 'steps', targetId: 'testSteps', transformation: null },
+          { sourceId: 'priority', targetId: 'priority', transformation: null },
+          { sourceId: 'status', targetId: 'status', transformation: null },
+          { sourceId: 'labels', targetId: 'tags', transformation: null },
+          { sourceId: 'precondition', targetId: 'preconditions', transformation: null },
+          { sourceId: 'component', targetId: 'module', transformation: null },
+          { sourceId: 'owner', targetId: 'assignedTo', transformation: null }
+        ]
+      }
+    ];
+  }
 }
+
+// Create and export a singleton instance
+export const transformationService = new TransformationService();
