@@ -44,11 +44,11 @@
 - [x] Implement provider interface use cases based on tests (Critical)
 - [x] Implement canonical data model for the translation layer (High)
 - [x] Implement bidirectional mapping in translation layer (High)
-- [ ] Test: Transformation use cases handle all data formats (Medium)
-- [ ] Test: Error handling follows expected patterns (Medium)
-- [ ] Test: Use cases interact with ports, not implementations (Medium)
-- [ ] Implement transformation use cases based on tests (Medium)
-- [ ] Implement port interfaces based on tests (Medium)
+- [x] Test: Transformation use cases handle all data formats (Medium)
+- [x] Test: Error handling follows expected patterns (Medium)
+- [x] Test: Use cases interact with ports, not implementations (Medium)
+- [x] Implement transformation use cases based on tests (Medium)
+- [x] Implement port interfaces based on tests (Medium)
 
 ### Phase 3: Infrastructure & Orchestration (Medium Priority)
 
@@ -111,8 +111,8 @@
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
 - [ ] Implement TDD test completeness metrics and reporting tool (High) 
 - [ ] Implement resilience pattern for API connections (High) - Design complete
-- [ ] Test: Transformation use cases handle all data formats (Medium)
-- [ ] Test: Error handling follows expected patterns (Medium)
+- [ ] Test: API Bridge correctly handles authentication flows (High)
+- [ ] Test: Orchestrator correctly manages workflow state (High)
 
 ## In Review
 
@@ -127,6 +127,11 @@
 
 ## Completed
 
+- [x] Test: Transformation use cases handle all data formats (Medium)
+- [x] Test: Error handling follows expected patterns (Medium)
+- [x] Test: Use cases interact with ports, not implementations (Medium)
+- [x] Implement transformation use cases based on tests (Medium)
+- [x] Implement port interfaces based on tests (Medium)
 - [x] Implement canonical data model for the translation layer (High)
 - [x] Implement bidirectional mapping in translation layer (High)
 - [x] Implement provider interface use cases based on tests (Critical)
