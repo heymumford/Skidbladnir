@@ -159,52 +159,103 @@ parse_version() {
   local version_str="$1"
   local major minor patch build
   
-  # Check if there's a build number (format: major.minor.patch-bBUILD)
+  # Try several parsing methods for better compatibility
+  
+  # Method 1: Using regex with BASH_REMATCH
   if [[ "$version_str" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-b([0-9]+))?$ ]]; then
     major="${BASH_REMATCH[1]}"
     minor="${BASH_REMATCH[2]}"
     patch="${BASH_REMATCH[3]}"
     build="${BASH_REMATCH[5]}"
-    
-    # Default build to 1 if not specified
-    if [ -z "$build" ]; then
-      build=1
+  
+  # Method 2: Using sed
+  elif major=$(echo "$version_str" | sed -E 's/^([0-9]+)\.[0-9]+\.[0-9]+(-b[0-9]+)?$/\1/') && \
+       minor=$(echo "$version_str" | sed -E 's/^[0-9]+\.([0-9]+)\.[0-9]+(-b[0-9]+)?$/\1/') && \
+       patch=$(echo "$version_str" | sed -E 's/^[0-9]+\.[0-9]+\.([0-9]+)(-b[0-9]+)?$/\1/') && \
+       build=$(echo "$version_str" | sed -E 's/^[0-9]+\.[0-9]+\.[0-9]+-b([0-9]+)$/\1/'); then
+    # Check if we got all parts
+    if [ -z "$major" ] || [ -z "$minor" ] || [ -z "$patch" ]; then
+      # If build is not present in the version string, it will be empty
+      :
     fi
-    
-    echo "$major $minor $patch $build"
+  
+  # Method 3: Simple splitting with cut
   else
+    # Try parsing with cut for the simplest case
+    major=$(echo "$version_str" | cut -d. -f1)
+    minor=$(echo "$version_str" | cut -d. -f2)
+    
+    # The patch may have -bXX suffix
+    patch_part=$(echo "$version_str" | cut -d. -f3)
+    
+    if [[ "$patch_part" =~ ^([0-9]+)-b([0-9]+)$ ]]; then
+      patch="${BASH_REMATCH[1]}"
+      build="${BASH_REMATCH[2]}"
+    else
+      patch="$patch_part"
+    fi
+  fi
+  
+  # Validate the components
+  if [[ ! "$major" =~ ^[0-9]+$ ]] || [[ ! "$minor" =~ ^[0-9]+$ ]] || [[ ! "$patch" =~ ^[0-9]+$ ]]; then
     log_error "Invalid version format: $version_str"
     log_error "Expected format: major.minor.patch or major.minor.patch-bBUILD"
+    log_error "Parsed: major=$major, minor=$minor, patch=$patch, build=$build"
     exit 1
   fi
+  
+  # Default build to 50 if not specified or invalid
+  if [ -z "$build" ] || [[ ! "$build" =~ ^[0-9]+$ ]]; then
+    build=50
+  fi
+  
+  echo "$major $minor $patch $build"
 }
 
 # Get current version information
 get_current_version() {
   if [ -f "$VERSION_FILE" ]; then
-    log "Reading existing version file"
     local version_info
     version_info=$(cat "$VERSION_FILE")
+    log "Reading existing version file: $VERSION_FILE"
     
-    # Extract current versions from JSON
+    # Extract current versions from JSON using grep and sed for better compatibility
     local version_major version_minor version_patch build_number
-    version_major=$(echo "$version_info" | grep -o '"major": *[0-9]*' | awk '{print $2}')
-    version_minor=$(echo "$version_info" | grep -o '"minor": *[0-9]*' | awk '{print $2}')
-    version_patch=$(echo "$version_info" | grep -o '"patch": *[0-9]*' | awk '{print $2}')
-    build_number=$(echo "$version_info" | grep -o '"build": *[0-9]*' | awk '{print $2}')
+    version_major=$(grep -o '"major": *[0-9]*' "$VERSION_FILE" | sed 's/[^0-9]//g')
+    version_minor=$(grep -o '"minor": *[0-9]*' "$VERSION_FILE" | sed 's/[^0-9]//g')
+    version_patch=$(grep -o '"patch": *[0-9]*' "$VERSION_FILE" | sed 's/[^0-9]//g')
+    build_number=$(grep -o '"build": *[0-9]*' "$VERSION_FILE" | sed 's/[^0-9]//g')
     
-    echo "$version_major $version_minor $version_patch $build_number"
+    # Validate results
+    if [ -z "$version_major" ] || [ -z "$version_minor" ] || [ -z "$version_patch" ] || [ -z "$build_number" ]; then
+      log_warning "Could not extract complete version from $VERSION_FILE, falling back to package.json"
+      # Fall back to package.json
+      if [ -f "$PROJECT_ROOT/package.json" ]; then
+        local pkg_version
+        pkg_version=$(grep -o '"version": *"[^"]*"' "$PROJECT_ROOT/package.json" | cut -d'"' -f4)
+        echo $(parse_version "$pkg_version")
+        return 0
+      else
+        log_error "No valid version sources found (invalid build-versions.json, no package.json)"
+        exit 1
+      fi
+    else
+      echo "$version_major $version_minor $version_patch $build_number"
+      return 0
+    fi
   else
-    log_warning "No existing version file found, checking package.json"
+    log_warning "No existing version file found at $VERSION_FILE, checking package.json"
     # Extract version from package.json
     if [ -f "$PROJECT_ROOT/package.json" ]; then
       local pkg_version
       pkg_version=$(grep -o '"version": *"[^"]*"' "$PROJECT_ROOT/package.json" | cut -d'"' -f4)
+      log "Found version $pkg_version in package.json"
       
       # Parse the version string
-      parse_version "$pkg_version"
+      echo $(parse_version "$pkg_version")
+      return 0
     else
-      log_error "No version sources found (build-versions.json or package.json)"
+      log_error "No version sources found (no build-versions.json or package.json)"
       exit 1
     fi
   fi
@@ -491,7 +542,20 @@ main() {
   local version_major version_minor version_patch build_number
   
   # Get current version information
-  read -r version_major version_minor version_patch build_number < <(get_current_version)
+  local version_info
+  version_info=$(get_current_version)
+  
+  # Parse the version info
+  version_major=$(echo "$version_info" | awk '{print $1}')
+  version_minor=$(echo "$version_info" | awk '{print $2}')
+  version_patch=$(echo "$version_info" | awk '{print $3}')
+  build_number=$(echo "$version_info" | awk '{print $4}')
+  
+  # Validate the parsed values
+  if [ -z "$version_major" ] || [ -z "$version_minor" ] || [ -z "$version_patch" ] || [ -z "$build_number" ]; then
+    log_error "Failed to parse version components from: $version_info"
+    exit 1
+  fi
   
   local initial_version="${version_major}.${version_minor}.${version_patch}-b${build_number}"
   log "Current version: $initial_version"
