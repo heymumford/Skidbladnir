@@ -56,6 +56,10 @@
 - [x] Implement API Bridge based on tests (High)
 - [x] Add Karate performance tests for API bridge and rate limiting (High)
 - [x] Create Karate tests for cross-component communication (High)
+- [ ] Implement Provider-Specific API Contracts with Operation Dependencies (High)
+- [ ] Add Dependency Graph Visualization for API Operations (Medium)
+- [ ] Implement Topological Sorting for Operation Execution Order (High)
+- [ ] Create Tests for API Operation Dependencies and Ordering (High)
 - [ ] Test: Binary Processor correctly handles attachments (Medium)
 - [ ] Test: Infrastructure scripts are idempotent (Medium)
 - [ ] Implement Binary Processor based on tests (Medium)
@@ -110,6 +114,7 @@
 
 ## In Progress
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
+- [ ] Implement API Operation Dependency System for Ordered Operations (High)
 - [x] Implement Binary Processor large test case handling (High)
 
 ## In Review
