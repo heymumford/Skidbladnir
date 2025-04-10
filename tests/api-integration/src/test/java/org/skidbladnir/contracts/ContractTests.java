@@ -86,6 +86,21 @@ class ContractTests {
         return Karate.run("provider-error-handling").relativeTo(getClass());
     }
     
+    @Karate.Test
+    Karate testQTestEnvironmentCompatibility() {
+        return Karate.run("environments/qtest-environment-compatibility").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testQTestPulseCompatibility() {
+        return Karate.run("environments/qtest-pulse-compatibility").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testQTestPerformanceConsistency() {
+        return Karate.run("environments/qtest-performance-consistency").relativeTo(getClass());
+    }
+    
     /**
      * Run just the cross-component tests with the crossComponent tag.
      * These tests typically take longer to run as they go through the complete flow.
