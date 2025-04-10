@@ -1,9 +1,9 @@
 {
-  "version": "0.2.6",
+  "version": "0.2.6-b50",
   "major": 0,
   "minor": 2,
   "patch": 6,
-  "build": 0,
+  "build": 50,
   "timestamp": "2025-04-10T13:44:36Z",
   "environment": "dev",
   "git": {
