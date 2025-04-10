@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# Pre-commit hook to validate polyglot architecture compliance
+#
+# Copyright (C) 2025 Eric C. Mumford (@heymumford)
+# 
+# This file is part of Skidbladnir.
+# 
+# Skidbladnir is free software: you can redistribute it and/or modify
+# it under the terms of the MIT License as published in the LICENSE file.
+
+set -e
+
+# Get the project root directory
+ROOT_DIR=$(git rev-parse --show-toplevel)
+cd "$ROOT_DIR"
+
+# Stash unstaged changes
+STASH_NAME="pre-commit-$(date +%s)"
+git stash push -q --keep-index --include-untracked --message "$STASH_NAME"
+STASHED=$?
+
+# Function to pop the stash when needed
+function cleanup {
+  if [ "$STASHED" -eq 0 ]; then
+    echo "Restoring unstaged changes..."
+    git stash list | grep -q "$STASH_NAME" && git stash pop -q
+  fi
+}
+
+# Ensure we clean up on script exit
+trap cleanup EXIT
+
+# Get list of staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|js|py|go)$' || true)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo "✅ No code files were staged, skipping architecture validation."
+  exit 0
+fi
+
+echo "🔍 Running polyglot architecture validation..."
+
+# Run the architecture check on the staged files
+# First check if the validator exists as a binary or needs to be run with ts-node
+VALIDATOR_PATH="$ROOT_DIR/tests/unit/architecture/cli/check-architecture.ts"
+OUTPUT_PATH="/tmp/arch-validation-$(date +%s).txt"
+
+if command -v ts-node &>/dev/null; then
+  # Run with ts-node
+  ts-node "$VALIDATOR_PATH" --polyglot --verbose --output "$OUTPUT_PATH"
+  RESULT=$?
+else
+  # Try with node (may fail if not compiled)
+  echo "⚠️ ts-node not found, using node instead. This may fail if the validator is not compiled."
+  node "$VALIDATOR_PATH" --polyglot --verbose --output "$OUTPUT_PATH"
+  RESULT=$?
+fi
+
+# Print validation results
+if [ -f "$OUTPUT_PATH" ]; then
+  cat "$OUTPUT_PATH"
+  rm "$OUTPUT_PATH"
+else
+  echo "⚠️ No output file produced by validator."
+fi
+
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Architecture validation failed!"
+  echo "Please fix the issues before committing, or use --no-verify to bypass (not recommended)."
+  exit 1
+else
+  echo "✅ Architecture validation passed!"
+fi
+
+# Look for circular dependencies
+echo "🔍 Checking for circular dependencies..."
+
+if command -v ts-node &>/dev/null; then
+  # Run with ts-node
+  ts-node "$VALIDATOR_PATH" --circular --verbose --output "$OUTPUT_PATH"
+  RESULT=$?
+else
+  # Try with node (may fail if not compiled)
+  node "$VALIDATOR_PATH" --circular --verbose --output "$OUTPUT_PATH"
+  RESULT=$?
+fi
+
+# Print validation results
+if [ -f "$OUTPUT_PATH" ]; then
+  cat "$OUTPUT_PATH"
+  rm "$OUTPUT_PATH"
+else
+  echo "⚠️ No output file produced by validator."
+fi
+
+if [ $RESULT -ne 0 ]; then
+  echo "❌ Circular dependency check failed!"
+  echo "Please fix the issues before committing, or use --no-verify to bypass (not recommended)."
+  exit 1
+else
+  echo "✅ No circular dependencies found!"
+fi
+
+exit 0
