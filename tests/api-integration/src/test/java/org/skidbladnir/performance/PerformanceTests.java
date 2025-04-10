@@ -55,6 +55,11 @@ class PerformanceTests {
     Karate testSoakTest() {
         return Karate.run("soak-test").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testApiBridgePerformance() {
+        return Karate.run("api-bridge-performance").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
