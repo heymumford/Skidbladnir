@@ -86,7 +86,12 @@
     "security:codeql": "./scripts/security/run-codeql.sh",
     "security:eslint": "eslint --ext .ts,.tsx --config .eslintrc.security.js .",
     "security:scan": "npm run security:eslint && ./scripts/security/run-codeql.sh --languages javascript",
-    "security:report": "node scripts/security/generate-security-report.js"
+    "security:report": "node scripts/security/generate-security-report.js",
+    "version:bump": "./scripts/update-version.sh",
+    "version:patch": "./scripts/update-version.sh --patch",
+    "version:minor": "./scripts/update-version.sh --minor",
+    "version:major": "./scripts/update-version.sh --major",
+    "version:push": "./scripts/update-version.sh --build --push-git"
   },
   "repository": {
     "type": "git",

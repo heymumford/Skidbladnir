@@ -83,8 +83,11 @@ verbose_log() {
 init_version_info() {
   log "Initializing version information"
   
+  # Use the dedicated version update script with build increment
+  "${SCRIPT_DIR}/../update-version.sh" --build
+  
+  # Read the updated version from the version file
   if [ -f "$VERSION_FILE" ]; then
-    log "Reading existing version file"
     VERSION_INFO=$(cat "$VERSION_FILE")
     
     # Extract current versions from JSON
@@ -93,56 +96,20 @@ init_version_info() {
     VERSION_PATCH=$(echo "$VERSION_INFO" | grep -o '"patch": *[0-9]*' | awk '{print $2}')
     BUILD_NUMBER=$(echo "$VERSION_INFO" | grep -o '"build": *[0-9]*' | awk '{print $2}')
     
-    # Increment build number
-    BUILD_NUMBER=$((BUILD_NUMBER + 1))
-    log "Incrementing build number to $BUILD_NUMBER"
+    # Construct full version string
+    FULL_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-b${BUILD_NUMBER}"
+    
+    log "Version: $FULL_VERSION (major: $VERSION_MAJOR, minor: $VERSION_MINOR, patch: $VERSION_PATCH, build: $BUILD_NUMBER)"
   else
-    log_warning "No existing version file found, creating initial version"
-    # Extract version from package.json
-    PKG_VERSION=$(grep -o '"version": *"[^"]*"' "$PROJECT_ROOT/package.json" | cut -d'"' -f4)
-    VERSION_MAJOR=$(echo "$PKG_VERSION" | cut -d. -f1)
-    VERSION_MINOR=$(echo "$PKG_VERSION" | cut -d. -f2)
-    VERSION_PATCH=$(echo "$PKG_VERSION" | cut -d. -f3)
-    BUILD_NUMBER=1
+    log_error "Version file not found after initialization"
+    exit 1
   fi
-  
-  # Construct full version string
-  FULL_VERSION="${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}-b${BUILD_NUMBER}"
-  
-  log "Version: $FULL_VERSION (major: $VERSION_MAJOR, minor: $VERSION_MINOR, patch: $VERSION_PATCH, build: $BUILD_NUMBER)"
-  
-  # Update version file
-  cat > "$VERSION_FILE" << EOF
-{
-  "version": "${FULL_VERSION}",
-  "major": ${VERSION_MAJOR},
-  "minor": ${VERSION_MINOR},
-  "patch": ${VERSION_PATCH},
-  "build": ${BUILD_NUMBER},
-  "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  "environment": "${ENV}",
-  "git": {
-    "branch": "${GIT_BRANCH}",
-    "commit": "${GIT_COMMIT}",
-    "shortCommit": "${GIT_SHORT_COMMIT}",
-    "timestamp": ${GIT_TIMESTAMP},
-    "tag": "${GIT_TAG}"
-  }
-}
-EOF
 }
 
 # Update version in package.json and pyproject.toml
 update_project_versions() {
-  log "Updating project version files"
-  
-  # Update package.json version
-  sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${FULL_VERSION}\"/" "$PROJECT_ROOT/package.json"
-  
-  # Update pyproject.toml version
-  sed -i "s/version = \"[^\"]*\"/version = \"${FULL_VERSION}\"/" "$PROJECT_ROOT/pyproject.toml"
-  
-  log_success "Updated version to ${FULL_VERSION} in project files"
+  # This step is now handled by the dedicated version update script in init_version_info
+  log "Project version files have already been updated"
 }
 
 # ===================================================
@@ -335,22 +302,8 @@ commit_version_changes() {
   if [ "${PUSH_GIT}" = "true" ]; then
     log "Committing version changes to Git"
     
-    cd "${PROJECT_ROOT}"
-    
-    # Add version files to Git
-    git add "${VERSION_FILE}" package.json pyproject.toml
-    
-    # Commit changes with version message
-    git commit -m "Build ${BUILD_NUMBER}: Version bump to ${FULL_VERSION} for ${ENV} environment" || true
-    
-    # Create tag for this build
-    git tag -a "v${FULL_VERSION}" -m "Release version ${FULL_VERSION} for ${ENV} environment" || true
-    
-    # Push changes if requested
-    if [ "${CI_MODE}" != "true" ]; then
-      git push origin "${GIT_BRANCH}" || log_warning "Failed to push to origin/${GIT_BRANCH}"
-      git push origin "v${FULL_VERSION}" || log_warning "Failed to push tag v${FULL_VERSION}"
-    fi
+    # Use the version update script with push to Git and without incrementing the build again
+    "${SCRIPT_DIR}/../update-version.sh" --keep-build --push-git
     
     log_success "Version changes committed and tagged"
   else
