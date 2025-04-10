@@ -1,0 +1,6 @@
+org/skidbladnir/contracts/ContractTests.class
+org/skidbladnir/performance/PerformanceTests.class
+org/skidbladnir/integration/IntegrationTests.class
+org/skidbladnir/KarateTests.class
+org/skidbladnir/mocks/MockTests.class
+org/skidbladnir/migration/MigrationTests.class

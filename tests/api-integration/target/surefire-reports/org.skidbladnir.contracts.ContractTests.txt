@@ -1,0 +1,164 @@
+-------------------------------------------------------------------------------
+Test set: org.skidbladnir.contracts.ContractTests
+-------------------------------------------------------------------------------
+Tests run: 30, Failures: 30, Errors: 0, Skipped: 0, Time elapsed: 3.946 s <<< FAILURE! - in org.skidbladnir.contracts.ContractTests
+org/skidbladnir/contracts/provider-error-handling.[1.1:241] Zephyr provider error handling - Not Found  Time elapsed: 0.854 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.2:242] Zephyr provider error handling - Validation  Time elapsed: 0.02 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.3:243] Zephyr provider error handling - Authentication  Time elapsed: 0.02 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.4:244] Zephyr provider error handling - Authorization  Time elapsed: 0.016 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.5:245] Zephyr provider error handling - Server Error  Time elapsed: 0.013 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.6:246] Zephyr provider error handling - Rate Limit  Time elapsed: 0.015 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.7:247] Zephyr provider error handling - Timeout  Time elapsed: 0.013 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.8:248] Zephyr provider error handling - Conflict  Time elapsed: 0.012 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.9:249] Zephyr provider error handling - Unprocessable Entity  Time elapsed: 0.011 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[1.10:250] Zephyr provider error handling - Batch Operation Errors  Time elapsed: 0.017 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:232
+
+org/skidbladnir/contracts/provider-error-handling.[2.1:268] qTest provider error handling - Not Found  Time elapsed: 0.01 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.2:269] qTest provider error handling - Validation  Time elapsed: 0.011 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.3:270] qTest provider error handling - Authentication  Time elapsed: 0.01 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.4:271] qTest provider error handling - Authorization  Time elapsed: 0.01 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.5:272] qTest provider error handling - Server Error  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.6:273] qTest provider error handling - Rate Limit  Time elapsed: 0.009 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.7:274] qTest provider error handling - Timeout  Time elapsed: 0.009 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.8:275] qTest provider error handling - Conflict  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.9:276] qTest provider error handling - Unprocessable Entity  Time elapsed: 0.009 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[2.10:277] qTest provider error handling - Batch Operation Errors  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+no step-definition method match found for: method <errorConfig.method>
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:259
+
+org/skidbladnir/contracts/provider-error-handling.[3:280] Sensitive information is redacted in error responses  Time elapsed: 0.267 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 224 milliseconds for url: http://localhost:8080/api/api/zephyr/auth
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:284
+
+org/skidbladnir/contracts/provider-error-handling.[4:334] Error responses include operation context information  Time elapsed: 0.03 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 2 milliseconds for url: http://localhost:8080/api/api/zephyr/test-cases/non-existent-id
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:336
+
+org/skidbladnir/contracts/provider-error-handling.[5:350] Retry mechanism handles transient errors  Time elapsed: 0.009 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 1 milliseconds for url: http://localhost:8080/api/api/zephyr/retry-test
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:353
+
+org/skidbladnir/contracts/provider-error-handling.[6:365] Rate limiting is handled consistently across providers  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 2 milliseconds for url: http://localhost:8080/api/api/zephyr/rate-limit-test
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:367
+
+org/skidbladnir/contracts/provider-error-handling.[7:379] Circuit breaker prevents cascading failures  Time elapsed: 0.011 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 2 milliseconds for url: http://localhost:8080/api/api/zephyr/circuit-breaker-test
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:382
+
+org/skidbladnir/contracts/provider-error-handling.[8:408] Error responses include stack traces in development mode only  Time elapsed: 0.027 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 1 milliseconds for url: http://localhost:8080/api/api/zephyr/simulate-server-error
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:414
+
+org/skidbladnir/contracts/provider-error-handling.[9:432] Error correlation IDs are maintained across calls  Time elapsed: 0.009 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 2 milliseconds for url: http://localhost:8080/api/api/zephyr/correlated-error
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:435
+
+org/skidbladnir/contracts/provider-error-handling.[10:449] Batch operations properly handle partial success  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 2 milliseconds for url: http://localhost:8080/api/api/zephyr/test-cases/batch-partial
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:459
+
+org/skidbladnir/contracts/provider-error-handling.[11:484] Provider-specific error codes are normalized to standard error codes  Time elapsed: 0.008 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 1 milliseconds for url: http://localhost:8080/api/api/zephyr/provider-specific-error
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:487
+
+org/skidbladnir/contracts/provider-error-handling.[12:513] Fallback mechanism is triggered when primary operation fails  Time elapsed: 1.758 s  <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+http call failed after 1 milliseconds for url: http://localhost:8080/api/api/zephyr/with-fallback
+org.apache.http.conn.HttpHostConnectException: Connect to localhost:8080 [localhost/127.0.0.1] failed: Connection refused
+classpath:org/skidbladnir/contracts/provider-error-handling.feature:515
+

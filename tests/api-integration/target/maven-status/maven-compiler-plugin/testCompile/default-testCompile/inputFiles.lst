@@ -1,0 +1,6 @@
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/integration/IntegrationTests.java
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/mocks/MockTests.java
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/migration/MigrationTests.java
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/performance/PerformanceTests.java
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/contracts/ContractTests.java
+/home/emumford/NativeLinuxProjects/Skidbladnir/tests/api-integration/src/test/java/org/skidbladnir/KarateTests.java

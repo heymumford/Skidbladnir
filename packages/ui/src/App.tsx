@@ -10,10 +10,9 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppLayout } from './components/Layout/AppLayout';
-import { ProviderConfigPage, FieldMappingPage } from './pages';
+import { ProviderConfigPage, FieldMappingPage, ExecutionPage } from './pages';
 
 // Import pages (placeholders for now)
-const ExecutionPage = () => <div>Execution Control Page</div>;
 const MonitoringPage = () => <div>Monitoring Page</div>;
 const SettingsPage = () => <div>Settings Page</div>;
 

@@ -8,8 +8,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Paper, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, Paper, CircularProgress, Dialog, DialogContent } from '@mui/material';
+import PreviewIcon from '@mui/icons-material/Preview';
 import { FieldMappingPanel } from '../components/Mapping';
+import { TransformationPreviewPanel } from '../components/Transformation';
 import { Field, FieldMapping } from '../types';
 
 // Mock services (would be replaced with actual API calls)
@@ -51,6 +53,8 @@ export const FieldMappingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedTestCase, setSelectedTestCase] = useState<string>('TC-123'); // Default for demo
   
   // Load fields when component mounts
   useEffect(() => {
@@ -112,6 +116,16 @@ export const FieldMappingPage: React.FC = () => {
     handleSave();
   };
   
+  // Open preview dialog
+  const handleOpenPreview = () => {
+    setPreviewOpen(true);
+  };
+  
+  // Close preview dialog
+  const handleClosePreview = () => {
+    setPreviewOpen(false);
+  };
+  
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -149,15 +163,45 @@ export const FieldMappingPage: React.FC = () => {
       
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
         <Button
+          variant="outlined"
+          color="secondary"
+          startIcon={<PreviewIcon />}
+          onClick={handleOpenPreview}
+          disabled={mappings.length === 0}
+          sx={{ mr: 2 }}
+        >
+          Preview Transformation
+        </Button>
+        
+        <Button
           variant="contained"
           color="primary"
           disabled={!isValid || isSaving}
           onClick={handleNavigateToNext}
-          sx={{ mr: 2 }}
         >
           {isSaving ? 'Saving...' : 'Continue to Execution'}
         </Button>
       </Box>
+      
+      {/* Transformation Preview Dialog */}
+      <Dialog
+        open={previewOpen}
+        onClose={handleClosePreview}
+        maxWidth="xl"
+        fullWidth
+        scroll="paper"
+        aria-labelledby="preview-dialog-title"
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <TransformationPreviewPanel
+            testCaseId={selectedTestCase}
+            sourceProviderId="zephyr"
+            targetProviderId="qtest"
+            fieldMappings={mappings}
+            onClose={handleClosePreview}
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

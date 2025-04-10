@@ -62,6 +62,14 @@ export interface MappingConfig {
   name?: string;
 }
 
+// Transformation Preview Types
+export interface TransformationPreview {
+  sourceData: Record<string, any>;
+  canonicalData: Record<string, any>;
+  targetData: Record<string, any>;
+  validationMessages?: string[];
+}
+
 // Migration Types
 export interface MigrationConfig {
   mappingId: string;
