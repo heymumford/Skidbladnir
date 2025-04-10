@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.3.1-b54",
+  "version": "0.3.1",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {
@@ -58,10 +58,6 @@
     "postinstall": "npm run hooks:install",
     "lint:security": "npm run security:eslint",
     "check:architecture": "ts-node tests/unit/architecture/cli/check-architecture.ts",
-    "hooks:install": "./scripts/git-hooks/install.sh",
-    "postinstall": "npm run hooks:install",
-    "hooks:install": "./scripts/git-hooks/install.sh",
-    "postinstall": "npm run hooks:install",
     "typecheck": "tsc --project config/tsconfig.json --noEmit",
     "build": "npm run build:clean && npm run build:ts && npm run build:py && npm run build:go",
     "build:clean": "rimraf dist",
