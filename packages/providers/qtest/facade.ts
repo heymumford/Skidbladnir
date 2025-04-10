@@ -72,6 +72,7 @@ import {
   FileMetadata
 } from './api-client/data-export-client';
 import { ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { createErrorHandler } from '../../common/src/utils/resilience/error-handler';
 
 /**
  * qTest Facade Provider Configuration
@@ -137,6 +138,13 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
   private scenarioProvider: QTestScenarioProvider | null = null;
   private pulseProvider: TestManagementProvider | null = null;
   private dataExportProvider: QTestDataExportProvider | null = null;
+  
+  // Error handler for standardized error handling
+  private handleError = createErrorHandler('qTest Unified', {
+    includeErrorStack: process.env.NODE_ENV !== 'production',
+    includeParams: true,
+    sensitiveParamKeys: ['apiToken', 'password', 'token', 'jiraApiToken']
+  });
   
   // Connection status for each product
   private productStatus: Record<QTestProductType, boolean> = {
@@ -1022,9 +1030,17 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         ...this.config!.products?.manager
       });
     } catch (error) {
-      throw new ExternalServiceError(
-        'qTest Manager',
-        `Failed to initialize qTest Manager provider: ${error instanceof Error ? error.message : String(error)}`
+      throw this.handleError(
+        'Failed to initialize qTest Manager provider',
+        error,
+        {
+          operation: 'initializeManagerProvider',
+          additionalInfo: {
+            product: QTestProductType.MANAGER,
+            baseUrl: this.config!.baseUrl,
+            defaultProjectId: this.config!.defaultProjectId
+          }
+        }
       );
     }
   }
@@ -1087,9 +1103,17 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         ...this.config!.products?.parameters
       });
     } catch (error) {
-      throw new ExternalServiceError(
-        'qTest Parameters',
-        `Failed to initialize qTest Parameters provider: ${error instanceof Error ? error.message : String(error)}`
+      throw this.handleError(
+        'Failed to initialize qTest Parameters provider',
+        error,
+        {
+          operation: 'initializeParametersProvider',
+          additionalInfo: {
+            product: QTestProductType.PARAMETERS,
+            baseUrl: this.config!.baseUrl,
+            defaultProjectId: this.config!.defaultProjectId
+          }
+        }
       );
     }
   }
@@ -1125,9 +1149,17 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         ...this.config!.products?.scenario
       });
     } catch (error) {
-      throw new ExternalServiceError(
-        'qTest Scenario',
-        `Failed to initialize qTest Scenario provider: ${error instanceof Error ? error.message : String(error)}`
+      throw this.handleError(
+        'Failed to initialize qTest Scenario provider',
+        error,
+        {
+          operation: 'initializeScenarioProvider',
+          additionalInfo: {
+            product: QTestProductType.SCENARIO,
+            baseUrl: this.config!.baseUrl,
+            defaultProjectId: this.config!.defaultProjectId
+          }
+        }
       );
     }
   }
@@ -1172,9 +1204,17 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         ...this.config!.products?.dataExport
       });
     } catch (error) {
-      throw new ExternalServiceError(
-        'qTest Data Export',
-        `Failed to initialize qTest Data Export provider: ${error instanceof Error ? error.message : String(error)}`
+      throw this.handleError(
+        'Failed to initialize qTest Data Export provider',
+        error,
+        {
+          operation: 'initializeDataExportProvider',
+          additionalInfo: {
+            product: QTestProductType.DATA_EXPORT,
+            baseUrl: this.config!.baseUrl,
+            defaultProjectId: this.config!.defaultProjectId
+          }
+        }
       );
     }
   }

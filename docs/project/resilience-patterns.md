@@ -1,5 +1,7 @@
 # API Resilience Patterns Implementation Guide
 
+*Updated with standardized error handling implementation*
+
 This document outlines the comprehensive resilience patterns to implement across all API connections within the Skíðblaðnir platform. These patterns ensure robustness in the face of network instability, service degradation, and API failures.
 
 ## Overview of Resilience Strategy
@@ -13,7 +15,98 @@ The Skíðblaðnir platform follows a multi-layered resilience approach:
 
 ## Core Resilience Patterns
 
-### 1. Circuit Breaker Pattern
+### 1. Standardized Error Handling
+
+The Standardized Error Handling pattern ensures consistent error reporting, contextual information, and proper error propagation across all providers.
+
+#### Implementation:
+
+```typescript
+// File: packages/common/src/utils/resilience/error-handler.ts
+
+export interface ErrorContext {
+  operation: string;
+  params?: Record<string, any>;
+  additionalInfo?: Record<string, any>;
+}
+
+export interface ErrorHandlerOptions {
+  includeErrorStack?: boolean;
+  includeParams?: boolean;
+  sensitiveParamKeys?: string[];
+}
+
+export const createErrorHandler = (
+  serviceName: string,
+  options: ErrorHandlerOptions = {}
+) => {
+  const config = { 
+    includeErrorStack: false, 
+    includeParams: true, 
+    sensitiveParamKeys: ['password', 'apiToken', 'token', 'key', 'secret']
+  };
+  
+  return function wrapError(
+    message: string,
+    error: unknown,
+    context?: ErrorContext
+  ): ExternalServiceError {
+    // Format the error message with detailed context
+    let errorMessage = `${message}: ${error instanceof Error ? error.message : String(error)}`;
+    
+    // Add context information
+    if (context) {
+      errorMessage += `\nOperation: ${context.operation}`;
+      
+      // Include parameters, hiding sensitive values
+      if (config.includeParams && context.params) {
+        const safeParams = { ...context.params };
+        for (const key of config.sensitiveParamKeys || []) {
+          if (key in safeParams) {
+            safeParams[key] = '***REDACTED***';
+          }
+        }
+        errorMessage += `\nParameters: ${JSON.stringify(safeParams)}`;
+      }
+      
+      if (context.additionalInfo) {
+        errorMessage += `\nAdditional Info: ${JSON.stringify(context.additionalInfo)}`;
+      }
+    }
+    
+    return new ExternalServiceError(serviceName, errorMessage);
+  };
+};
+```
+
+#### Usage:
+
+```typescript
+// In a provider class
+private handleError = createErrorHandler('qTest Unified', {
+  includeErrorStack: process.env.NODE_ENV !== 'production',
+  includeParams: true,
+  sensitiveParamKeys: ['apiToken', 'password', 'token', 'jiraApiToken']
+});
+
+async someMethod() {
+  try {
+    // API operation
+  } catch (error) {
+    throw this.handleError(
+      'Failed to perform operation',
+      error,
+      {
+        operation: 'someMethod',
+        params: { /* parameters */ },
+        additionalInfo: { /* context */ }
+      }
+    );
+  }
+}
+```
+
+### 2. Circuit Breaker Pattern
 
 The Circuit Breaker pattern prevents cascading failures by "tripping" when error rates exceed thresholds, preventing further calls to failing services.
 

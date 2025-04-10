@@ -12,5 +12,8 @@ export * from './resilience-factory';
 export * from './service-health-monitor';
 export * from './health-monitor-factory';
 
+// Export error handling
+export * from './error-handler';
+
 // Export provider configs
 export * from './provider-configs';

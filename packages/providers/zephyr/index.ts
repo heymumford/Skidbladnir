@@ -46,6 +46,7 @@ import { PaginatedResult } from '../../common/src/models/paginated';
 import { ZephyrClient } from './api-client';
 import { ZephyrMapper } from './models/mappers';
 import { ExternalServiceError } from '../../pkg/domain/errors/DomainErrors';
+import { createErrorHandler } from '../../common/src/utils/resilience/error-handler';
 
 /**
  * Zephyr provider configuration
@@ -239,7 +240,20 @@ export class ZephyrProvider implements SourceProvider, TargetProvider {
         pageSize: options?.pageSize || testCases.length
       };
     } catch (error) {
-      throw this.wrapError(`Failed to get test cases for project ${projectId}`, error);
+      // Need to get projectKey here in catch block to avoid reference error
+      const safeProjectKey = this.config?.defaultProjectKey || projectId;
+      throw this.wrapError(
+        `Failed to get test cases for project ${projectId}`,
+        error,
+        {
+          operation: 'getTestCases',
+          params: { projectId, options },
+          additionalInfo: {
+            projectKey: safeProjectKey,
+            clientConfigured: !!this.client
+          }
+        }
+      );
     }
   }
   
@@ -691,12 +705,13 @@ export class ZephyrProvider implements SourceProvider, TargetProvider {
   }
   
   /**
-   * Wrap an error in an ExternalServiceError
+   * Error handler for Zephyr Scale API errors
    */
-  private wrapError(message: string, error: unknown): ExternalServiceError {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return new ExternalServiceError('Zephyr Scale', `${message}: ${errorMessage}`);
-  }
+  private wrapError = createErrorHandler('Zephyr Scale', {
+    includeErrorStack: process.env.NODE_ENV !== 'production',
+    includeParams: true,
+    sensitiveParamKeys: ['apiToken', 'jiraApiToken', 'password']
+  });
   
   /**
    * Upload attachments for a test case
