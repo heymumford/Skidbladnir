@@ -12,7 +12,9 @@ export interface Provider {
   id: string;
   name: string;
   version: string;
-  capabilities: ProviderCapabilities;
+  type?: 'source' | 'target';
+  icon?: string;
+  capabilities?: ProviderCapabilities;
 }
 
 export interface ProviderCapabilities {
@@ -35,7 +37,13 @@ export interface ConnectionConfig {
 export interface ConnectionStatus {
   success: boolean;
   message: string;
-  details?: string;
+  details?: {
+    version?: string;
+    authenticatedUser?: string;
+    projectName?: string;
+    timestamp?: string;
+    [key: string]: any;
+  };
 }
 
 // Field Mapping Types

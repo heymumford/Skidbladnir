@@ -77,7 +77,8 @@ export const NavigationBar: React.FC = () => {
     if (path.includes('/mapping')) return 1;
     if (path.includes('/execution')) return 2;
     if (path.includes('/monitoring')) return 3;
-    if (path.includes('/settings')) return 4;
+    if (path.includes('/wizard')) return 4;
+    if (path.includes('/settings')) return 5;
     return 0; // Default to Providers tab
   };
 
@@ -106,6 +107,7 @@ export const NavigationBar: React.FC = () => {
           <Tab label="Mapping" component={Link} to="/mapping" />
           <Tab label="Execution" component={Link} to="/execution" />
           <Tab label="Monitoring" component={Link} to="/monitoring" />
+          <Tab label="Migration Wizard" component={Link} to="/wizard" />
           <Tab label="Settings" component={Link} to="/settings" />
         </Tabs>
         
