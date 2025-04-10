@@ -204,8 +204,17 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
       setError(null);
       
       try {
-        // For development/testing purposes, let's use the mock preview
-        const preview = transformationService.getMockTransformationPreview();
+        // Fetch preview from the API, falling back to mock for development
+        const preview = await transformationService.getTransformationPreview(
+          testCaseId,
+          {
+            sourceProviderId,
+            targetProviderId,
+            fieldMappings,
+            defaultValues: {}
+          }
+        );
+        
         setPreview(preview);
         
         // Extract field mappings for the comparison table

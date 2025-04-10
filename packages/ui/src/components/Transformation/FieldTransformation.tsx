@@ -37,6 +37,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { Field, FieldMapping } from '../../types';
+import { TransformationPreviewComponent } from './TransformationPreviewComponent';
 
 // Available transformation types
 export enum TransformationType {
@@ -731,19 +732,15 @@ export const FieldTransformation: React.FC<FieldTransformationProps> = ({
             Transformation Preview
           </Typography>
           <Alert severity="info" sx={{ mb: 2 }}>
-            This is a simplified preview. The actual transformation will be applied during migration.
+            This is a live preview of the transformation. Edit source values to see how the transformation behaves.
           </Alert>
-          <Card variant="outlined" sx={{ bgcolor: '#f5f5f5', p: 2 }}>
-            <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-              <strong>Source:</strong> <code>"Field Value"</code>
-            </Typography>
-            <Typography variant="body2" sx={{ fontFamily: 'monospace', mt: 1 }}>
-              <strong>Transformation:</strong> <code>{transformationType}</code>
-            </Typography>
-            <Typography variant="body2" sx={{ fontFamily: 'monospace', mt: 1 }}>
-              <strong>Result:</strong> <code>"Transformed Value"</code>
-            </Typography>
-          </Card>
+          <TransformationPreviewComponent
+            sourceField={sourceField}
+            targetField={targetField}
+            transformationType={transformationType}
+            transformationParams={transformationParams}
+            sourceFields={sourceFields}
+          />
         </TabPanel>
       </Box>
       

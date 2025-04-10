@@ -9,6 +9,7 @@
 
 import { ProviderService } from './ProviderService';
 import { TransformationService } from './TransformationService';
+import { TransformationEngine } from './TransformationEngine';
 import { MigrationService } from './MigrationService';
 import { TestCaseService } from './TestCaseService';
 import { TestExecutionService } from './TestExecutionService';
@@ -17,6 +18,7 @@ import { ProviderConnectionService } from './ProviderConnectionService';
 // Create and export service instances
 export const providerService = new ProviderService();
 export const transformationService = new TransformationService();
+export const transformationEngine = new TransformationEngine();
 export const migrationService = new MigrationService();
 export const testCaseService = new TestCaseService();
 export const testExecutionService = new TestExecutionService();
@@ -25,6 +27,7 @@ export const providerConnectionService = new ProviderConnectionService();
 // Export service classes
 export * from './ProviderService';
 export * from './TransformationService';
+export * from './TransformationEngine';
 export * from './MigrationService';
 export * from './TestCaseService';
 export * from './TestExecutionService';

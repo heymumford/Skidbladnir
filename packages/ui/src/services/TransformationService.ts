@@ -8,6 +8,8 @@
  */
 
 import { TransformationPreview, MappingConfig, FieldMapping } from '../types';
+import { transformationEngine } from './TransformationEngine';
+import { TransformationType } from '../components/Transformation/FieldTransformation';
 
 /**
  * Service for handling test case transformations.
@@ -197,6 +199,87 @@ export class TransformationService {
       console.error('Error analyzing field compatibility:', error);
       throw error;
     }
+  }
+  
+  /**
+   * Apply transformations to a test case.
+   * 
+   * @param testCase The test case to transform
+   * @param fieldMappings The field mappings to apply
+   * @returns A transformed test case
+   */
+  applyFieldTransformations(
+    testCase: Record<string, any>,
+    fieldMappings: FieldMapping[]
+  ): Record<string, any> {
+    const result: Record<string, any> = {};
+    
+    for (const mapping of fieldMappings) {
+      const sourceId = mapping.sourceId;
+      const targetId = mapping.targetId;
+      const sourceValue = testCase[sourceId];
+      
+      if (mapping.transformation) {
+        try {
+          const config = JSON.parse(mapping.transformation);
+          const transformedValue = transformationEngine.applyTransformation(
+            sourceValue,
+            config.type as TransformationType,
+            config.params || {},
+            testCase
+          );
+          
+          result[targetId] = transformedValue;
+        } catch (error) {
+          console.error(`Error applying transformation for ${sourceId} -> ${targetId}:`, error);
+          result[targetId] = sourceValue;
+        }
+      } else {
+        // No transformation, direct mapping
+        result[targetId] = sourceValue;
+      }
+    }
+    
+    return result;
+  }
+  
+  /**
+   * Apply transformation to a test case field.
+   * 
+   * @param field The field ID
+   * @param value The field value
+   * @param transformationType The type of transformation to apply
+   * @param transformationParams The transformation parameters
+   * @param sourceObject The full source object for multi-field transformations
+   * @returns The transformed value
+   */
+  applyFieldTransformation(
+    field: string,
+    value: any,
+    transformationType: TransformationType,
+    transformationParams: Record<string, any>,
+    sourceObject?: Record<string, any>
+  ): any {
+    return transformationEngine.applyTransformation(
+      value,
+      transformationType,
+      transformationParams,
+      sourceObject
+    );
+  }
+  
+  /**
+   * Generate a preview of a transformed test case.
+   * 
+   * @param testCase The test case to transform
+   * @param fieldMappings The field mappings to apply
+   * @returns A preview of the transformed test case
+   */
+  generateTransformationPreview(
+    testCase: Record<string, any>,
+    fieldMappings: FieldMapping[]
+  ): Record<string, any> {
+    return this.applyFieldTransformations(testCase, fieldMappings);
   }
   
   /**
