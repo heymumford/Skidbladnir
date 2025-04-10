@@ -12,6 +12,9 @@ export * from '../api-client';
 
 // Export specialized clients
 export * from './manager-client';
+export * from './parameters-client';
+export * from './scenario-client';
+export * from './data-export-client';
 
 /**
  * Factory to create appropriate qTest client based on target qTest product
@@ -35,12 +38,14 @@ export function getQTestClient(product: QTestProduct, config: any) {
       return new QTestManagerClient(config);
     
     case QTestProduct.PARAMETERS:
-      // Will be implemented in future tasks
-      throw new Error('QTest Parameters client not yet implemented');
+      // Import here to avoid circular dependencies
+      const { QTestParametersClient } = require('./parameters-client');
+      return new QTestParametersClient(config);
     
     case QTestProduct.SCENARIO:
-      // Will be implemented in future tasks
-      throw new Error('QTest Scenario client not yet implemented');
+      // Import here to avoid circular dependencies
+      const { QTestScenarioClient } = require('./scenario-client');
+      return new QTestScenarioClient(config);
     
     case QTestProduct.PULSE:
       // Will be implemented in future tasks

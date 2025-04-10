@@ -42,6 +42,35 @@ import { PaginatedResult } from '../../common/src/models/paginated';
 
 import { QTestProviderFactory, QTestProductType, QTestFactoryConfig } from './provider-factory';
 import { QTestManagerProvider } from './manager-provider';
+import { 
+  QTestParametersProvider, 
+  ParameterizedTestCase, 
+  ParameterSet 
+} from './parameters-provider';
+import { 
+  Parameter, 
+  ParameterValue, 
+  Dataset, 
+  DatasetRow 
+} from './api-client/parameters-client';
+import {
+  QTestScenarioProvider,
+  BDDFeature,
+  GherkinScenario
+} from './scenario-provider';
+import {
+  Feature,
+  FeatureStatus,
+  Step,
+  StepType
+} from './api-client/scenario-client';
+import {
+  QTestDataExportProvider,
+  ExportFile
+} from './data-export-provider';
+import {
+  FileMetadata
+} from './api-client/data-export-client';
 import { ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 
 /**
@@ -104,10 +133,10 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
   
   // Individual product providers
   private managerProvider: QTestManagerProvider | null = null;
-  private parametersProvider: TestManagementProvider | null = null;
-  private scenarioProvider: TestManagementProvider | null = null;
+  private parametersProvider: QTestParametersProvider | null = null;
+  private scenarioProvider: QTestScenarioProvider | null = null;
   private pulseProvider: TestManagementProvider | null = null;
-  private dataExportProvider: TestManagementProvider | null = null;
+  private dataExportProvider: QTestDataExportProvider | null = null;
   
   // Connection status for each product
   private productStatus: Record<QTestProductType, boolean> = {
@@ -163,10 +192,8 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
     // Initialize the qTest Manager provider (always initialized as core product)
     await this.initializeManagerProvider();
     
-    // Initialize other providers as needed (will be implemented in future tasks)
-    // These are commented out for now as they will be addressed in future tasks
+    // Initialize other providers as needed
     
-    /*
     // Initialize Parameters provider if configured
     if (config.products?.parameters) {
       await this.initializeParametersProvider();
@@ -177,14 +204,16 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
       await this.initializeScenarioProvider();
     }
     
-    // Initialize Pulse provider if configured
-    if (config.products?.pulse) {
-      await this.initializePulseProvider();
-    }
-    
     // Initialize Data Export provider if configured
     if (config.products?.dataExport) {
       await this.initializeDataExportProvider();
+    }
+    
+    // The following providers will be implemented in future tasks
+    /*
+    // Initialize Pulse provider if configured
+    if (config.products?.pulse) {
+      await this.initializePulseProvider();
     }
     */
   }
@@ -209,8 +238,43 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
         }
       }
       
+      // Test connection to qTest Parameters
+      if (this.parametersProvider) {
+        const parametersStatus = await this.parametersProvider.testConnection();
+        this.productStatus[QTestProductType.PARAMETERS] = parametersStatus.connected;
+        details[QTestProductType.PARAMETERS] = parametersStatus;
+        
+        // Only need one successful connection for facade to be considered connected
+        if (parametersStatus.connected) {
+          connected = true;
+        }
+      }
+      
+      // Test connection to qTest Scenario
+      if (this.scenarioProvider) {
+        const scenarioStatus = await this.scenarioProvider.testConnection();
+        this.productStatus[QTestProductType.SCENARIO] = scenarioStatus.connected;
+        details[QTestProductType.SCENARIO] = scenarioStatus;
+        
+        // Only need one successful connection for facade to be considered connected
+        if (scenarioStatus.connected) {
+          connected = true;
+        }
+      }
+      
+      // Test connection to qTest Data Export
+      if (this.dataExportProvider) {
+        const dataExportStatus = await this.dataExportProvider.testConnection();
+        this.productStatus[QTestProductType.DATA_EXPORT] = dataExportStatus.connected;
+        details[QTestProductType.DATA_EXPORT] = dataExportStatus;
+        
+        // Only need one successful connection for facade to be considered connected
+        if (dataExportStatus.connected) {
+          connected = true;
+        }
+      }
+      
       // Test connection to other products (will be implemented in future tasks)
-      // ...
       
       return {
         connected,
@@ -458,6 +522,473 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
       .migrateTestCases(projectId, testCases, folderMapping);
   }
   
+  // Parameters API methods
+  
+  /**
+   * Get all parameters from qTest Parameters
+   */
+  async getParameters(
+    projectId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+      status?: string;
+      searchText?: string;
+    } = {}
+  ): Promise<PaginatedResult<Parameter>> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getParameters(projectId, options);
+  }
+  
+  /**
+   * Get parameter by ID from qTest Parameters
+   */
+  async getParameter(
+    projectId: string,
+    parameterId: string
+  ): Promise<Parameter> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getParameter(projectId, parameterId);
+  }
+  
+  /**
+   * Create a parameter in qTest Parameters
+   */
+  async createParameter(
+    projectId: string,
+    parameter: Parameter
+  ): Promise<string> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.createParameter(projectId, parameter);
+  }
+  
+  /**
+   * Update a parameter in qTest Parameters
+   */
+  async updateParameter(
+    projectId: string,
+    parameterId: string,
+    parameter: Parameter
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.updateParameter(projectId, parameterId, parameter);
+  }
+  
+  /**
+   * Delete a parameter from qTest Parameters
+   */
+  async deleteParameter(
+    projectId: string,
+    parameterId: string
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.deleteParameter(projectId, parameterId);
+  }
+  
+  /**
+   * Get parameter values from qTest Parameters
+   */
+  async getParameterValues(
+    projectId: string,
+    parameterId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+    } = {}
+  ): Promise<PaginatedResult<ParameterValue>> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getParameterValues(projectId, parameterId, options);
+  }
+  
+  /**
+   * Add a parameter value in qTest Parameters
+   */
+  async addParameterValue(
+    projectId: string,
+    parameterId: string,
+    value: ParameterValue
+  ): Promise<string> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.addParameterValue(projectId, parameterId, value);
+  }
+  
+  /**
+   * Update a parameter value in qTest Parameters
+   */
+  async updateParameterValue(
+    projectId: string,
+    parameterId: string,
+    valueId: string,
+    value: ParameterValue
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.updateParameterValue(projectId, parameterId, valueId, value);
+  }
+  
+  /**
+   * Delete parameter values from qTest Parameters
+   */
+  async deleteParameterValues(
+    projectId: string,
+    parameterId: string,
+    valueIds: string[]
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.deleteParameterValues(projectId, parameterId, valueIds);
+  }
+  
+  /**
+   * Get all datasets from qTest Parameters
+   */
+  async getDatasets(
+    projectId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+      status?: string;
+      searchText?: string;
+    } = {}
+  ): Promise<PaginatedResult<Dataset>> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getDatasets(projectId, options);
+  }
+  
+  /**
+   * Get dataset by ID from qTest Parameters
+   */
+  async getDataset(
+    projectId: string,
+    datasetId: string
+  ): Promise<Dataset> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getDataset(projectId, datasetId);
+  }
+  
+  /**
+   * Create a dataset in qTest Parameters
+   */
+  async createDataset(
+    projectId: string,
+    dataset: Dataset
+  ): Promise<string> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.createDataset(projectId, dataset);
+  }
+  
+  /**
+   * Update a dataset in qTest Parameters
+   */
+  async updateDataset(
+    projectId: string,
+    datasetId: string,
+    dataset: Dataset
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.updateDataset(projectId, datasetId, dataset);
+  }
+  
+  /**
+   * Delete a dataset from qTest Parameters
+   */
+  async deleteDataset(
+    projectId: string,
+    datasetId: string
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.deleteDataset(projectId, datasetId);
+  }
+  
+  /**
+   * Get dataset rows from qTest Parameters
+   */
+  async getDatasetRows(
+    projectId: string,
+    datasetId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+    } = {}
+  ): Promise<PaginatedResult<DatasetRow>> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getDatasetRows(projectId, datasetId, options);
+  }
+  
+  /**
+   * Add rows to a dataset in qTest Parameters
+   */
+  async addDatasetRows(
+    projectId: string,
+    datasetId: string,
+    rows: DatasetRow[]
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.addDatasetRows(projectId, datasetId, rows);
+  }
+  
+  /**
+   * Delete rows from a dataset in qTest Parameters
+   */
+  async deleteDatasetRows(
+    projectId: string,
+    datasetId: string,
+    rowIds: string[]
+  ): Promise<void> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.deleteDatasetRows(projectId, datasetId, rowIds);
+  }
+  
+  /**
+   * Get parameterized test cases from qTest
+   */
+  async getParameterizedTestCases(
+    projectId: string,
+    options?: TestCaseQueryOptions
+  ): Promise<PaginatedResult<ParameterizedTestCase>> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getParameterizedTestCases(projectId, options);
+  }
+  
+  /**
+   * Get a parameterized test case from qTest
+   */
+  async getParameterizedTestCase(
+    projectId: string,
+    testCaseId: string
+  ): Promise<ParameterizedTestCase> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.getParameterizedTestCase(projectId, testCaseId);
+  }
+  
+  /**
+   * Create a parameterized test case in qTest
+   */
+  async createParameterizedTestCase(
+    projectId: string,
+    testCase: ParameterizedTestCase
+  ): Promise<string> {
+    this.ensureParametersProvider();
+    return this.parametersProvider!.createParameterizedTestCase(projectId, testCase);
+  }
+  
+  // Scenario API methods
+  
+  /**
+   * Get features from qTest Scenario
+   */
+  async getFeatures(
+    projectId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+      status?: FeatureStatus;
+      searchText?: string;
+      tags?: string[];
+    } = {}
+  ): Promise<PaginatedResult<Feature>> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.getFeatures(projectId, options);
+  }
+  
+  /**
+   * Get a feature by ID from qTest Scenario
+   */
+  async getFeature(
+    projectId: string,
+    featureId: string
+  ): Promise<Feature> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.getFeature(projectId, featureId);
+  }
+  
+  /**
+   * Get a BDD feature with steps from qTest Scenario
+   */
+  async getBDDFeature(
+    projectId: string,
+    featureId: string
+  ): Promise<BDDFeature> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.getBDDFeature(projectId, featureId);
+  }
+  
+  /**
+   * Create a feature in qTest Scenario
+   */
+  async createFeature(
+    projectId: string,
+    feature: Feature
+  ): Promise<string> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.createFeature(projectId, feature);
+  }
+  
+  /**
+   * Update a feature in qTest Scenario
+   */
+  async updateFeature(
+    projectId: string,
+    featureId: string,
+    feature: Feature
+  ): Promise<void> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.updateFeature(projectId, featureId, feature);
+  }
+  
+  /**
+   * Delete a feature from qTest Scenario
+   */
+  async deleteFeature(
+    projectId: string,
+    featureId: string
+  ): Promise<void> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.deleteFeature(projectId, featureId);
+  }
+  
+  /**
+   * Get steps for a feature from qTest Scenario
+   */
+  async getFeatureSteps(
+    projectId: string,
+    featureId: string,
+    options: {
+      page?: number;
+      pageSize?: number;
+    } = {}
+  ): Promise<PaginatedResult<Step>> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.getFeatureSteps(projectId, featureId, options);
+  }
+  
+  /**
+   * Create steps for a feature in qTest Scenario
+   */
+  async createFeatureSteps(
+    projectId: string,
+    featureId: string,
+    steps: Step[]
+  ): Promise<void> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.createFeatureSteps(projectId, featureId, steps);
+  }
+  
+  /**
+   * Create a BDD feature with steps in qTest Scenario
+   */
+  async createBDDFeature(
+    projectId: string,
+    feature: BDDFeature
+  ): Promise<string> {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.createBDDFeature(projectId, feature);
+  }
+  
+  /**
+   * Format a BDD feature as Gherkin text
+   */
+  formatBDDFeatureAsGherkin(feature: BDDFeature): string {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.formatBDDFeatureAsGherkin(feature);
+  }
+  
+  /**
+   * Parse Gherkin text into a BDD feature
+   */
+  parseGherkinText(gherkinText: string): BDDFeature {
+    this.ensureScenarioProvider();
+    return this.scenarioProvider!.parseGherkinText(gherkinText);
+  }
+  
+  // Data Export API methods
+  
+  /**
+   * List files from qTest Data Export
+   */
+  async listFiles(
+    projectId: string,
+    options: {
+      path?: string;
+      pattern?: string;
+      recursive?: boolean;
+      limit?: number;
+    } = {}
+  ): Promise<PaginatedResult<FileMetadata>> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.listFiles(projectId, options);
+  }
+  
+  /**
+   * Get file metadata from qTest Data Export
+   */
+  async getFileMetadata(
+    projectId: string,
+    filePath: string
+  ): Promise<FileMetadata> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.getFileMetadata(projectId, filePath);
+  }
+  
+  /**
+   * Download a file from qTest Data Export
+   */
+  async downloadFile(
+    projectId: string,
+    filePath: string,
+    asBinary: boolean = false
+  ): Promise<ExportFile> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.downloadFile(projectId, filePath, asBinary);
+  }
+  
+  /**
+   * Search for files in qTest Data Export
+   */
+  async searchFiles(
+    projectId: string,
+    pattern: string,
+    options: {
+      path?: string;
+      recursive?: boolean;
+      limit?: number;
+    } = {}
+  ): Promise<PaginatedResult<FileMetadata>> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.searchFiles(projectId, pattern, options);
+  }
+  
+  /**
+   * Get project exports from qTest Data Export
+   */
+  async getProjectExports(
+    projectId: string
+  ): Promise<PaginatedResult<FileMetadata>> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.getProjectExports(projectId);
+  }
+  
+  /**
+   * Get latest export from qTest Data Export
+   */
+  async getLatestExport(
+    projectId: string,
+    pattern?: string
+  ): Promise<FileMetadata | null> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.getLatestExport(projectId, pattern);
+  }
+  
+  /**
+   * Download latest export from qTest Data Export
+   */
+  async downloadLatestExport(
+    projectId: string,
+    pattern?: string,
+    asBinary: boolean = false
+  ): Promise<ExportFile | null> {
+    this.ensureDataExportProvider();
+    return this.dataExportProvider!.downloadLatestExport(projectId, pattern, asBinary);
+  }
+  
   // Provider initialization methods
   
   /**
@@ -507,16 +1038,159 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
     }
   }
   
+  /**
+   * Ensure the Parameters provider is initialized
+   */
+  private ensureParametersProvider(): void {
+    if (!this.parametersProvider) {
+      throw new Error('qTest Parameters provider not initialized');
+    }
+  }
+  
+  /**
+   * Ensure the Scenario provider is initialized
+   */
+  private ensureScenarioProvider(): void {
+    if (!this.scenarioProvider) {
+      throw new Error('qTest Scenario provider not initialized');
+    }
+  }
+  
+  /**
+   * Initialize qTest Parameters provider
+   */
+  private async initializeParametersProvider(): Promise<void> {
+    try {
+      // Create and initialize the provider
+      this.parametersProvider = QTestProviderFactory.createProvider({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        product: QTestProductType.PARAMETERS,
+        productConfig: this.config!.products?.parameters || {}
+      }) as QTestParametersProvider;
+      
+      await this.parametersProvider.initialize({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        ...this.config!.products?.parameters
+      });
+    } catch (error) {
+      throw new ExternalServiceError(
+        'qTest Parameters',
+        `Failed to initialize qTest Parameters provider: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+  
+  /**
+   * Initialize qTest Scenario provider
+   */
+  private async initializeScenarioProvider(): Promise<void> {
+    try {
+      // Create and initialize the provider
+      this.scenarioProvider = QTestProviderFactory.createProvider({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        product: QTestProductType.SCENARIO,
+        productConfig: this.config!.products?.scenario || {}
+      }) as QTestScenarioProvider;
+      
+      await this.scenarioProvider.initialize({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        ...this.config!.products?.scenario
+      });
+    } catch (error) {
+      throw new ExternalServiceError(
+        'qTest Scenario',
+        `Failed to initialize qTest Scenario provider: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+  
+  /**
+   * Ensure the Scenario provider is initialized
+   */
+  private ensureScenarioProvider(): void {
+    if (!this.scenarioProvider) {
+      throw new Error('qTest Scenario provider not initialized');
+    }
+  }
+  
+  /**
+   * Initialize qTest Data Export provider
+   */
+  private async initializeDataExportProvider(): Promise<void> {
+    try {
+      // Create and initialize the provider
+      this.dataExportProvider = QTestProviderFactory.createProvider({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        product: QTestProductType.DATA_EXPORT,
+        productConfig: this.config!.products?.dataExport || {}
+      }) as QTestDataExportProvider;
+      
+      await this.dataExportProvider.initialize({
+        baseUrl: this.config!.baseUrl,
+        apiToken: this.config!.apiToken,
+        username: this.config!.username,
+        password: this.config!.password,
+        defaultProjectId: this.config!.defaultProjectId,
+        maxRequestsPerMinute: this.config!.common?.maxRequestsPerMinute,
+        bypassSSL: this.config!.common?.bypassSSL,
+        maxRetries: this.config!.common?.maxRetries,
+        ...this.config!.products?.dataExport
+      });
+    } catch (error) {
+      throw new ExternalServiceError(
+        'qTest Data Export',
+        `Failed to initialize qTest Data Export provider: ${error instanceof Error ? error.message : String(error)}`
+      );
+    }
+  }
+  
+  /**
+   * Ensure the Data Export provider is initialized
+   */
+  private ensureDataExportProvider(): void {
+    if (!this.dataExportProvider) {
+      throw new Error('qTest Data Export provider not initialized');
+    }
+  }
+  
   // The following methods will be implemented in future tasks
   
   /*
-  private async initializeParametersProvider(): Promise<void> {
-    // TODO: Implement in future tasks
-  }
-  
-  private async initializeScenarioProvider(): Promise<void> {
-    // TODO: Implement in future tasks
-  }
   
   private async initializePulseProvider(): Promise<void> {
     // TODO: Implement in future tasks

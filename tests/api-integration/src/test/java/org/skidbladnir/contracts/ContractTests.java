@@ -60,6 +60,29 @@ class ContractTests {
     Karate testSecurityHeaders() {
         return Karate.run("security-headers").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testPolyglotApiContract() {
+        return Karate.run("polyglot-api-contract").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testCrossComponentWorkflow() {
+        return Karate.run("cross-component-workflow").relativeTo(getClass());
+    }
+    
+    /**
+     * Run just the cross-component tests with the crossComponent tag.
+     * These tests typically take longer to run as they go through the complete flow.
+     */
+    @Test
+    void testCrossComponentOnly() {
+        Results results = Runner.path("classpath:org/skidbladnir/contracts")
+                .tags("@crossComponent")
+                .parallel(1); // Run sequentially as they test workflow state
+        generateReport(results.getReportDir());
+        assertEquals(0, results.getFailCount(), results.getErrorMessages());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);

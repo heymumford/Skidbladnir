@@ -4,6 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { TestCaseRepositoryImpl } from '../../internal/typescript/api/repositories/TestCaseRepository';
 import { ValidatedTestCaseRepository } from '../../internal/typescript/api/repositories/ValidatedTestCaseRepository';
 import { ExpressTestCaseController } from '../../internal/typescript/api/controllers/TestCaseController';
+import { ProviderRegistry } from '../../packages/common/src/interfaces/provider';
+import { ZephyrProvider } from '../../packages/providers/zephyr';
+import { createOperationDependencyRoutes } from '../../internal/typescript/api/routes/operationDependencyRoutes';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -46,9 +49,26 @@ const testCaseController = new ExpressTestCaseController(
   '/api'
 );
 
+// Set up provider registry and register available providers
+const providerRegistry = new ProviderRegistry();
+
+// Initialize and register Zephyr provider
+const zephyrProvider = new ZephyrProvider();
+zephyrProvider.initialize({
+  baseUrl: process.env.ZEPHYR_BASE_URL || 'https://api.zephyrscale.example.com',
+  apiToken: process.env.ZEPHYR_API_TOKEN || 'dummy-token', // For development only
+});
+providerRegistry.registerProvider(zephyrProvider);
+
 // Create API router
 const apiRouter = express.Router();
+
+// Register test case routes
 testCaseController.registerRoutes(apiRouter);
+
+// Register operation dependency routes
+const operationRoutes = createOperationDependencyRoutes(providerRegistry);
+apiRouter.use('/operations', operationRoutes);
 
 // Mount API router
 app.use('/api', apiRouter);

@@ -55,9 +55,13 @@ def mock_translation_service():
             key = f"{source_format}->{target_format}"
             self.translations[key] = data
             
+            # Use canonical model in the translation process
+            canonical_data = self.get_canonical_form(source_format, data)
+            target_data = self.from_canonical_form(target_format, canonical_data)
+            
             # Just return the data with a translation marker for testing
             return {
-                **data,
+                **target_data,
                 "translated": True,
                 "sourceFormat": source_format,
                 "targetFormat": target_format
@@ -65,6 +69,14 @@ def mock_translation_service():
         
         def get_translations(self):
             return self.translations
+            
+        def get_canonical_form(self, source_format, data):
+            # Mock method to convert source data to canonical form
+            return data
+            
+        def from_canonical_form(self, target_format, canonical_data):
+            # Mock method to convert canonical form to target format
+            return canonical_data
     
     return MockTranslationService()
 

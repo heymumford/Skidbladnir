@@ -8,3 +8,4 @@
  */
 
 export * from './architectural-coverage-visualizer';
+export * from './quality-metrics-visualizer';

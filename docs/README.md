@@ -14,6 +14,7 @@ This directory contains comprehensive documentation for the Skidbladnir project,
 - [Architecture Overview](architecture.md) - High-level architecture documentation
 - [Architecture Diagrams (C4)](c4-diagrams.md) - System visualizations with C4 model
 - [Clean Architecture Guide](clean-architecture-guide.md) - Implementation details of clean architecture
+- [Architecture Validation](architecture-validation.md) - Tools for validating architecture compliance
 
 ### Component Documentation
 - [API Bridge Architecture](api-bridge-architecture.md) - API integration details
@@ -21,6 +22,7 @@ This directory contains comprehensive documentation for the Skidbladnir project,
 - [Provider Interface](provider-interface.md) - Provider implementation details
 - [Local LLM Assistant](local-llm-assistant.md) - LLM integration and usage
 - [Containerization Strategy](containerization.md) - Container setup details
+- [Binary Processor Large Test Cases](binary-processor-large-testcases.md) - Large test case handling
 
 ### Development & Testing
 - [Development Guide](development-guide.md) - Guide for developers

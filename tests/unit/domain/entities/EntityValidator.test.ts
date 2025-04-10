@@ -72,8 +72,8 @@ describe('EntityValidator', () => {
         description: 'Description',
         steps: [
           { order: 1, description: 'Step 1', expectedResult: 'Result 1' },
-          { order: 3, description: 'Step 3', expectedResult: 'Result 3' },
-          { order: 2, description: 'Step 2', expectedResult: 'Result 2' }
+          { order: 3, description: 'Step 3', expectedResult: 'Result 3' }, // Missing step 2
+          { order: 4, description: 'Step 4', expectedResult: 'Result 4' }
         ]
       };
       

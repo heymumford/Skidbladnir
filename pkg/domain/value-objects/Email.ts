@@ -10,6 +10,8 @@ export class Email {
 
   private constructor(value: string) {
     this.value = value;
+    // Make the object immutable
+    Object.freeze(this);
   }
 
   /**

@@ -12,10 +12,14 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { StatusWindow } from './StatusWindow';
 
 // Mock clipboard API
-Object.assign(navigator, {
-  clipboard: {
-    writeText: jest.fn(),
-  },
+beforeEach(() => {
+  // Create a proper mock for the clipboard API
+  Object.defineProperty(navigator, 'clipboard', {
+    value: {
+      writeText: jest.fn().mockImplementation(() => Promise.resolve()),
+    },
+    configurable: true,
+  });
 });
 
 describe('StatusWindow', () => {
@@ -60,17 +64,27 @@ describe('StatusWindow', () => {
   });
 
   it('allows saving logs to file', () => {
-    // Mock URL.createObjectURL and document.createElement
-    global.URL.createObjectURL = jest.fn();
+    // Create a mock anchor element that won't cause infinite recursion
     const mockAnchor = {
       href: '',
       download: '',
       click: jest.fn(),
       remove: jest.fn(),
     };
+    
+    // Mock URL.createObjectURL
+    global.URL.createObjectURL = jest.fn().mockReturnValue('blob:mock-url');
+    
+    // Save the original document.createElement to restore it later
+    const originalCreateElement = document.createElement;
+    
+    // Use a more careful mock implementation
     document.createElement = jest.fn().mockImplementation((tag) => {
-      if (tag === 'a') return mockAnchor;
-      return document.createElement(tag);
+      if (tag === 'a') {
+        return mockAnchor;
+      }
+      // Use the original for everything else
+      return originalCreateElement.call(document, tag);
     });
     
     render(
@@ -86,6 +100,9 @@ describe('StatusWindow', () => {
     
     expect(mockAnchor.download).toContain('migration_log');
     expect(mockAnchor.click).toHaveBeenCalled();
+    
+    // Restore the original document.createElement
+    document.createElement = originalCreateElement;
   });
 
   it('copies logs to clipboard when copy button is clicked', () => {
@@ -104,6 +121,11 @@ describe('StatusWindow', () => {
   });
 
   it('allows changing display format when format button is clicked', () => {
+    // Create a mock for Date.prototype.toLocaleTimeString
+    const mockTime = '12:34:56';
+    const originalToLocaleTimeString = Date.prototype.toLocaleTimeString;
+    Date.prototype.toLocaleTimeString = jest.fn().mockReturnValue(mockTime);
+    
     render(
       <StatusWindow 
         title="Migration Status"
@@ -120,7 +142,11 @@ describe('StatusWindow', () => {
     fireEvent.click(screen.getByText('Show Timestamps'));
     
     // The logs should now display with timestamps
-    expect(screen.getAllByText(/\d{2}:\d{2}:\d{2}/)).toHaveLength(mockLogs.length);
+    const timestampElements = screen.getAllByText(mockTime);
+    expect(timestampElements).toHaveLength(mockLogs.length);
+    
+    // Restore the original function
+    Date.prototype.toLocaleTimeString = originalToLocaleTimeString;
   });
 
   it('allows searching log content', () => {

@@ -1,359 +1,272 @@
-# API Operation Dependency System Design
+# API Operation Dependency System
 
 ## Overview
 
-This document outlines the design for a dependency-aware operation sequencing system in the migration workflow. This system will ensure that API operations are executed in the correct order based on provider-specific requirements and dependencies between operations.
+The API Operation Dependency System is a powerful feature that ensures operations are executed in the correct order based on their dependencies. This enhances reliability and efficiency by:
 
-## Problem Statement
+1. Preventing API failures from incorrect operation ordering
+2. Reducing unnecessary retries and failures
+3. Minimizing code duplication across providers
+4. Facilitating easier addition of new provider types with unique requirements
 
-Currently, the migration process follows a fixed sequential flow that is hardcoded and not provider-specific. Different API providers may have different requirements for operation ordering:
+The system automatically determines the optimal execution order for complex workflows, handling dependencies between operations across different providers and components.
 
-- Some APIs require fetching project metadata before accessing test cases
-- Some APIs require fetching modules/folders before test cases
-- Some operations depend on identifiers from previous operations
-- Some APIs have specific sequencing requirements for authentication refreshing
+## Key Components
 
-Without a formal way to model and enforce these dependencies, we risk:
-1. API failures when operations are performed out of order
-2. Inefficient execution with unnecessary waiting or retries
-3. Code duplication across providers to handle similar dependencies
-4. Difficulty in adding new providers with unique dependency requirements
+### 1. Operation Types and Definitions
 
-## Solution Design
-
-We propose implementing a **Dependency-Aware Operation Sequencer** with the following components:
-
-### 1. Operation Dependencies Model
+Each provider defines operations it supports along with their requirements:
 
 ```typescript
-// Define operation types that can be performed
-export enum OperationType {
-  AUTHENTICATE = 'authenticate',
-  GET_PROJECTS = 'get_projects',
-  GET_PROJECT = 'get_project',
-  GET_TEST_CASES = 'get_test_cases',
-  GET_TEST_CASE = 'get_test_case',
-  CREATE_TEST_CASE = 'create_test_case',
-  UPDATE_TEST_CASE = 'update_test_case',
-  GET_ATTACHMENTS = 'get_attachments',
-  UPLOAD_ATTACHMENT = 'upload_attachment',
-  GET_HISTORY = 'get_history',
-  CREATE_HISTORY = 'create_history',
-  // ... other operations
-}
-
-// Define an operation with its dependencies
-export interface OperationDefinition {
-  type: OperationType;
-  // Operations that must be completed before this one
-  dependencies: OperationType[];
-  // Is this operation required for the provider?
-  required: boolean;
-  // Description for better understanding
-  description: string;
-  // Parameters this operation requires
-  requiredParams: string[];
-  // Estimated time/cost (for optimization)
-  estimatedTimeCost?: number;
-}
-
-// Define a provider's API contract including operation sequencing
-export interface ProviderApiContract {
-  providerId: string;
-  operations: Record<OperationType, OperationDefinition>;
-  // Provider-specific validation rules
-  validationRules?: {
-    [key: string]: (value: any) => boolean;
-  };
+// Example operation definition
+{
+  type: "get_test_cases",
+  dependencies: ["authenticate", "get_project"],
+  required: true,
+  description: "Get test cases from a project",
+  requiredParams: ["projectId"],
+  estimatedTimeCost: 3000
 }
 ```
 
-### 2. Dependency Graph and Topological Sorting
+This clearly specifies:
+- What operation does (`description`)
+- What it depends on (`dependencies`) 
+- Required parameters (`requiredParams`)
+- Approximate execution time (`estimatedTimeCost`)
 
-The system will use a directed acyclic graph (DAG) to represent operation dependencies and topological sorting to determine the execution order:
+### 2. Dependency Graph
 
-```typescript
-// Represents a directed graph of operation dependencies
-export class DependencyGraph {
-  private nodes: Map<OperationType, Set<OperationType>> = new Map();
-  
-  // Add node to graph
-  addNode(operation: OperationType): void;
-  
-  // Add dependency (edge) from one operation to another
-  addDependency(dependent: OperationType, dependency: OperationType): void;
-  
-  // Get all dependencies for an operation
-  getDependencies(operation: OperationType): OperationType[];
-  
-  // Get all operations that depend on a given operation
-  getDependents(operation: OperationType): OperationType[];
-  
-  // Check if graph contains cycles (impossible dependency resolution)
-  hasCycles(): boolean;
-  
-  // Get all operations in the graph
-  getAllOperations(): OperationType[];
-}
+The system builds a directed acyclic graph (DAG) representing operation dependencies:
 
-// Resolves execution order using topological sorting
-export class OperationDependencyResolver {
-  // Build a dependency graph from operations
-  buildDependencyGraph(operations: OperationDefinition[]): DependencyGraph;
-  
-  // Perform topological sort to determine execution order
-  resolveExecutionOrder(graph: DependencyGraph): OperationType[];
-  
-  // Identify missing operations or circular dependencies
-  validateDependencies(graph: DependencyGraph): ValidationResult;
-  
-  // Find the minimal set of operations needed for a specific goal
-  calculateMinimalOperationSet(
-    graph: DependencyGraph, 
-    goalOperation: OperationType
-  ): OperationType[];
-}
+```
+authenticate → get_projects → get_project → get_test_cases
+                                          ↘ 
+                                            get_attachments → get_attachment
 ```
 
-### 3. Operation Executor
+The graph helps:
+- Identify circular dependencies (impossible to resolve)
+- Calculate minimal operation sets for specific goals
+- Visualize complex operation relationships
 
-The execution engine will run operations in the resolved order with proper error handling and context passing:
+### 3. Topological Sorting
 
-```typescript
-// Context passed between operations
-export interface OperationContext {
-  // Input parameters
-  input: Record<string, any>;
-  // Results from previous operations
-  results: Record<OperationType, any>;
-  // Provider instances
-  sourceProvider: TestManagementProvider;
-  targetProvider: TestManagementProvider;
-  // Cancellation token
-  abortSignal?: AbortSignal;
-  // Additional metadata
-  metadata: Record<string, any>;
-}
+The system performs topological sorting to determine a valid execution order respecting all dependencies. For example:
 
-// Result of an operation execution
-export interface OperationResult {
-  operationType: OperationType;
-  success: boolean;
-  data?: any;
-  error?: Error;
-  durationMs: number;
-  timestamp: Date;
-}
-
-// Executes operations in proper order
-export class OperationExecutor {
-  // Execute operations in correct order with proper error handling
-  executeOperations(
-    operations: Operation[],
-    context: OperationContext
-  ): Promise<OperationResult[]>;
-  
-  // Handle retries and circuit breaking
-  executeWithResilience(
-    operation: Operation,
-    context: OperationContext
-  ): Promise<OperationResult>;
-  
-  // Run a single operation
-  executeOperation(
-    operation: Operation,
-    context: OperationContext
-  ): Promise<OperationResult>;
-}
+```
+1. authenticate
+2. get_projects
+3. get_project
+4. get_test_cases
+5. get_attachments
+6. get_attachment
 ```
 
-### 4. Provider-Specific API Contracts
+### 4. Smart Execution
 
-Each provider will define its own contract with operation dependencies:
+The execution engine:
+- Runs operations in the correct sequence
+- Passes context data between operations
+- Handles errors with intelligent retry logic
+- Supports parallel execution where dependencies allow
+- Provides detailed reporting on execution progress and results
+
+## Using the Operation Dependency System
+
+### REST API Endpoints
+
+The system exposes several RESTful endpoints:
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/operations` | GET | List all available operations |
+| `/api/operations/dependency-graph` | GET | Get the dependency graph |
+| `/api/operations/validate` | POST | Validate operation dependencies |
+| `/api/operations/visualize` | POST | Generate visualization |
+| `/api/operations/minimal-set` | POST | Calculate minimal operation set |
+
+### Visualizing Dependencies
+
+The system can generate visualizations in multiple formats:
+
+- **HTML**: Interactive dependency graph with execution details
+- **Mermaid**: Flowchart diagram for embedding in documentation
+- **DOT**: Format for use with GraphViz and other tools
+
+#### Example Visualization
+
+![Example Dependency Graph](../assets/dependency-graph-example.png)
+
+### Integrating in Custom Code
+
+To use the dependency system in your code:
 
 ```typescript
-// Zephyr Example
-export const zephyrApiContract: ProviderApiContract = {
+// 1. Create the resolver and executor
+const resolver = new OperationDependencyResolver();
+const executor = new OperationExecutor();
+
+// 2. Get API contracts from providers
+const sourceContract = await sourceProvider.getApiContract();
+const targetContract = await targetProvider.getApiContract();
+
+// 3. Build the operation plan
+const operations = [
+  ...Object.values(sourceContract.operations),
+  ...Object.values(targetContract.operations)
+];
+
+// 4. Create the dependency graph and resolve order
+const graph = resolver.buildDependencyGraph(operations);
+const executionOrder = resolver.resolveExecutionOrder(graph);
+
+// 5. Execute operations in proper order
+const context = createOperationContext();
+const results = await executor.executeOperations(
+  executionOrder.map(type => operationsMap[type]),
+  context
+);
+```
+
+## Provider-Specific API Contracts
+
+Each provider in the system defines its own API contract specifying operation dependencies. Here are examples:
+
+### Zephyr Scale Provider
+
+```typescript
+{
   providerId: 'zephyr',
   operations: {
-    [OperationType.AUTHENTICATE]: {
-      type: OperationType.AUTHENTICATE,
+    'authenticate': {
+      type: 'authenticate',
       dependencies: [],
       required: true,
       description: 'Authenticate with Zephyr API',
       requiredParams: ['apiKey', 'baseUrl']
     },
-    [OperationType.GET_PROJECTS]: {
-      type: OperationType.GET_PROJECTS,
-      dependencies: [OperationType.AUTHENTICATE],
+    'get_projects': {
+      type: 'get_projects',
+      dependencies: ['authenticate'],
       required: true,
       description: 'Get all projects from Zephyr',
       requiredParams: []
     },
-    [OperationType.GET_TEST_CASES]: {
-      type: OperationType.GET_TEST_CASES,
-      dependencies: [OperationType.AUTHENTICATE, OperationType.GET_PROJECTS],
+    'get_test_cases': {
+      type: 'get_test_cases',
+      dependencies: ['authenticate', 'get_project'],
       required: true,
-      description: 'Get test cases from a project',
+      description: 'Get test cases from a Zephyr project',
       requiredParams: ['projectId']
-    },
-    // ... other operations
+    }
+    // Additional operations...
   }
-};
+}
+```
 
-// QTest Manager Example
-export const qtestManagerApiContract: ProviderApiContract = {
-  providerId: 'qtest_manager',
+### QTest Provider
+
+```typescript
+{
+  providerId: 'qtest',
   operations: {
-    [OperationType.AUTHENTICATE]: {
-      type: OperationType.AUTHENTICATE,
+    'authenticate': {
+      type: 'authenticate',
       dependencies: [],
       required: true,
       description: 'Authenticate with QTest API',
       requiredParams: ['apiKey', 'baseUrl']
     },
-    [OperationType.GET_PROJECTS]: {
-      type: OperationType.GET_PROJECTS,
-      dependencies: [OperationType.AUTHENTICATE],
+    'get_projects': {
+      type: 'get_projects',
+      dependencies: ['authenticate'],
       required: true,
       description: 'Get all projects from QTest',
       requiredParams: []
     },
-    // Note: QTest requires getting modules before test cases
-    [OperationType.GET_MODULES]: {
-      type: OperationType.GET_MODULES, 
-      dependencies: [OperationType.AUTHENTICATE, OperationType.GET_PROJECTS],
+    // Note: QTest requires modules before test cases
+    'get_modules': {
+      type: 'get_modules',
+      dependencies: ['authenticate', 'get_project'],
       required: true,
       description: 'Get modules from a project',
       requiredParams: ['projectId']
     },
-    [OperationType.GET_TEST_CASES]: {
-      type: OperationType.GET_TEST_CASES,
-      dependencies: [
-        OperationType.AUTHENTICATE, 
-        OperationType.GET_PROJECTS, 
-        OperationType.GET_MODULES
-      ],
+    'get_test_cases': {
+      type: 'get_test_cases',
+      dependencies: ['authenticate', 'get_project', 'get_modules'],
       required: true,
-      description: 'Get test cases from a module',
+      description: 'Get test cases from a QTest module',
       requiredParams: ['projectId', 'moduleId']
-    },
-    // ... other operations
-  }
-};
-```
-
-### 5. Integration with Migration System
-
-```typescript
-// Enhanced migration use case
-export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
-  constructor(
-    private readonly sourceProviderFactory: ProviderFactory,
-    private readonly targetProviderFactory: ProviderFactory,
-    private readonly operationResolver: OperationDependencyResolver,
-    private readonly operationExecutor: OperationExecutor,
-    loggerService?: LoggerService
-  ) {
-    super(sourceProviderFactory, targetProviderFactory, loggerService);
-  }
-  
-  async execute(input: MigrateTestCasesInput): Promise<MigrateTestCasesResult> {
-    // Get providers
-    const sourceProvider = this.sourceProviderFactory.createProvider(input.sourceSystem);
-    const targetProvider = this.targetProviderFactory.createProvider(input.targetSystem);
-    
-    // Get API contracts
-    const sourceContract = await sourceProvider.getApiContract();
-    const targetContract = await targetProvider.getApiContract();
-    
-    // Build operation plan
-    const migrationPlan = this.buildMigrationPlan(
-      sourceContract,
-      targetContract,
-      input
-    );
-    
-    // Resolve dependencies
-    const graph = this.operationResolver.buildDependencyGraph(migrationPlan.operations);
-    const executionOrder = this.operationResolver.resolveExecutionOrder(graph);
-    
-    // Execute operations in order
-    const context = this.createOperationContext(input, sourceProvider, targetProvider);
-    await this.operationExecutor.executeOperations(
-      executionOrder.map(type => migrationPlan.operationsMap[type]),
-      context
-    );
-    
-    // Return results
-    return this.buildResult(context);
+    }
+    // Additional operations...
   }
 }
 ```
 
-### 6. Visualizing Operation Dependencies
+## Error Handling
 
-We'll create a visualization tool for operation dependencies to help with debugging and understanding the execution flow:
+The system provides detailed validation and error reporting:
 
-```typescript
-// Visualizer for dependency graphs
-export class DependencyGraphVisualizer {
-  // Generate mermaid.js diagram for dependency graph
-  generateMermaidDiagram(graph: DependencyGraph): string;
-  
-  // Generate DOT format for use with GraphViz
-  generateDotDiagram(graph: DependencyGraph): string;
-  
-  // Generate HTML report with interactive diagram
-  generateHtmlReport(
-    graph: DependencyGraph, 
-    executionOrder: OperationType[],
-    executionResults?: OperationResult[]
-  ): string;
-}
-```
+### Circular Dependencies
 
-## Implementation Plan
+If operations form a cycle (A → B → C → A), the system will:
+- Detect the cycle during validation
+- Report detailed error information
+- Prevent execution of invalid operation sets
 
-1. **Phase 1: Core Dependency System**
-   - Define operation types and interfaces
-   - Implement dependency graph data structure
-   - Implement topological sorting algorithm
-   - Add validation for dependency cycles
-   - Write tests for graph operations and sorting
+### Missing Dependencies
 
-2. **Phase 2: Provider API Contracts**
-   - Define API contract interface
-   - Implement Zephyr API contract
-   - Implement QTest API contracts (Manager, Parameters, Scenario)
-   - Add validation for contract completeness
+If an operation depends on another that doesn't exist, the system will:
+- Identify the missing dependency
+- Report which operation(s) are affected
+- Suggest possible corrections
 
-3. **Phase 3: Execution Engine**
-   - Implement operation executor
-   - Add context passing between operations
-   - Integrate with existing resilience patterns
-   - Support for parallel execution where possible
+### Parameter Validation
 
-4. **Phase 4: Migration Integration**
-   - Enhance migration use case
-   - Update provider interfaces to expose API contracts
-   - Integrate with existing workflow state management
-   - Add telemetry for operation dependencies
+The system validates that all required parameters are present before execution, preventing runtime errors from missing data.
 
-5. **Phase 5: Visualization and Tooling**
-   - Implement dependency graph visualizer
-   - Add debugging tools for dependency issues
-   - Create documentation for extending with new operations
-   - Add monitoring for operation execution
+## Performance Optimization
 
-## Benefits
+The Operation Dependency System includes several optimizations:
 
-1. **Correctness**: Ensures operations are executed in valid order
-2. **Efficiency**: Minimizes redundant operations and allows parallelization where possible
-3. **Flexibility**: Makes adding new providers easier with explicit dependency declaration
-4. **Understandability**: Visualizations make complex API dependencies easier to understand
-5. **Reliability**: Better error handling for dependency-related failures
+1. **Minimal Operation Sets**: Calculate the smallest set of operations needed for a specific goal
+2. **Parallel Execution**: Identify operations that can run concurrently
+3. **Cost Estimation**: Use estimated time costs to prioritize long-running operations
+4. **Intelligent Retries**: Apply backoff strategies for failed operations
+5. **Selective Execution**: Skip unnecessary operations based on context
+
+## Extending the System
+
+To add support for a new provider:
+
+1. Define the provider's operations and their dependencies
+2. Implement the operation execution logic
+3. Register the provider with the system
+
+The system will automatically incorporate the new provider's operations into the dependency graph and execution planning.
+
+## Best Practices
+
+1. **Be explicit about dependencies**: Clearly define what each operation requires
+2. **Keep dependency chains as short as possible**: Minimize the depth of dependencies
+3. **Avoid optional dependencies**: If an operation truly depends on another, mark it as required
+4. **Document operation behavior**: Include clear descriptions for each operation
+5. **Validate API contracts**: Use the system's validation features to detect issues early
+
+## Troubleshooting
+
+Common issues and solutions:
+
+| Issue | Solution |
+|-------|----------|
+| Circular dependencies | Review your dependency graph and break cycles |
+| Missing operations | Ensure all referenced operations are defined |
+| Parameter errors | Verify all required parameters are in the context |
+| Slow execution | Check for bottlenecks and optimize expensive operations |
+| Execution failures | Review error logs and operation dependencies |
 
 ## Conclusion
 
-The API Operation Dependency System will significantly improve the robustness and flexibility of our migration process. By explicitly modeling operation dependencies, we can ensure correct execution order and better handle provider-specific requirements. This system will allow us to easily onboard new providers with unique API contract requirements without code duplication or hardcoded sequences.
+The API Operation Dependency System provides a robust foundation for managing complex API workflows while ensuring correct operation sequencing. By explicitly modeling operation dependencies, the system enhances reliability, efficiency, and maintainability across diverse provider integrations.

@@ -142,12 +142,15 @@ describe('Identifier', () => {
       const value = 'immutable-id';
       const identifier = Identifier.create(value);
       
-      // Act & Assert - try to modify the internal value
-      // @ts-ignore - deliberately accessing private property for test
-      expect(() => { identifier.value = 'changed'; }).toThrow();
+      // Verify the value cannot be changed through direct property access
+      expect(Object.isFrozen(identifier)).toBe(true);
       
-      // Verify the value is unchanged
+      // Verify the value is unchangeable through the API
       expect(identifier.getValue()).toBe(value);
+      
+      // Create a new identifier - should be a different instance
+      const identifier2 = Identifier.create('different-id');
+      expect(identifier).not.toBe(identifier2);
     });
   });
 });

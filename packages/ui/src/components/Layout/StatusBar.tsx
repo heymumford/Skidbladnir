@@ -15,23 +15,7 @@ import {
   Chip,
   styled
 } from '@mui/material';
-import { MigrationStatus } from '../../types';
-
-// Mock migration context hook until we implement it
-const useMigrationContext = () => {
-  return {
-    currentMigration: {
-      id: 'migration-123',
-      status: 'running',
-      progress: 42,
-      totalItems: 100,
-      processedItems: 42,
-      failedItems: 3,
-      startTime: '2025-04-09T10:00:00Z',
-      estimatedRemainingTime: 600 // 10 minutes in seconds
-    } as MigrationStatus
-  };
-};
+import { useMigrationContext } from '../../contexts/MigrationContext';
 
 const StatusBarContainer = styled(Box)(({ theme }) => ({
   display: 'flex',

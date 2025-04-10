@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.3.0-b53",
+  "version": "0.3.1-b54",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {

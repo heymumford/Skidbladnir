@@ -4,7 +4,8 @@
   "description": "Tool for measuring and analyzing TDD test completeness and quality",
   "main": "dist/index.js",
   "bin": {
-    "tdd-metrics": "dist/bin/tdd-metrics.js"
+    "tdd-metrics": "dist/bin/tdd-metrics.js",
+    "quality-dashboard": "dist/bin/quality-dashboard.js"
   },
   "scripts": {
     "build": "tsc",
@@ -12,6 +13,7 @@
     "lint": "eslint --ext .ts src",
     "start": "ts-node src/bin/tdd-metrics.ts",
     "visualize": "ts-node src/bin/visualize-coverage.ts",
+    "quality-dashboard": "ts-node src/bin/quality-dashboard.ts",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

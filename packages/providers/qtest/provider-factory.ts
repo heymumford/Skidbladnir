@@ -20,6 +20,9 @@ import {
 
 import { QTestProvider, QTestProviderConfig } from './index';
 import { QTestManagerProvider, QTestManagerProviderConfig } from './manager-provider';
+import { QTestParametersProvider, QTestParametersProviderConfig } from './parameters-provider';
+import { QTestScenarioProvider, QTestScenarioProviderConfig } from './scenario-provider';
+import { QTestDataExportProvider, QTestDataExportProviderConfig } from './data-export-provider';
 
 /**
  * qTest product types
@@ -62,20 +65,17 @@ export class QTestProviderFactory {
         return new QTestManagerProvider();
       
       case QTestProductType.PARAMETERS:
-        // Will be implemented in future tasks
-        throw new Error('QTest Parameters provider not yet implemented');
+        return new QTestParametersProvider();
       
       case QTestProductType.SCENARIO:
-        // Will be implemented in future tasks
-        throw new Error('QTest Scenario provider not yet implemented');
+        return new QTestScenarioProvider();
       
       case QTestProductType.PULSE:
         // Will be implemented in future tasks
         throw new Error('QTest Pulse provider not yet implemented');
       
       case QTestProductType.DATA_EXPORT:
-        // Will be implemented in future tasks
-        throw new Error('QTest Data Export provider not yet implemented');
+        return new QTestDataExportProvider();
       
       default:
         // Fall back to standard provider

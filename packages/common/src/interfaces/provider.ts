@@ -20,11 +20,11 @@ import {
   TestCase,
   TestCycle,
   TestExecution,
-  Attachment,
-  AttachmentContent,
-  FieldDefinition,
-  PaginatedResult
+  Attachment
 } from '../models/entities';
+import { AttachmentContent } from '../models/attachment';
+import { FieldDefinition } from '../models/field-definition';
+import { PaginatedResult } from '../models/paginated';
 
 /**
  * Basic provider configuration
@@ -242,6 +242,29 @@ export interface ExecutionQueryOptions extends BaseQueryOptions {
 }
 
 /**
+ * API Operation Contract for provider operation dependencies
+ */
+export interface ProviderApiContract {
+  providerId: string;
+  operations: Record<string, OperationDefinition>;
+  validationRules?: {
+    [key: string]: (value: any) => boolean;
+  };
+}
+
+/**
+ * Operation definition with dependencies
+ */
+export interface OperationDefinition {
+  type: string;
+  dependencies: string[];
+  required: boolean;
+  description: string;
+  requiredParams: string[];
+  estimatedTimeCost?: number;
+}
+
+/**
  * Base provider interface that all providers must implement
  */
 export interface TestManagementProvider {
@@ -279,6 +302,11 @@ export interface TestManagementProvider {
    * Get provider metadata
    */
   getMetadata(): ProviderMetadata;
+  
+  /**
+   * Get provider API contract with operation dependencies
+   */
+  getApiContract(): Promise<ProviderApiContract>;
 }
 
 /**

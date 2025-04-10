@@ -8,7 +8,11 @@
 [![TDD](https://img.shields.io/badge/TDD-Clean%20Architecture-orange.svg)](docs/project/tdd-approach.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/heymumford/Skidbladnir/pulls)
 
-Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. It provides a reliable bridge between systems like Jira/Zephyr, qTest, ALM, Azure DevOps, and Rally by implementing clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components. The platform features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
+## Beta Readiness: 68% Complete
+![Progress](https://progress-bar.dev/68/?width=500&title=Zephyr→qTest%20Migration)
+[📊 Detailed Progress Tracker](docs/project/progress-tracker.md)
+
+Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. Our primary focus is providing a reliable bridge from Atlassian Jira with Zephyr Scale (source) to Tricentis qTest (destination), demonstrating how future providers should be implemented within our extensible architecture. The platform implements clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components and features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
 
 ## Purpose
 
@@ -32,8 +36,13 @@ Skíðblaðnir is a containerized, polyglot platform that automates the migratio
 
 ## Supported Systems
 
-- Atlassian Jira with Zephyr Scale
-- Tricentis qTest
+### Primary Focus (Fully Implemented)
+- **Source**: Atlassian Jira with Zephyr Scale
+- **Destination**: Tricentis qTest
+
+For details on why we prioritize this migration path, see our [Migration Focus](docs/project/migration-focus.md) document.
+
+### Future Support (Architecture Ready)
 - HP ALM/Quality Center
 - Microsoft Azure DevOps
 - Rally
@@ -41,8 +50,11 @@ Skíðblaðnir is a containerized, polyglot platform that automates the migratio
 
 ## Key Features
 
-- **Universal Provider Interface**: Standardized adapter system for multiple test management platforms
+- **Zephyr to qTest Migration**: Specialized support for migrating from Zephyr Scale to qTest
+- **Field Mapping**: Intelligent mapping between Zephyr and qTest field structures
+- **API Operation Dependencies**: Ensures operations execute in the correct order based on dependencies
 - **Multi-Stage API Handling**: Sophisticated management of complex API flows and authentication
+- **Universal Provider Interface**: Standardized adapter system extensible to future platforms
 - **Local LLM Advisor**: Llama-3 powered assistant for API troubleshooting and optimization
 - **Self-Healing Capabilities**: Automatic recovery from API errors and schema changes
 - **LCARS-inspired Interface**: Star Trek styled real-time status displays with TX/RX indicators
@@ -74,7 +86,7 @@ The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate
 
 ### Quick Start (Recommended)
 
-For the simplest possible setup, just run:
+For the simplest possible setup to start migrating from Zephyr Scale to qTest, just run:
 
 ```bash
 # Clone the repository
@@ -88,7 +100,7 @@ chmod +x scripts/quick-start.sh
 ./scripts/quick-start.sh
 ```
 
-That's it! A browser window will automatically open to the Skidbladnir web interface.
+That's it! A browser window will automatically open to the Skidbladnir web interface where you can configure your Zephyr Scale and qTest connections.
 
 For more details, see the [Quick Start Guide](docs/quick-start.md).
 
@@ -198,14 +210,14 @@ Skidbladnir follows Test-Driven Development (TDD) principles:
 2. Implement the minimum code needed to pass the tests
 3. Refactor the code while keeping tests passing
 
-Our testing strategy includes:
+Our testing strategy for the Zephyr→qTest migration includes:
 
-- **Unit Testing**: All components and functions have unit tests
-- **Integration Testing**: Test interactions between components
-- **API Testing**: Validate provider API interactions with scripts like `test-zephyr-connectivity.js`
-- **End-to-End Testing**: Full system tests
-- **Performance Testing**: Verify system behavior under load
-- **Architecture Validation**: Enforce clean architecture boundaries
+- **Unit Testing**: Components and functions have comprehensive unit tests
+- **Integration Testing**: Test interactions between components, especially between Zephyr extraction and qTest loading
+- **API Testing**: Validate provider API interactions with scripts like `test-zephyr-connectivity.js` and `test-qtest-connectivity.js`
+- **End-to-End Testing**: Full system tests for complete Zephyr→qTest migrations
+- **Performance Testing**: Verify system behavior under load with realistic Zephyr and qTest data volumes
+- **Architecture Validation**: Enforce clean architecture boundaries while allowing for provider-specific implementation details
 
 For more details, see [TDD Approach](docs/project/tdd-approach.md) and [API Testing Strategy](docs/adrs/0012-api-testing-validation-strategy.md).
 

@@ -24,13 +24,13 @@ export class ValidationError extends DomainError {
 }
 
 export class AuthenticationError extends DomainError {
-  constructor(message: string = 'Authentication failed') {
+  constructor(message = 'Authentication failed') {
     super(message);
   }
 }
 
 export class AuthorizationError extends DomainError {
-  constructor(message: string = 'Not authorized to perform this action') {
+  constructor(message = 'Not authorized to perform this action') {
     super(message);
   }
 }
@@ -50,5 +50,11 @@ export class InvalidOperationError extends DomainError {
 export class ExternalServiceError extends DomainError {
   constructor(serviceName: string, message: string) {
     super(`Error in external service ${serviceName}: ${message}`);
+  }
+}
+
+export class MigrationError extends DomainError {
+  constructor(message: string) {
+    super(message);
   }
 }

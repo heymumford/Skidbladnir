@@ -4,8 +4,8 @@
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "./dist",
-    "rootDir": "./",
+    "outDir": "../dist",
+    "rootDir": "..",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,24 +15,26 @@
     "incremental": true,
     "jsx": "react",
     "lib": ["es2020", "dom"],
-    "baseUrl": ".",
+    "baseUrl": "..",
     "paths": {
       "@domain/*": ["pkg/domain/*"],
       "@usecases/*": ["pkg/usecases/*"],
       "@interfaces/*": ["pkg/interfaces/*"],
       "@infrastructure/*": ["internal/*"]
-    }
+    },
+    "isolatedModules": true,
+    "allowJs": true
   },
   "include": [
-    "cmd/**/*",
-    "pkg/**/*",
-    "internal/**/*",
-    "domain/**/*",
-    "packages/**/*"
+    "../cmd/**/*",
+    "../pkg/**/*",
+    "../internal/**/*", 
+    "../domain/**/*",
+    "../packages/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "dist",
+    "../node_modules",
+    "../dist",
     "**/*.test.ts",
     "**/*.spec.ts"
   ]

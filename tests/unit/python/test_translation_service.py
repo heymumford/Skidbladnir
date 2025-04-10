@@ -72,25 +72,70 @@ class TestTranslationService:
             key = f"{source}->{target}"
             assert key in translation_history
             
-    def test_translation_with_llm(self, mock_translation_service, mock_llm_service):
-        """Test translation with LLM service."""
+    def test_translation_with_canonical_model(self, mock_translation_service, mocker):
+        """Test translation using canonical data model."""
         # Arrange
         source_format = "Zephyr"
         target_format = "Azure DevOps"
         test_data = {
             "id": "TC-001",
-            "title": "Complex test case requiring LLM translation"
+            "title": "Test login functionality",
+            "description": "Verify that users can log in with valid credentials",
+            "status": "ACTIVE",
+            "priority": "HIGH",
+            "steps": [
+                {
+                    "id": "step-1",
+                    "order": 1,
+                    "action": "Navigate to login page",
+                    "expectedResult": "Login page is displayed"
+                },
+                {
+                    "id": "step-2",
+                    "order": 2,
+                    "action": "Enter valid username and password",
+                    "expectedResult": "Credentials are accepted"
+                },
+                {
+                    "id": "step-3",
+                    "order": 3,
+                    "action": "Click login button",
+                    "expectedResult": "User is logged in and dashboard is displayed"
+                }
+            ]
         }
+
+        # Mock the transformation process
+        canonical_test_case = mocker.MagicMock()
+        canonical_test_case.id = "TC-001"
+        canonical_test_case.name = "Test login functionality"
+        canonical_test_case.status = "READY"
+        canonical_test_case.priority = "HIGH"
         
-        # Act - simulate translation with LLM assistance
-        # In a real implementation, this would use the LLM service for complex translations
-        mock_llm_service.load_model()
-        llm_response = mock_llm_service.query(f"translate from {source_format} to {target_format}: {test_data}")
+        # Mock the to_canonical and from_canonical methods
+        mock_to_canonical = mocker.patch.object(
+            mock_translation_service, 
+            'get_canonical_form', 
+            return_value=canonical_test_case
+        )
         
-        # For testing purposes, we'll add the LLM response to our test data
-        test_data["llm_enhanced"] = True
-        test_data["llm_response"] = llm_response
+        mock_from_canonical = mocker.patch.object(
+            mock_translation_service,
+            'from_canonical_form',
+            return_value={
+                "id": "TC-001",
+                "title": "Test login functionality",
+                "state": "Design",
+                "priority": 2,
+                "steps": [
+                    {"stepNumber": 1, "action": "Navigate to login page", "expected": "Login page is displayed"},
+                    {"stepNumber": 2, "action": "Enter valid username and password", "expected": "Credentials are accepted"},
+                    {"stepNumber": 3, "action": "Click login button", "expected": "User is logged in and dashboard is displayed"}
+                ]
+            }
+        )
         
+        # Act
         result = mock_translation_service.translate(source_format, target_format, test_data)
         
         # Assert
@@ -98,12 +143,14 @@ class TestTranslationService:
         assert result["translated"] is True
         assert result["sourceFormat"] == source_format
         assert result["targetFormat"] == target_format
-        assert result["llm_enhanced"] is True
-        assert "Translated content from the LLM" in result["llm_response"]
+        assert result["id"] == "TC-001"
+        assert result["title"] == "Test login functionality"
+        assert "steps" in result
+        assert len(result["steps"]) == 3
         
-        # Verify LLM was queried
-        assert len(mock_llm_service.queries) > 0
-        assert "translate" in mock_llm_service.queries[0].lower()
+        # Verify the canonical model was used
+        mock_to_canonical.assert_called_once()
+        mock_from_canonical.assert_called_once()
         
     def test_translation_error_handling(self, mock_translation_service, mock_llm_service):
         """Test error handling during translation."""

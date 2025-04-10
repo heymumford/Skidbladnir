@@ -134,7 +134,7 @@ class TestLLMAdvisor:
         
         # Assert
         assert response is not None
-        assert "Generic LLM response" in response
+        assert "Error analysis" in response
         
         # In a real test with a real LLM, we would expect more specific analysis
         # For this mock, we just verify the query was made

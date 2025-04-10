@@ -560,4 +560,71 @@ Test Distribution:
     .join(', ')}
 `.trim();
   }
+  
+  /**
+   * Get a quality-focused summary of the report
+   */
+  getQualitySummary(): string {
+    const meetsQualityTargets = this.qualityMetrics.meetsTargets();
+    const qualityStatus = meetsQualityTargets ? 'PASSED' : 'FAILED';
+    
+    return `
+Test Quality Dashboard for ${this.projectName}
+Generated: ${this.timestamp.toISOString()}
+Quality Status: ${qualityStatus}
+
+Quality Metrics:
+  Test-to-Code Ratio: ${this.qualityMetrics.testToCodeRatio.formattedValue()}${
+    this.qualityMetrics.testToCodeRatio.target 
+      ? ` (Target: ${this.qualityMetrics.testToCodeRatio.target})` : ''
+  }${
+    this.qualityMetrics.testToCodeRatio.meetsTarget() 
+      ? ' ✓' : ' ✗'
+  }
+  ${this.qualityMetrics.setupToAssertionRatio ? 
+    `Setup-to-Assertion Ratio: ${this.qualityMetrics.setupToAssertionRatio.formattedValue()}${
+      this.qualityMetrics.setupToAssertionRatio.target 
+        ? ` (Target: ${this.qualityMetrics.setupToAssertionRatio.target})` : ''
+    }${
+      this.qualityMetrics.setupToAssertionRatio.meetsTarget() 
+        ? ' ✓' : ' ✗'
+    }` : ''
+  }
+  ${this.qualityMetrics.testComplexity ? 
+    `Test Complexity: ${this.qualityMetrics.testComplexity.formattedValue()}${
+      this.qualityMetrics.testComplexity.target 
+        ? ` (Target: ${this.qualityMetrics.testComplexity.target})` : ''
+    }${
+      this.qualityMetrics.testComplexity.meetsTarget() 
+        ? ' ✓' : ' ✗'
+    }` : ''
+  }
+  ${this.qualityMetrics.averageTestExecutionTime ? 
+    `Average Test Execution Time: ${this.qualityMetrics.averageTestExecutionTime.formattedValue()}${
+      this.qualityMetrics.averageTestExecutionTime.target 
+        ? ` (Target: ${this.qualityMetrics.averageTestExecutionTime.target}ms)` : ''
+    }${
+      this.qualityMetrics.averageTestExecutionTime.meetsTarget() 
+        ? ' ✓' : ' ✗'
+    }` : ''
+  }
+  ${this.qualityMetrics.testIsolation ? 
+    `Test Isolation: ${this.qualityMetrics.testIsolation.formattedValue()}${
+      this.qualityMetrics.testIsolation.target 
+        ? ` (Target: ${this.qualityMetrics.testIsolation.target}%)` : ''
+    }${
+      this.qualityMetrics.testIsolation.meetsTarget() 
+        ? ' ✓' : ' ✗'
+    }` : ''
+  }
+
+Test Distribution:
+  Total Tests: ${this.distributionMetrics.getTotalTests()}
+  By Type: ${Object.entries(this.distributionMetrics.getTestPercentageByType())
+    .map(([type, percentage]) => `${type}: ${percentage.toFixed(1)}%`)
+    .join(', ')}
+
+Quality Dashboard generated successfully. Open the HTML dashboard for interactive visualizations.
+`.trim();
+  }
 }

@@ -1,5 +1,8 @@
 # Skíðblaðnir: Universal Test Asset Migration Kanban
 
+## North Star Direction
+Our primary "north star" for implementation is to use Zephyr Scale as our source and qTest as our destination for test case migrations. This focus provides a clear demonstration of how other sources and destinations should be configured in the future. While we're building an open architecture that will support other products, we're prioritizing the Zephyr → qTest workflow for our initial implementation.
+
 ## Backlog
 
 ### Phase 0: Test Infrastructure (Highest Priority)
@@ -13,6 +16,7 @@
 - [x] Add cross-language dependency analysis to architecture validator (Medium)
 
 ### Phase 1: Provider Adapters (High Priority)
+#### Primary Providers (Critical - Current Focus)
 - [x] Test: Zephyr extractor handles all data types correctly (Critical)
 - [x] Test: qTest loader manages all error scenarios correctly (Critical)
 - [x] Test: Zephyr Scale API connectivity script (Critical)
@@ -28,12 +32,14 @@
 - [ ] Test: Validate qTest Pulse metrics extraction (Medium)
 - [ ] Test: Validate qTest API compatibility across environments (High)
 - [ ] Implement consistent error handling across providers (High)
-- [ ] Test: HP ALM adapter manages connections correctly (Medium)
-- [ ] Test: Azure DevOps provider correctly maps work items (Medium)
-- [ ] Test: Rally provider respects rate limits (Medium)
-- [ ] Test: Excel import/export handles various formats (Medium)
-- [ ] Create provider-specific migration workflows (Medium)
-- [ ] Create Karate tests for provider API interfaces (High)
+- [ ] Create Karate tests for Zephyr/qTest API interfaces (High)
+
+#### Future Providers (Pending)
+- [ ] Test: HP ALM adapter manages connections correctly (Future)
+- [ ] Test: Azure DevOps provider correctly maps work items (Future)
+- [ ] Test: Rally provider respects rate limits (Future)
+- [ ] Test: Excel import/export handles various formats (Future)
+- [ ] Create provider-specific migration workflows (Future)
 
 ### Phase 2: Use Cases & Translation Layer (High Priority)
 
@@ -56,15 +62,15 @@
 - [x] Implement API Bridge based on tests (High)
 - [x] Add Karate performance tests for API bridge and rate limiting (High)
 - [x] Create Karate tests for cross-component communication (High)
-- [ ] Implement Provider-Specific API Contracts with Operation Dependencies (High)
-- [ ] Add Dependency Graph Visualization for API Operations (Medium)
-- [ ] Implement Topological Sorting for Operation Execution Order (High)
-- [ ] Create Tests for API Operation Dependencies and Ordering (High)
-- [ ] Test: Binary Processor correctly handles attachments (Medium)
+- [x] Implement Provider-Specific API Contracts with Operation Dependencies (High) - Prioritizing Zephyr and qTest
+- [x] Add Dependency Graph Visualization for API Operations (Medium)
+- [x] Implement Topological Sorting for Operation Execution Order (High)
+- [x] Create Tests for API Operation Dependencies and Ordering (High)
+- [ ] Test: Binary Processor correctly handles Zephyr/qTest attachments (Medium)
 - [ ] Test: Infrastructure scripts are idempotent (Medium)
 - [ ] Implement Binary Processor based on tests (Medium)
-- [x] Test: Binary processor correctly handles large test cases (High)
-- [x] Test: Orchestrator correctly manages workflow state (High)
+- [x] Test: Binary processor correctly handles large test cases from Zephyr Scale (High)
+- [x] Test: Orchestrator correctly manages Zephyr to qTest workflow state (High)
 - [x] Implement Orchestrator based on tests (High)
 
 ### Phase 4: UI & User Experience (Critical Priority)
@@ -74,22 +80,22 @@
 - [ ] Test: UI components render correctly (High)
 - [ ] Test: User interactions work as expected (High)
 - [ ] Implement beautiful and elegant React UI with streamlined workflow (Critical)
-- [ ] Implement provider configuration screens with auth token support (Critical)
-- [ ] Implement data transformation interface with field-by-field adjustments (Critical)
+- [ ] Implement Zephyr/qTest provider configuration screens with auth token support (Critical)
+- [ ] Implement Zephyr→qTest data transformation interface with field-by-field adjustments (Critical)
 - [ ] Implement concatenation, slicing, and other common data transformations (Critical)
 - [ ] Implement preview functionality for transformed data (Critical)
 - [ ] Implement execution control interface with pause/resume/cancel (Critical)
 - [ ] Implement detailed error reporting with remediation suggestions (Critical)
-- [ ] Implement real-time monitoring dashboard with operation details (Critical)
-- [ ] Implement test case structure visualization component (Critical)
+- [ ] Implement real-time migration monitoring dashboard with operation details (Critical)
+- [ ] Implement test case structure visualization component for Zephyr/qTest formats (Critical)
 - [ ] Implement test execution and attachment preview (Critical)
-- [ ] Create migration workflow UI wizard with connection testing (Critical)
-- [ ] Test: Data transformation interface handles complex adjustments (Critical)
+- [ ] Create Zephyr→qTest migration workflow UI wizard with connection testing (Critical)
+- [ ] Test: Data transformation interface handles complex Zephyr to qTest field mappings (Critical)
 - [ ] Test: Test case data viewer renders complex test data correctly (Critical)
 - [ ] Test: Attachment previewer handles different file types (High)
-- [ ] Test: Connection verification provides clear feedback (Critical)
+- [ ] Test: Connection verification provides clear feedback for Zephyr/qTest APIs (Critical)
 - [ ] Test: Progress indicators accurately reflect operation status (Critical)
-- [ ] Test: Error handling provides detailed information and options (Critical)
+- [ ] Test: Error handling provides detailed information and options for API failures (Critical)
 - [ ] Test: Pause/resume/cancel functionality works correctly (Critical)
 - [ ] Test: LCARS-inspired design is implemented correctly (Medium)
 - [ ] Test: UI is responsive across devices (Medium)
@@ -97,16 +103,16 @@
 - [ ] Implement LCARS styling with blinking lights for active operations (Medium)
 - [ ] Implement user interactions based on tests (Medium)
 - [ ] Implement real-time indicators based on tests (Medium)
-- [ ] Create user documentation and examples (Medium)
+- [ ] Create user documentation and examples specifically for Zephyr→qTest migration (Critical)
 
 ### Phase 5: LLM Components (Lower Priority)
 
-- [ ] Test: LLM Advisor correctly assists with API translations (Medium)
-- [ ] Test: LLM Assistant provides accurate troubleshooting (Medium)
+- [ ] Test: LLM Advisor correctly assists with Zephyr→qTest API translations (Medium)
+- [ ] Test: LLM Assistant provides accurate troubleshooting for migration issues (Medium)
 - [ ] Test: LLM Performance optimization works as expected (Medium)
-- [ ] Test: LLM Security measures prevent data leakage (High)
+- [ ] Test: LLM Security measures prevent data leakage from test cases (High)
 - [ ] Test: LLM Components operate within resource constraints (Medium)
-- [ ] Implement LLM Advisor based on tests (Medium)
+- [ ] Implement LLM Advisor specialized in Zephyr and qTest APIs (Medium)
 - [ ] Implement LLM Assistant based on tests (Medium)
 - [ ] Implement LLM Performance optimizations (Medium)
 - [ ] Implement LLM Security measures (High)
@@ -114,8 +120,10 @@
 
 ## In Progress
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
-- [ ] Implement API Operation Dependency System for Ordered Operations (High)
 - [x] Implement Binary Processor large test case handling (High)
+
+## In Review
+- [x] Implement API Operation Dependency System for Ordered Operations (High)
 
 ## In Review
 - [x] Test: API Bridge correctly handles authentication flows (High)
