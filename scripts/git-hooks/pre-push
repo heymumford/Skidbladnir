@@ -57,7 +57,8 @@ check_version_sync() {
   
   # Check if pyproject.toml exists
   if [ -f "${PROJECT_ROOT}/pyproject.toml" ]; then
-    pyproject_version=$(grep -o 'version = *"[^"]*"' "${PROJECT_ROOT}/pyproject.toml" | cut -d'"' -f2)
+    # Get only the version in the [tool.poetry] section
+    pyproject_version=$(sed -n '/\[tool\.poetry\]/,/\[.*\]/p' "${PROJECT_ROOT}/pyproject.toml" | grep -o 'version = *"[^"]*"' | head -1 | cut -d'"' -f2)
   else
     log_warning "pyproject.toml not found, skipping check"
     pyproject_version=$pkg_json_version
