@@ -30,7 +30,9 @@ module.exports = {
     '\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
     // Handle static assets
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/__mocks__/fileMock.js'
+      '<rootDir>/__mocks__/fileMock.js',
+    // Mock libxmljs2 dependency
+    'libxmljs2': '<rootDir>/__mocks__/libxmljs2.js'
   },
   testMatch: [
     '**/?(*.)+(spec|test).+(ts|tsx|js)'
