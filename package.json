@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.2.6-b51",
+  "version": "0.2.6-b52",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {
@@ -87,11 +87,11 @@
     "security:eslint": "eslint --ext .ts,.tsx --config .eslintrc.security.js .",
     "security:scan": "npm run security:eslint && ./scripts/security/run-codeql.sh --languages javascript",
     "security:report": "node scripts/security/generate-security-report.js",
-    "version:bump": "./scripts/update-version.sh",
-    "version:patch": "./scripts/update-version.sh --patch",
-    "version:minor": "./scripts/update-version.sh --minor",
-    "version:major": "./scripts/update-version.sh --major",
-    "version:push": "./scripts/update-version.sh --build --push-git"
+    "version:bump": "./scripts/version-update.sh --build",
+    "version:patch": "./scripts/version-update.sh --patch",
+    "version:minor": "./scripts/version-update.sh --minor",
+    "version:major": "./scripts/version-update.sh --major",
+    "version:push": "./scripts/version-update.sh --build --push-git"
   },
   "repository": {
     "type": "git",
