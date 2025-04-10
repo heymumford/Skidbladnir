@@ -232,6 +232,13 @@ export interface CanonicalTestExecution {
   // Attribution
   executedBy?: CanonicalUser;
   
+  // Test cycle reference
+  testCycleId?: string;
+  
+  // Description and timing
+  description?: string;
+  executionTime?: number; // In seconds
+  
   // Related items
   attachments?: CanonicalAttachment[];
   defects?: string[];

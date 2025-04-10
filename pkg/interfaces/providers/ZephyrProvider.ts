@@ -1,4 +1,4 @@
-import { TestCase } from '../../domain/entities/TestCase';
+import { TestCase, TestCaseStatus, Priority } from '../../domain/entities/TestCase';
 import { TestSuite } from '../../domain/entities/TestSuite';
 import { TestExecution, ExecutionStatus } from '../../domain/entities/TestExecution';
 import { ExternalServiceError } from '../../domain/errors/DomainErrors';
@@ -117,8 +117,8 @@ export class ZephyrProviderImpl implements ZephyrProvider {
         id: `TC-${Math.floor(Math.random() * 10000)}`,
         title: testCase.title || 'New Test Case',
         description: testCase.description || '',
-        status: testCase.status || 'DRAFT',
-        priority: testCase.priority || 'MEDIUM',
+        status: testCase.status || TestCaseStatus.DRAFT,
+        priority: testCase.priority || Priority.MEDIUM,
         steps: testCase.steps || [],
         tags: testCase.tags || [],
         createdAt: new Date(),
@@ -245,8 +245,8 @@ export class ZephyrProviderImpl implements ZephyrProvider {
         id: 'TC-1001',
         title: 'Verify user login with valid credentials',
         description: 'Test the user login functionality with valid credentials',
-        status: 'READY',
-        priority: 'HIGH',
+        status: TestCaseStatus.READY,
+        priority: Priority.HIGH,
         steps: [
           {
             order: 1,
@@ -272,8 +272,8 @@ export class ZephyrProviderImpl implements ZephyrProvider {
         id: 'TC-1002',
         title: 'Verify user login with invalid credentials',
         description: 'Test the user login functionality with invalid credentials',
-        status: 'READY',
-        priority: 'MEDIUM',
+        status: TestCaseStatus.READY,
+        priority: Priority.MEDIUM,
         steps: [
           {
             order: 1,
