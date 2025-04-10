@@ -7,4 +7,6 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-export * from './ProviderService';
+export * from './ProviderSelector';
+export * from './ConnectionForm';
+export * from './ProviderConfigPanel';

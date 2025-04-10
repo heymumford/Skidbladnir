@@ -7,4 +7,4 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-// Placeholder file for pages
+export * from './ProviderConfigPage';
