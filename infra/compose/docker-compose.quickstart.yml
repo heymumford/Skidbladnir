@@ -1,0 +1,159 @@
+version: '3.8'
+
+# Quickstart configuration for Skidbladnir
+# Designed for new users to get started quickly
+
+services:
+  # Web UI and API in a single container for simplicity
+  api:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/api:${VERSION:-latest}
+    build:
+      context: ../../
+      dockerfile: infra/prod/api.Dockerfile
+      args:
+        NODE_ENV: production
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    ports:
+      - "8080:8080"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://testbridge:testbridge@postgres:5432/testbridge
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      ENABLE_ANALYTICS: "false"
+      # Quick start specific configuration
+      SKIP_AUTHENTICATION: "true"
+      ENABLE_TEST_CONNECTIONS: "true"
+      ENABLE_AUTO_CONNECT: "true"
+      SHOW_WELCOME_SCREEN: "true"
+      SHOW_PROGRESS_DETAILS: "true"
+      ENABLE_BLINKEN_LIGHTS: "true"
+    volumes:
+      - api_logs:/var/log/testbridge
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Orchestration Service - handles workflow management
+  orchestrator:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/orchestrator:${VERSION:-latest}
+    build:
+      context: ../../
+      dockerfile: infra/prod/orchestrator.Dockerfile
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    environment:
+      ENVIRONMENT: production
+      DATABASE_URL: postgresql://testbridge:testbridge@postgres:5432/testbridge
+      REDIS_URL: redis://redis:6379
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      # Quick start specific configuration
+      ENABLE_VERBOSE_LOGGING: "true"
+      ENABLE_STEP_LOGGING: "true"
+      MIGRATION_CHUNK_SIZE: "50"
+      MAX_CONCURRENT_UPLOADS: "5"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Binary Processor Service - handles attachment processing
+  binary-processor:
+    image: ${REGISTRY_URL:-localhost:5000}/testbridge/binary-processor:${VERSION:-latest}
+    build:
+      context: ../../
+      dockerfile: infra/prod/binary-processor.Dockerfile
+    depends_on:
+      - minio
+    environment:
+      ENVIRONMENT: production
+      MINIO_ENDPOINT: minio
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: testbridge
+      MINIO_SECRET_KEY: testbridge
+      MINIO_USE_SSL: "false"
+      # Quick start specific configuration
+      LOG_LEVEL: "debug"
+      ENABLE_PREVIEW_GENERATION: "true"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL for state tracking
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: testbridge
+      POSTGRES_USER: testbridge
+      POSTGRES_DB: testbridge
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testbridge"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+
+  # MinIO for object storage
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: testbridge
+      MINIO_ROOT_PASSWORD: testbridge
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    ports:
+      - "9001:9001" # Console access for troubleshooting
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Note: The specialized LLM advisor component is not included in quickstart
+  # to keep resource usage low and setup simple.
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  api_logs:
+
+# Networks are automatically created and managed by Docker Compose

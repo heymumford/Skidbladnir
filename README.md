@@ -72,6 +72,26 @@ The LLM advisor component uses Llama-3 (8B) with 4-bit quantization to translate
 
 ## Getting Started
 
+### Quick Start (Recommended)
+
+For the simplest possible setup, just run:
+
+```bash
+# Clone the repository
+git clone https://github.com/heymumford/Skidbladnir.git
+cd Skidbladnir
+
+# Make the script executable
+chmod +x scripts/quick-start.sh
+
+# Run the quick-start script (this will build and start everything)
+./scripts/quick-start.sh
+```
+
+That's it! A browser window will automatically open to the Skidbladnir web interface.
+
+For more details, see the [Quick Start Guide](docs/quick-start.md).
+
 ### Prerequisites
 
 - Podman 3.x+ (or Docker and Docker Compose)
