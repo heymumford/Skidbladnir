@@ -47,3 +47,18 @@ For API testing, we use Karate framework. If you're new to Karate, check out the
 - [Karate Test Syntax Guide](../docs/karate-test-syntax-guide.md) - Quick reference for Karate syntax
 - [Karate Testing Strategy](../docs/karate-testing-strategy.md) - Overview of our Karate testing approach
 - [Karate API Mocking Strategy](../docs/karate-api-mocking.md) - Guide to using Karate for API mocking
+- [Cross-Component Testing](../docs/api/cross-component-testing.md) - How to test workflows across services
+
+### Cross-Component Testing
+
+Our cross-component tests validate communication between different services in our polyglot architecture:
+- TypeScript API service
+- Python Orchestrator service
+- Go Binary Processor service
+
+Run cross-component tests with:
+```bash
+npm run test:api:cross-component
+```
+
+These tests verify complete workflows, error handling, and health monitoring across service boundaries.

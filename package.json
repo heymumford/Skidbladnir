@@ -45,6 +45,7 @@
     "test:api:performance": "mvn test -f tests/api-integration/pom.xml -Dtest=PerformanceTests -Dkarate.env=perf",
     "test:api:mocks": "mvn test -f tests/api-integration/pom.xml -Dtest=MockTests",
     "test:api:migration": "mvn test -f tests/api-integration/pom.xml -Dtest=MigrationTests",
+    "test:api:cross-component": "mvn test -f tests/api-integration/pom.xml -Dtest=ContractTests#testCrossComponentOnly",
     "test:xml": "node -e \"require('ts-node').register(); require('./tests/unit/validation/xml-schema/cli/validate-xml.ts');\"",
     "test:xml:pom": "node -e \"require('ts-node').register(); require('./tests/unit/validation/xml-schema/cli/validate-xml.ts');\" -- -p '**/*pom.xml' -v",
     "lint": "npm run lint:ts && npm run lint:py && npm run lint:go && npm run lint:arch && npm run lint:xml",

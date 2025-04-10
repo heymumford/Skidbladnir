@@ -37,6 +37,7 @@ tests/api-integration/
    - API to Orchestrator integration
    - Orchestrator to Binary Processor integration
    - End-to-end migration flows
+   - Cross-component communication across all services
 
 3. **Performance Tests**: Measure API performance
    - API rate limiting tests
@@ -66,6 +67,7 @@ npm run test:api
 npm run test:api:contracts
 npm run test:api:integration
 npm run test:api:performance
+npm run test:api:cross-component
 ```
 
 Or directly with Maven:
@@ -78,6 +80,7 @@ mvn test -Dtest=IntegrationTests         # Run only integration tests
 mvn test -Dtest=PerformanceTests         # Run only performance tests
 mvn test -Dtest=MockTests                # Run only mock API tests
 mvn test -Dtest=MigrationTests           # Run only migration workflow tests
+mvn test -Dtest=ContractTests#testCrossComponentOnly  # Run only cross-component tests
 mvn test -Dkarate.env=perf               # Run with performance environment config
 ```
 

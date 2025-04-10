@@ -35,6 +35,7 @@ tasks:
       - echo "  task test:ts           # Run TypeScript tests"
       - echo "  task test:py           # Run Python tests"
       - echo "  task test:go           # Run Go tests"
+      - echo "  task test:cross-component # Run cross-component tests"
       - echo "  task lint              # Run all linters"
       - echo "  task lint:ts           # Run TypeScript linters"
       - echo "  task lint:py           # Run Python linters"
@@ -132,6 +133,11 @@ tasks:
       - go test -v ./tests/go/...
     env:
       GOFLAGS: "-mod=mod"
+      
+  test:cross-component:
+    desc: Run cross-component tests
+    cmds:
+      - npm run test:api:cross-component
 
   lint:
     desc: Run all linters
