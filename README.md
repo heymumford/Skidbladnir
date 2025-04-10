@@ -1,5 +1,13 @@
 # Skíðblaðnir
 
+[![Version](https://img.shields.io/badge/version-0.2.3-blue.svg)](https://github.com/heymumford/Skidbladnir/releases)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
+[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![Go](https://img.shields.io/badge/Go-1.19-blue.svg)](https://golang.org/)
+[![TDD](https://img.shields.io/badge/TDD-Clean%20Architecture-orange.svg)](docs/project/tdd-approach.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/heymumford/Skidbladnir/pulls)
+
 Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. It provides a reliable bridge between systems like Jira/Zephyr, qTest, ALM, Azure DevOps, and Rally by implementing clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components. The platform features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
 
 ## Purpose

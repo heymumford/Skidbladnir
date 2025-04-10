@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {
@@ -19,6 +19,9 @@
     "test:all": "npm run test:unit && npm run test:domain && npm run test:py && npm run test:go && npm run test:integration && npm run test:e2e && npm run test:acceptance && npm run test:api",
     "test:mocks": "jest --config=config/jest.config.js --testRegex='.*Mock.*\\.test\\.(ts|tsx)$'",
     "test:zephyr": "node scripts/test-zephyr-connectivity.js",
+    "test:qtest:parameters": "node scripts/test-qtest-parameters-connectivity.js",
+    "test:qtest:scenario": "node scripts/test-qtest-scenario-connectivity.js",
+    "test:qtest:data-export": "node scripts/test-qtest-data-export-connectivity.js",
     "coverage:check": "jest --config=config/jest.config.js --coverage",
     "test:report": "jest --config=config/jest.config.js --json --outputFile=test-results/test-report.json && node scripts/generate-test-report.js",
     "test:acceptance": "cucumber-js",
@@ -112,6 +115,7 @@
     "@typescript-eslint/parser": "^5.59.1",
     "axios": "^1.4.0",
     "chai": "^4.5.0",
+    "chalk": "^4.1.2",
     "concurrently": "^8.0.1",
     "cross-env": "^7.0.3",
     "cucumber-html-reporter": "^7.2.0",
