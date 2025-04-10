@@ -111,6 +111,8 @@
 - [ ] Implement qTest Pulse API adapter for test insights (Medium)
 - [ ] Implement TDD test completeness metrics and reporting tool (High) 
 - [ ] Implement resilience pattern for API connections (High) - Design complete
+- [ ] Test: Transformation use cases handle all data formats (Medium)
+- [ ] Test: Error handling follows expected patterns (Medium)
 
 ## In Review
 
