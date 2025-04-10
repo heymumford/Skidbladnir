@@ -23,6 +23,7 @@
     "test:qtest:scenario": "node scripts/test-qtest-scenario-connectivity.js",
     "test:qtest:data-export": "node scripts/test-qtest-data-export-connectivity.js",
     "coverage:check": "jest --config=config/jest.config.js --coverage",
+    "coverage:check:unified": "bash scripts/check-coverage.sh",
     "test:report": "jest --config=config/jest.config.js --json --outputFile=test-results/test-report.json && node scripts/generate-test-report.js",
     "test:ui": "jest --config=config/jest.ui.config.js",
     "test:acceptance": "cucumber-js",

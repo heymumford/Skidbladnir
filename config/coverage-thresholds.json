@@ -1,0 +1,112 @@
+{
+  "global": {
+    "branches": 70,
+    "functions": 75,
+    "lines": 80,
+    "statements": 80
+  },
+  "typescript": {
+    "pkg/domain": {
+      "branches": 90,
+      "functions": 95,
+      "lines": 95,
+      "statements": 95
+    },
+    "pkg/usecases": {
+      "branches": 85,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    },
+    "pkg/interfaces": {
+      "branches": 80,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
+    },
+    "internal/typescript": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    },
+    "packages": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    }
+  },
+  "python": {
+    "overall": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    },
+    "internal/python/orchestrator": {
+      "branches": 80,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
+    },
+    "internal/python/llm-advisor": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    },
+    "internal/python/translation": {
+      "branches": 85,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    }
+  },
+  "go": {
+    "overall": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    },
+    "internal/go/binary-processor": {
+      "branches": 80,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
+    },
+    "internal/go/common": {
+      "branches": 85,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    }
+  },
+  "architectural_layers": {
+    "domain": {
+      "branches": 90,
+      "functions": 95,
+      "lines": 95,
+      "statements": 95
+    },
+    "use-case": {
+      "branches": 85,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
+    },
+    "adapter": {
+      "branches": 80,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
+    },
+    "infrastructure": {
+      "branches": 70,
+      "functions": 75,
+      "lines": 80,
+      "statements": 80
+    }
+  }
+}

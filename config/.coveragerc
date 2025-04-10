@@ -1,0 +1,40 @@
+[run]
+source = internal/python
+omit = 
+    */__pycache__/*
+    */tests/*
+    */.venv/*
+    */venv/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    pass
+    raise ImportError
+    except ImportError:
+
+[paths]
+source =
+    internal/python/
+    */site-packages/skidbladnir/
+
+[html]
+directory = test-results/python/coverage
+
+# Coverage thresholds
+# These match the unified thresholds in coverage-thresholds.json
+[coverage:report]
+fail_under = 80
+
+# Specific package thresholds
+[coverage:internal.python.orchestrator]
+fail_under = 85
+
+[coverage:internal.python.llm-advisor]
+fail_under = 80
+
+[coverage:internal.python.translation]
+fail_under = 90

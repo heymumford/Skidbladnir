@@ -11,7 +11,8 @@
 const path = require('path');
 
 module.exports = {
-  preset: 'ts-jest',
+  // Using babel-jest instead of ts-jest preset
+  // preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: path.resolve(__dirname, '..'),
   roots: [
@@ -19,9 +20,9 @@ module.exports = {
     '<rootDir>/pkg',
     '<rootDir>/packages'
   ],
-  // Simple configuration without projects to fix setupFilesAfterEnv issue
+  // Setup files for the entire test suite
   setupFilesAfterEnv: [
-    '<rootDir>/tests/jest.setup.js'
+    path.resolve(__dirname, '..', 'tests/jest.setup.js')
   ],
   moduleNameMapper: {
     // Handle CSS imports (with CSS modules)
@@ -35,7 +36,9 @@ module.exports = {
     'libxmljs2': '<rootDir>/__mocks__/libxmljs2.js'
   },
   testMatch: [
-    '**/?(*.)+(spec|test).+(ts|tsx|js)'
+    '**/*.test.ts',
+    '**/*.test.tsx',
+    '**/*.test.js'
   ],
   moduleFileExtensions: [
     'ts',
@@ -60,26 +63,22 @@ module.exports = {
     'text',
     'clover'
   ],
-  coverageThreshold: {
-    global: {
-      branches: 70,
-      functions: 75,
-      lines: 80,
-      statements: 80
-    }
-  },
+  // Load the unified coverage thresholds
+  coverageThreshold: require('./coverage-thresholds.json').typescript,
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: path.resolve(__dirname, 'tsconfig.json')
+    '^.+\\.(ts|tsx)$': ['babel-jest', {
+      presets: [
+        ['@babel/preset-env', { targets: { node: 'current' } }],
+        '@babel/preset-typescript',
+        '@babel/preset-react'
+      ],
+      plugins: [
+        '@babel/plugin-transform-modules-commonjs'
+      ]
     }]
-  },
-  globals: {
-    'ts-jest': {
-      isolatedModules: true
-    }
   }
 };

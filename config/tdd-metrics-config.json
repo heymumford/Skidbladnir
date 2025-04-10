@@ -1,0 +1,34 @@
+{
+  "projectRoot": ".",
+  "sourcePaths": [
+    "pkg",
+    "internal",
+    "cmd",
+    "packages"
+  ],
+  "testPaths": [
+    "tests",
+    "internal/python/*/tests",
+    "internal/go/*/tests"
+  ],
+  "outputPath": "test-results/tdd-metrics",
+  "excludePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/__pycache__/**",
+    "**/.git/**",
+    "**/venv/**"
+  ],
+  "thresholds": {
+    "lineCoverage": 80,
+    "functionCoverage": 75,
+    "layerCoverage": {
+      "domain": 95,
+      "use-case": 90,
+      "adapter": 85,
+      "infrastructure": 80,
+      "unknown": 70
+    },
+    "testToCodeRatio": 0.8
+  }
+}
