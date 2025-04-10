@@ -11,127 +11,15 @@
 # it under the terms of the MIT License as published in the LICENSE file.
 #
 
-# Get the directory containing the script
+# Get the directory containing the script and project root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 PROJECT_ROOT="$(cd "${SCRIPT_DIR}/../.." &>/dev/null && pwd)"
 
-# Function to log messages with color
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-NC='\033[0m' # No Color
+# Set warning mode to display warnings rather than errors for version mismatches
+export VERSION_CHECK_DISPLAY_WARNING=1
 
-log_error() {
-  echo -e "${RED}ERROR:${NC} $1" >&2
-}
+# Run the JavaScript version checker
+node "${PROJECT_ROOT}/scripts/util/version-check.js"
 
-log_warning() {
-  echo -e "${YELLOW}WARNING:${NC} $1" >&2
-}
-
-log_success() {
-  echo -e "${GREEN}SUCCESS:${NC} $1" >&2
-}
-
-# Check if version files are in sync
-check_version_sync() {
-  local pkg_json_version
-  local build_version_file
-  local pyproject_version
-  
-  # Check if package.json exists
-  if [ -f "${PROJECT_ROOT}/package.json" ]; then
-    pkg_json_version=$(grep -o '"version": *"[^"]*"' "${PROJECT_ROOT}/package.json" | cut -d'"' -f4)
-  else
-    log_error "package.json not found"
-    return 1
-  fi
-  
-  # Check if build-versions.json exists
-  if [ -f "${PROJECT_ROOT}/build-versions.json" ]; then
-    build_version_file=$(grep -o '"version": *"[^"]*"' "${PROJECT_ROOT}/build-versions.json" | cut -d'"' -f4)
-  else
-    log_error "build-versions.json not found"
-    return 1
-  fi
-  
-  # Check if pyproject.toml exists
-  if [ -f "${PROJECT_ROOT}/pyproject.toml" ]; then
-    # Get only the version in the [tool.poetry] section
-    pyproject_version=$(sed -n '/\[tool\.poetry\]/,/\[.*\]/p' "${PROJECT_ROOT}/pyproject.toml" | grep -o 'version = *"[^"]*"' | head -1 | cut -d'"' -f2)
-  else
-    log_warning "pyproject.toml not found, skipping check"
-    pyproject_version=$pkg_json_version
-  fi
-  
-  # Compare versions
-  if [ "$pkg_json_version" != "$build_version_file" ]; then
-    log_error "Version mismatch between package.json ($pkg_json_version) and build-versions.json ($build_version_file)"
-    log_error "Run 'npm run version:bump' to synchronize versions"
-    return 1
-  fi
-  
-  if [ -n "$pyproject_version" ] && [ "$pkg_json_version" != "$pyproject_version" ]; then
-    log_error "Version mismatch between package.json ($pkg_json_version) and pyproject.toml ($pyproject_version)"
-    log_error "Run 'npm run version:bump' to synchronize versions"
-    return 1
-  fi
-  
-  # Check POM files
-  # For Maven, we need to compare just the major.minor.patch part without build number
-  local version_base
-  if [[ "$pkg_json_version" =~ ^([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-    version_base="${BASH_REMATCH[1]}"
-    
-    # Find all pom.xml files
-    while IFS= read -r pom_file; do
-      if [ -f "$pom_file" ]; then
-        # Check if xmlstarlet is available
-        if command -v xmlstarlet >/dev/null 2>&1; then
-          # Extract version from pom.xml
-          local pom_version
-          pom_version=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:version" "$pom_file" 2>/dev/null)
-          
-          # If version is directly in project, compare it
-          if [ -n "$pom_version" ] && [ "$pom_version" != "$version_base" ]; then
-            log_error "Version mismatch in ${pom_file#$PROJECT_ROOT/}: POM version ($pom_version) differs from package.json version base ($version_base)"
-            log_error "Run 'npm run version:bump' to synchronize versions"
-            return 1
-          fi
-          
-          # Check for version in properties
-          pom_version=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:properties/x:skidbladnir.version" "$pom_file" 2>/dev/null)
-          if [ -n "$pom_version" ] && [ "$pom_version" != "$version_base" ]; then
-            log_error "Version mismatch in ${pom_file#$PROJECT_ROOT/}: skidbladnir.version property ($pom_version) differs from package.json version base ($version_base)"
-            log_error "Run 'npm run version:bump' to synchronize versions"
-            return 1
-          fi
-        else
-          log_warning "xmlstarlet not found, skipping POM version check"
-        fi
-      fi
-    done < <(find "${PROJECT_ROOT}" -name "pom.xml" -type f -not -path "*/node_modules/*" -not -path "*/.git/*")
-  fi
-  
-  log_success "All version files are in sync: $pkg_json_version"
-  return 0
-}
-
-# Main script
-check_version_sync
-
-if [ $? -ne 0 ]; then
-  # Version mismatch, but don't block the push
-  # Just display a warning
-  echo -e "${YELLOW}========================= WARNING =========================${NC}"
-  echo -e "${YELLOW}Version files are out of sync. Please run one of:${NC}"
-  echo -e "${YELLOW}  - npm run version:bump   (to update build number)${NC}"
-  echo -e "${YELLOW}  - npm run version:patch  (to update patch version)${NC}"
-  echo -e "${YELLOW}  - npm run version:minor  (to update minor version)${NC}"
-  echo -e "${YELLOW}  - npm run version:major  (to update major version)${NC}"
-  echo -e "${YELLOW}========================= WARNING =========================${NC}"
-  # Allow the push to continue, but with a warning
-  exit 0
-fi
-
-exit 0
+# Exit with the same code as the version checker
+exit $?

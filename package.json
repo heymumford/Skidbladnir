@@ -90,11 +90,13 @@
     "security:eslint": "eslint --ext .ts,.tsx --config .eslintrc.security.js .",
     "security:scan": "npm run security:eslint && ./scripts/security/run-codeql.sh --languages javascript",
     "security:report": "node scripts/security/generate-security-report.js",
-    "version:bump": "./scripts/version-update.sh --build",
-    "version:patch": "./scripts/version-update.sh --patch",
-    "version:minor": "./scripts/version-update.sh --minor",
-    "version:major": "./scripts/version-update.sh --major",
-    "version:push": "./scripts/version-update.sh --build --push-git"
+    "version:check": "node scripts/util/version-check.js",
+    "version:sync": "node scripts/util/update-version.js -v $(node -e \"console.log(require('./package.json').version)\")",
+    "version:bump": "node scripts/util/update-version.js -b",
+    "version:patch": "node scripts/util/update-version.js -p",
+    "version:minor": "node scripts/util/update-version.js -n",
+    "version:major": "node scripts/util/update-version.js -m",
+    "version:push": "node scripts/util/update-version.js -b -g"
   },
   "repository": {
     "type": "git",
