@@ -1,6 +1,6 @@
 {
   "name": "skidbladnir",
-  "version": "0.2.9-b59",
+  "version": "0.3.0-b60",
   "description": "A robust, plugin-based platform for migrating test assets between various test management systems",
   "main": "index.js",
   "scripts": {
@@ -143,6 +143,7 @@
     "chalk": "^4.1.2",
     "concurrently": "^8.0.1",
     "cross-env": "^7.0.3",
+    "css-mediaquery": "^0.1.2",
     "cucumber-html-reporter": "^7.2.0",
     "eslint": "^8.39.0",
     "eslint-plugin-security": "^1.7.1",
