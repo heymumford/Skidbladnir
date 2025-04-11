@@ -153,9 +153,9 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 ## In Progress
 
 ## In Review
-- [x] Complete implementation of qTest Parameters Provider methods (Critical)
 
 ## Completed
+- [x] Complete implementation of qTest Parameters Provider methods (Critical)
 - [x] Create adapter for Zephyr-to-qTest API type conversion (Critical)
 - [x] Fix build errors for Operation Dependency Controller (Critical)
 - [x] Test: Full user workflow through UI for each provider combination (Critical)
