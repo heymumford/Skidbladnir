@@ -14,14 +14,15 @@
  * with specific support for requirements tracing
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
 import { ProviderConfig, SourceProvider, TargetProvider } from '../../../packages/common/src/interfaces/provider';
-import { ErrorResponse, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
-import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment, FieldDefinition } from '../../../packages/common/src/models/entities';
+import { ErrorResponse as _ErrorResponse, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
+import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment as _Attachment, FieldDefinition } from '../../../packages/common/src/models/entities';
 import { AttachmentContent } from '../../../packages/common/src/models/attachment';
 import { PaginatedResult } from '../../../packages/common/src/models/paginated';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
 import * as logger from '../../../internal/typescript/common/logger/LoggerAdapter';
+import * as https from 'https';
 
 // Enum for Visure error categories
 export enum VisureErrorCategory {
@@ -213,7 +214,7 @@ export class VisureClient {
       proxy: proxyConfig,
       // Add option to disable SSL verification if requested (not recommended for production)
       httpsAgent: config.metadata?.disableSSLVerification ? 
-        new (require('https').Agent)({ rejectUnauthorized: false }) : 
+        new https.Agent({ rejectUnauthorized: false }) : 
         undefined
     });
     
@@ -320,7 +321,7 @@ export class VisureClient {
     try {
       // Try to connect to the Visure server by fetching current user
       await this.ensureValidToken();
-      const response = await this.axiosInstance.get('/users/current');
+      const _response = await this.axiosInstance.get('/users/current');
       
       return { connected: true };
     } catch (error) {
@@ -1113,25 +1114,25 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Get test cases
    */
-  async getTestCases(projectId: string, options?: any): Promise<PaginatedResult<TestCase>> {
+  async getTestCases(projectId: string, _options?: any): Promise<PaginatedResult<TestCase>> {
     try {
       logger.debug('Getting test cases from Visure Solutions', { 
         projectId,
-        folderId: options?.folderId
+        folderId: _options?.folderId
       });
       
       const visureTestCases = await this.client.getTestCases(
         projectId,
-        options?.folderId,
-        !!options?.includeTraceLinks
+        _options?.folderId,
+        !!_options?.includeTraceLinks
       );
       
       // Map to canonical TestCase model
       const testCases = await Promise.all(visureTestCases.map(async (tc) => {
         // If steps are not included, fetch them
         let testCaseWithSteps = tc;
-        if (!tc.steps && options?.includeSteps !== false) {
-          testCaseWithSteps = await this.client.getTestCase(projectId, tc.id, true, !!options?.includeTraceLinks);
+        if (!tc.steps && _options?.includeSteps !== false) {
+          testCaseWithSteps = await this.client.getTestCase(projectId, tc.id, true, !!_options?.includeTraceLinks);
         }
         
         return this.mapVisureTestCaseToCanonical(testCaseWithSteps);
@@ -1139,7 +1140,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
       
       logger.info(`Retrieved ${testCases.length} test cases from Visure Solutions`, { 
         projectId,
-        folderId: options?.folderId
+        folderId: _options?.folderId
       });
       
       // Return as paginated result
@@ -1184,7 +1185,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Get test cycles
    */
-  async getTestCycles(projectId: string, options?: any): Promise<PaginatedResult<TestCycle>> {
+  async getTestCycles(_projectId: string, _options?: any): Promise<PaginatedResult<TestCycle>> {
     // Visure doesn't directly support test cycles as a concept
     // Return an empty result
     return {
@@ -1198,7 +1199,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Get test executions
    */
-  async getTestExecutions(projectId: string, testCycleId: string, options?: any): Promise<PaginatedResult<TestExecution>> {
+  async getTestExecutions(_projectId: string, _testCycleId: string, _options?: any): Promise<PaginatedResult<TestExecution>> {
     // Visure doesn't directly support test executions as a concept
     // Return an empty result
     return {
@@ -1260,7 +1261,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a folder structure
    */
-  async createFolder(projectId: string, folder: Folder): Promise<string> {
+  async createFolder(_projectId: string, _folder: Folder): Promise<string> {
     // Implement folder creation if Visure API supports it
     // This is a placeholder implementation
     throw new Error('Folder creation not implemented for Visure Solutions provider');
@@ -1344,7 +1345,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a test cycle
    */
-  async createTestCycle(projectId: string, testCycle: TestCycle): Promise<string> {
+  async createTestCycle(_projectId: string, _testCycle: TestCycle): Promise<string> {
     // Visure doesn't directly support test cycles as a concept
     throw new Error('Test cycle creation not supported by Visure Solutions provider');
   }
@@ -1352,7 +1353,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update test executions
    */
-  async createTestExecutions(projectId: string, testCycleId: string, executions: TestExecution[]): Promise<void> {
+  async createTestExecutions(_projectId: string, _testCycleId: string, _executions: TestExecution[]): Promise<void> {
     // Visure doesn't directly support test executions as a concept
     throw new Error('Test execution creation not supported by Visure Solutions provider');
   }
@@ -1408,7 +1409,7 @@ export class VisureProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update field definitions (if supported)
    */
-  async createFieldDefinition(projectId: string, fieldDefinition: FieldDefinition): Promise<string> {
+  async createFieldDefinition(_projectId: string, _fieldDefinition: FieldDefinition): Promise<string> {
     // Field definition creation typically requires admin access in Visure
     throw new Error('Field definition creation not implemented for Visure Solutions provider');
   }

@@ -8,7 +8,9 @@
 # it under the terms of the MIT License as published in the LICENSE file.
 #
 
-# Simple version update script
+# Enhanced version update script with proper XML handling
+# This script updates version information across multiple file types
+# and ensures proper XML handling for POM files
 
 # Color and tracking setup
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[0;33m'; BLUE='\033[0;34m'; CYAN='\033[0;36m'; NC='\033[0m'; BOLD='\033[1m'
@@ -19,6 +21,7 @@ ERRORS=(); WARNINGS=()
 PROJECT_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 VERSION_FILE="${PROJECT_ROOT}/build-versions.json"
 NEW_VERSION=${1:-"0.2.6-b51"}
+VERBOSE=${2:-"false"}
 
 # Output functions
 msg() { printf "$1$2${NC}\n"; }
@@ -29,6 +32,7 @@ warn() { msg "  ${YELLOW}WARNING:${NC}" "$1"; WARNINGS+=("$1"); }
 ok() { msg "  ${GREEN}✓${NC}" "$1"; }
 err() { msg "  ${RED}✗${NC}" "$1"; ERRORS+=("$1"); return 1; }
 fail() { err "$1"; print_summary; exit 1; }
+verbose() { [[ "$VERBOSE" == "true" ]] && echo -e "    $1"; }
 
 # Summary printer
 print_summary() {
@@ -43,8 +47,40 @@ print_summary() {
   echo -e "${BOLD}=======================================${NC}"
 }
 
+# Check for required dependencies
+check_dependencies() {
+  local missing=false
+  local deps=("xmlstarlet" "sed" "find" "date" "git")
+  
+  for dep in "${deps[@]}"; do
+    if ! command -v "$dep" &>/dev/null; then
+      warn "Missing dependency: $dep"
+      missing=true
+    fi
+  done
+  
+  if [[ "$missing" == "true" ]]; then
+    if command -v apt-get &>/dev/null; then
+      info "You may install missing dependencies with: sudo apt-get install xmlstarlet git"
+    elif command -v yum &>/dev/null; then
+      info "You may install missing dependencies with: sudo yum install xmlstarlet git"
+    elif command -v brew &>/dev/null; then
+      info "You may install missing dependencies with: brew install xmlstarlet git"
+    fi
+    return 1
+  fi
+  
+  return 0
+}
+
 # Announce the process
 echo -e "\n${BOLD}Skidbladnir Version Update${NC}"
+
+# STEP 0: Check dependencies
+step "Checking dependencies"
+if ! check_dependencies; then
+  warn "Some dependencies are missing, will use fallback methods where possible"
+fi
 
 # STEP 1: Parse version components
 step "Parsing version components"
@@ -63,23 +99,11 @@ else
 fi
 
 info "Version: $VERSION_BASE (build $BUILD_NUMBER)"
+verbose "Full version: $NEW_VERSION"
+verbose "Major: $VERSION_MAJOR, Minor: $VERSION_MINOR, Patch: $VERSION_PATCH, Build: $BUILD_NUMBER"
 
-# STEP 2: Update files
-step "Updating files"
-
-# Update package.json if it exists
-if [ -f "$PROJECT_ROOT/package.json" ]; then
-  prog "Updating package.json"
-  sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION}\"/" "$PROJECT_ROOT/package.json" || fail "Failed to update package.json"
-else
-  fail "package.json not found at $PROJECT_ROOT/package.json"
-fi
-
-# Update pyproject.toml if it exists
-if [ -f "$PROJECT_ROOT/pyproject.toml" ]; then
-  prog "Updating pyproject.toml"
-  sed -i "/\[tool\.poetry\]/,/\[.*\]/{s/version = \"[^\"]*\"/version = \"${NEW_VERSION}\"/}" "$PROJECT_ROOT/pyproject.toml" || warn "Failed to update pyproject.toml"
-fi
+# STEP 2: Update build-versions.json as the single source of truth
+step "Creating version source of truth"
 
 # Create build-versions.json
 prog "Creating build-versions.json"
@@ -102,33 +126,143 @@ cat > "$VERSION_FILE" << EOF || fail "Failed to create build-versions.json"
 }
 EOF
 
-# STEP 3: Update POM files
+ok "Created build-versions.json"
+
+# STEP 3: Update files
+step "Updating package files"
+
+# Update package.json if it exists
+if [ -f "$PROJECT_ROOT/package.json" ]; then
+  prog "Updating package.json"
+  
+  if ! sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION}\"/" "$PROJECT_ROOT/package.json"; then
+    warn "Failed to update package.json"
+  else
+    ok "Updated package.json"
+  fi
+else
+  warn "package.json not found at $PROJECT_ROOT/package.json"
+fi
+
+# Update pyproject.toml if it exists
+if [ -f "$PROJECT_ROOT/pyproject.toml" ]; then
+  prog "Updating pyproject.toml"
+  
+  # More reliable pattern for poetry version
+  if ! sed -i "s/^\(version = \)\"[^\"]*\"/\1\"${NEW_VERSION}\"/" "$PROJECT_ROOT/pyproject.toml"; then
+    warn "Failed to update pyproject.toml"
+  else
+    ok "Updated pyproject.toml"
+  fi
+fi
+
+# STEP 4: Update POM files
 step "Updating Maven POM files"
 
-# Skip POM updates if xmlstarlet is not available
+# Check for xmlstarlet
 if ! command -v xmlstarlet &>/dev/null; then
-  warn "xmlstarlet not found, skipping POM updates"
+  warn "xmlstarlet not found, using fallback method for POM updates"
+  use_xmlstarlet=false
 else
-  # Find and update all POM files
-  pom_count=0; pom_updated=0
-  for pom_file in $(find "$PROJECT_ROOT" -name "pom.xml" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null || echo ""); do
-    pom_count=$((pom_count + 1))
-    prog "Updating $pom_file"
+  use_xmlstarlet=true
+fi
+
+# Find and update all POM files
+pom_count=0; pom_updated=0
+for pom_file in $(find "$PROJECT_ROOT" -name "pom.xml" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null || echo ""); do
+  pom_count=$((pom_count + 1))
+  prog "Processing $pom_file"
+  
+  if [[ "$use_xmlstarlet" == "true" ]]; then
+    # Use xmlstarlet for precise XML manipulation
     
-    # Update project version
-    if xmlstarlet ed -L -N x="http://maven.apache.org/POM/4.0.0" -u "/x:project/x:version" -v "$VERSION_BASE" "$pom_file" 2>/dev/null; then
-      pom_updated=$((pom_updated + 1))
-      # Update skidbladnir.version property
-      xmlstarlet ed -L -N x="http://maven.apache.org/POM/4.0.0" -u "/x:project/x:properties/x:skidbladnir.version" -v "$VERSION_BASE" "$pom_file" 2>/dev/null
+    # Create temp file for error handling
+    temp_file=$(mktemp)
+    
+    # 1. Check if the POM has a project/version tag
+    if xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:version" "$pom_file" &> /dev/null; then
+      # Update project version
+      if xmlstarlet ed -L -N x="http://maven.apache.org/POM/4.0.0" -u "/x:project/x:version" -v "$VERSION_BASE" "$pom_file" 2>"$temp_file"; then
+        verbose "Updated project version to $VERSION_BASE"
+        pom_updated=$((pom_updated + 1))
+      else
+        warn "Failed to update project version in $pom_file: $(cat "$temp_file")"
+      fi
     else
-      warn "Failed to update version in $pom_file"
+      verbose "No project version tag found in $pom_file, skipping project version update"
+    fi
+    
+    # 2. Check if the POM has a skidbladnir.version property
+    if xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:properties/x:skidbladnir.version" "$pom_file" &> /dev/null; then
+      # Update skidbladnir.version property
+      if xmlstarlet ed -L -N x="http://maven.apache.org/POM/4.0.0" -u "/x:project/x:properties/x:skidbladnir.version" -v "$VERSION_BASE" "$pom_file" 2>"$temp_file"; then
+        verbose "Updated skidbladnir.version property to $VERSION_BASE"
+      else
+        warn "Failed to update skidbladnir.version property in $pom_file: $(cat "$temp_file")"
+      fi
+    else
+      verbose "No skidbladnir.version property found in $pom_file, skipping property update"
+    fi
+    
+    # Clean up temp file
+    rm -f "$temp_file"
+    
+  else
+    # Fallback for systems without xmlstarlet - more limited
+    warn "Using limited sed-based POM update for $pom_file"
+    
+    # Only update top-level version tag (first occurrence)
+    if sed -i "0,/<version>[^<]*<\/version>/{s/<version>[^<]*<\/version>/<version>${VERSION_BASE}<\/version>/}" "$pom_file"; then
+      pom_updated=$((pom_updated + 1))
+      verbose "Updated project version using sed fallback"
+    else
+      warn "Failed to update version in $pom_file using sed"
+    fi
+    
+    # Try to update skidbladnir.version property if it exists
+    if grep -q "<skidbladnir.version>" "$pom_file"; then
+      if sed -i "s/<skidbladnir.version>[^<]*<\/skidbladnir.version>/<skidbladnir.version>${VERSION_BASE}<\/skidbladnir.version>/" "$pom_file"; then
+        verbose "Updated skidbladnir.version property using sed fallback"
+      else
+        warn "Failed to update skidbladnir.version property in $pom_file using sed"
+      fi
+    fi
+  fi
+done
+
+[ $pom_count -eq 0 ] && info "No POM files found" || ok "Updated $pom_updated of $pom_count POM files"
+
+# STEP 5: Verify version consistency (if xmlstarlet is available)
+if [[ "$use_xmlstarlet" == "true" ]] && [[ "$pom_count" -gt 0 ]]; then
+  step "Verifying version consistency"
+  
+  inconsistencies=0
+  for pom_file in $(find "$PROJECT_ROOT" -name "pom.xml" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null || echo ""); do
+    # Get the POM version
+    pom_version=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:version" "$pom_file" 2>/dev/null || echo "")
+    
+    # Get the skidbladnir.version property
+    property_version=$(xmlstarlet sel -N x="http://maven.apache.org/POM/4.0.0" -t -v "/x:project/x:properties/x:skidbladnir.version" "$pom_file" 2>/dev/null || echo "")
+    
+    # Check for inconsistencies
+    if [[ -n "$pom_version" ]] && [[ "$pom_version" != "$VERSION_BASE" ]]; then
+      warn "Version inconsistency in $pom_file: Expected $VERSION_BASE, got $pom_version"
+      inconsistencies=$((inconsistencies + 1))
+    fi
+    
+    if [[ -n "$property_version" ]] && [[ "$property_version" != "$VERSION_BASE" ]]; then
+      warn "Property version inconsistency in $pom_file: Expected $VERSION_BASE, got $property_version"
+      inconsistencies=$((inconsistencies + 1))
     fi
   done
   
-  [ $pom_count -eq 0 ] && info "No POM files found" || ok "Updated $pom_updated of $pom_count POM files"
+  if [[ "$inconsistencies" -eq 0 ]]; then
+    ok "All POM files have consistent versions"
+  else
+    warn "Found $inconsistencies version inconsistencies in POM files"
+  fi
 fi
 
 ok "Version update complete"
-
 print_summary
 [ ${#ERRORS[@]} -gt 0 ] && exit 1 || exit 0

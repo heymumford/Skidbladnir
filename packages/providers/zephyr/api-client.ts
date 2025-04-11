@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import { createResilientAxiosClient } from '../../common/src/utils/resilience/resilience-factory';
 

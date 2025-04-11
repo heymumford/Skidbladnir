@@ -15,7 +15,7 @@
  */
 
 import {
-  TestManagementProvider,
+  TestManagementProvider as _TestManagementProvider,
   SourceProvider,
   TargetProvider,
   ProviderConfig,
@@ -27,7 +27,7 @@ import {
   TestCycleQueryOptions,
   ExecutionQueryOptions,
   ProviderApiContract,
-  OperationDefinition
+  OperationDefinition as _OperationDefinition
 } from '../../common/src/interfaces/provider';
 
 import {
@@ -45,7 +45,7 @@ import { PaginatedResult } from '../../common/src/models/paginated';
 
 import { ZephyrClient } from './api-client';
 import { ZephyrMapper } from './models/mappers';
-import { ExternalServiceError } from '../../pkg/domain/errors/DomainErrors';
+import { ExternalServiceError as _ExternalServiceError } from '../../pkg/domain/errors/DomainErrors';
 import { createErrorHandler } from '../../common/src/utils/resilience/error-handler';
 
 /**
@@ -557,8 +557,8 @@ export class ZephyrProvider implements SourceProvider, TargetProvider {
    * Note: Zephyr Scale doesn't support creating custom fields via API
    */
   async createFieldDefinition(
-    projectId: string,
-    fieldDefinition: FieldDefinition
+    _projectId: string,
+    _fieldDefinition: FieldDefinition
   ): Promise<string> {
     throw new Error('Creating custom fields is not supported by the Zephyr Scale API');
   }

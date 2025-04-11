@@ -20,10 +20,10 @@ import {
 import { 
   FieldDefinition,
   FieldType,
-  FieldOption
+  FieldOption as _FieldOption
 } from '../../../common/src/models/field-definition';
 
-import { AttachmentContent } from '../../../common/src/models/attachment';
+import { AttachmentContent as _AttachmentContent } from '../../../common/src/models/attachment';
 
 /**
  * Mapper to convert between Zephyr API models and internal models

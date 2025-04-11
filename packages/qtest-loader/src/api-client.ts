@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse } from 'axios';
 import { RateLimiter } from '../../common/src/utils/rate-limiter';
 
 /**
