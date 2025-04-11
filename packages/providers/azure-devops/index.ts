@@ -13,12 +13,12 @@
  * Implements the provider interface for Azure DevOps' test management system
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ProviderConfig, SourceProvider, TargetProvider, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
-import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment } from '../../../packages/common/src/models/entities';
-import { AttachmentContent } from '../../../packages/common/src/models/attachment';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
+import { ProviderConfig, SourceProvider, TargetProvider, ConnectionStatus as _ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
+import { Project, TestCase, Folder as _Folder, TestCycle, TestExecution, Attachment as _Attachment } from '../../../packages/common/src/models/entities';
+import { AttachmentContent as _AttachmentContent } from '../../../packages/common/src/models/attachment';
 import { PaginatedResult } from '../../../packages/common/src/models/paginated';
-import { FieldDefinition } from '../../../packages/common/src/models/field-definition';
+import { FieldDefinition as _FieldDefinition } from '../../../packages/common/src/models/field-definition';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
 import { defaultLogger as logger } from '../../../packages/common/src/utils/logger';
 
@@ -784,7 +784,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
    * Get test folders/hierarchical structure
    * In Azure DevOps, test suites can be used as folders
    */
-  async getFolders(projectId: string): Promise<Folder[]> {
+  async getFolders(_projectId: string): Promise<Folder[]> {
     try {
       logger.debug('Getting test suites as folders from Azure DevOps');
       
@@ -824,13 +824,13 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Get test cases
    */
-  async getTestCases(projectId: string, options?: any): Promise<PaginatedResult<TestCase>> {
+  async getTestCases(_projectId: string, _options?: any): Promise<PaginatedResult<TestCase>> {
     try {
-      logger.debug('Getting test cases from Azure DevOps', { projectId });
+      logger.debug('Getting test cases from Azure DevOps', { projectId: _projectId });
       
       // Extract planId and suiteId from options or use defaults
-      const planId = options?.planId || this.config.metadata?.defaultTestPlanId;
-      const suiteId = options?.suiteId || this.config.metadata?.defaultTestSuiteId;
+      const planId = _options?.planId || this.config.metadata?.defaultTestPlanId;
+      const suiteId = _options?.suiteId || this.config.metadata?.defaultTestSuiteId;
       
       if (!planId || !suiteId) {
         logger.warn('No test plan or suite specified, and no defaults configured');
@@ -898,7 +898,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Get test cycles
    */
-  async getTestCycles(projectId: string, options?: any): Promise<PaginatedResult<TestCycle>> {
+  async getTestCycles(_projectId: string, _options?: any): Promise<PaginatedResult<TestCycle>> {
     // Test plans in Azure DevOps can be considered test cycles
     try {
       logger.debug('Getting test plans as test cycles from Azure DevOps');
@@ -938,7 +938,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Get test executions
    */
-  async getTestExecutions(projectId: string, testCycleId: string, options?: any): Promise<PaginatedResult<TestExecution>> {
+  async getTestExecutions(_projectId: string, _testCycleId: string, _options?: any): Promise<PaginatedResult<TestExecution>> {
     // Placeholder for test executions
     // Azure DevOps has test runs that would need to be fetched
     return {
@@ -952,7 +952,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Get attachment content
    */
-  async getAttachmentContent(projectId: string, attachmentId: string): Promise<AttachmentContent> {
+  async getAttachmentContent(_projectId: string, _attachmentId: string): Promise<AttachmentContent> {
     // Placeholder for attachment content
     throw new Error('Get attachment content not implemented for Azure DevOps provider');
   }
@@ -960,7 +960,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Get field definitions (including custom fields)
    */
-  async getFieldDefinitions(projectId: string): Promise<FieldDefinition[]> {
+  async getFieldDefinitions(_projectId: string): Promise<FieldDefinition[]> {
     // Placeholder for field definitions
     return [];
   }
@@ -968,7 +968,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a folder structure
    */
-  async createFolder(projectId: string, folder: Folder): Promise<string> {
+  async createFolder(_projectId: string, _folder: Folder): Promise<string> {
     // Placeholder for folder creation
     throw new Error('Folder creation not implemented for Azure DevOps provider');
   }
@@ -1043,7 +1043,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a test cycle
    */
-  async createTestCycle(projectId: string, testCycle: TestCycle): Promise<string> {
+  async createTestCycle(_projectId: string, _testCycle: TestCycle): Promise<string> {
     // Placeholder for test cycle creation
     throw new Error('Test cycle creation not implemented for Azure DevOps provider');
   }
@@ -1051,7 +1051,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update test executions
    */
-  async createTestExecutions(projectId: string, testCycleId: string, executions: TestExecution[]): Promise<void> {
+  async createTestExecutions(_projectId: string, _testCycleId: string, _executions: TestExecution[]): Promise<void> {
     // Placeholder for test execution creation
     throw new Error('Test execution creation not implemented for Azure DevOps provider');
   }
@@ -1059,7 +1059,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
   /**
    * Upload an attachment
    */
-  async uploadAttachment(projectId: string, entityType: string, entityId: string, attachment: AttachmentContent): Promise<string> {
+  async uploadAttachment(_projectId: string, _entityType: string, _entityId: string, _attachment: AttachmentContent): Promise<string> {
     // Placeholder for attachment upload
     throw new Error('Attachment upload not implemented for Azure DevOps provider');
   }

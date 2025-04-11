@@ -13,12 +13,13 @@
  * Implements the provider interface for Jama Software's test management system
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ProviderConfig, SourceProvider, TargetProvider } from '../../../pkg/interfaces/providers';
-import { ErrorResponse, ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
+import { ProviderConfig, SourceProvider as _SourceProvider, TargetProvider as _TargetProvider } from '../../../pkg/interfaces/providers';
+import { ErrorResponse as _ErrorResponse, ProviderConnectionStatus as _ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
 import { Identifier } from '../../../pkg/domain/value-objects/Identifier';
 import * as logger from '../../../internal/typescript/common/logger/LoggerAdapter';
+import * as https from 'https';
 
 // Enum for Jama error categories
 export enum JamaErrorCategory {
@@ -170,7 +171,7 @@ export class JamaClient {
       proxy: proxyConfig,
       // Add option to disable SSL verification if requested (not recommended for production)
       httpsAgent: config.metadata?.disableSSLVerification ? 
-        new (require('https').Agent)({ rejectUnauthorized: false }) : 
+        new https.Agent({ rejectUnauthorized: false }) : 
         undefined
     });
     
@@ -380,7 +381,7 @@ export class JamaClient {
     try {
       // Try to connect to the Jama server by fetching current user
       await this.ensureValidToken();
-      const response = await this.axiosInstance.get('/users/current');
+      const _response = await this.axiosInstance.get('/users/current');
       
       return { connected: true };
     } catch (error) {
@@ -891,7 +892,7 @@ export class JamaClient {
 /**
  * Main Jama Provider implementation
  */
-export class JamaProvider implements SourceProvider, TargetProvider {
+export class JamaProvider implements _SourceProvider, _TargetProvider {
   private client: JamaClient;
   private resilientClient: ResilientApiClient;
   private testCaseTypeId: number | null = null;
@@ -919,7 +920,7 @@ export class JamaProvider implements SourceProvider, TargetProvider {
   /**
    * Test connection to the provider
    */
-  async testConnection(): Promise<ProviderConnectionStatus> {
+  async testConnection(): Promise<_ProviderConnectionStatus> {
     try {
       logger.debug('Testing connection to Jama', { baseUrl: this.config.baseUrl });
       

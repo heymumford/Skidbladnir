@@ -13,12 +13,13 @@
  * Implements the provider interface for Micro Focus Application Lifecycle Management (formerly HP ALM/Quality Center)
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ProviderConfig, SourceProvider, TargetProvider } from '../../../pkg/interfaces/providers';
-import { ErrorResponse, ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
+import { ProviderConfig, SourceProvider as _SourceProvider, TargetProvider as _TargetProvider } from '../../../pkg/interfaces/providers';
+import { ErrorResponse as _ErrorResponse, ProviderConnectionStatus as _ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
 import { Identifier } from '../../../pkg/domain/value-objects/Identifier';
 import * as logger from '../../../internal/typescript/common/logger/LoggerAdapter';
+import * as https from 'https';
 
 // Enum for HP ALM error categories
 export enum HPALMErrorCategory {
@@ -157,7 +158,7 @@ export class HPALMClient {
       proxy: proxyConfig,
       // Add option to disable SSL verification if requested (not recommended for production)
       httpsAgent: config.metadata?.disableSSLVerification ? 
-        new (require('https').Agent)({ rejectUnauthorized: false }) : 
+        new https.Agent({ rejectUnauthorized: false }) : 
         undefined
     });
     
@@ -209,7 +210,7 @@ export class HPALMClient {
   async testConnection(): Promise<{ connected: boolean }> {
     try {
       // Try to connect to the ALM server
-      const response = await this.axiosInstance.get(`/rest/domains/${this.config.domain}/projects/${this.config.project}`);
+      const _response = await this.axiosInstance.get(`/rest/domains/${this.config.domain}/projects/${this.config.project}`);
       
       return { connected: true };
     } catch (error) {
@@ -748,7 +749,7 @@ export class HPALMClient {
 /**
  * Main HP ALM Provider implementation
  */
-export class HPALMProvider implements SourceProvider, TargetProvider {
+export class HPALMProvider implements _SourceProvider, _TargetProvider {
   private client: HPALMClient;
   private resilientClient: ResilientApiClient;
   private sessionId: string | null = null;
@@ -777,7 +778,7 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
   /**
    * Test connection to the provider
    */
-  async testConnection(): Promise<ProviderConnectionStatus> {
+  async testConnection(): Promise<_ProviderConnectionStatus> {
     try {
       logger.debug('Testing connection to Micro Focus ALM', { baseUrl: this.config.baseUrl });
       
