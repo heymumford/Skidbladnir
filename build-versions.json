@@ -1,10 +1,10 @@
 {
-  "version": "0.3.0-b66",
+  "version": "0.3.0-b67",
   "major": 0,
   "minor": 3,
   "patch": 0,
-  "build": 66,
-  "timestamp": "2025-04-11T19:42:15.000Z",
+  "build": 67,
+  "timestamp": "2025-04-11T20:05:30.000Z",
   "environment": "dev",
   "git": {
     "branch": "main",
