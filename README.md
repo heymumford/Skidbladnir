@@ -218,6 +218,7 @@ Comprehensive documentation is organized by category in the `docs/` directory:
 - [📘 Migration Guide](docs/user/migration-guide/README.md) - Complete migration user guide
 - [🎮 User Interface Guide](docs/ui/user-interface-guide.md) - How to use the LCARS interface
 - [♿ Accessibility Guide](docs/user/accessibility-guide.md) - Accessibility features and guidelines
+- [🌐 Cross-Browser Support](docs/user/cross-browser-testing-guide.md) - Browser compatibility guide
 
 ### For Developers
 - [🏗️ Architecture Overview](docs/architecture/README.md) - System architecture and design
@@ -226,11 +227,16 @@ Comprehensive documentation is organized by category in the `docs/` directory:
 - [🏠 Laptop-Friendly Guide](docs/development/laptop-friendly-guide.md) - Optimized for 16GB laptops
 - [🔍 API Documentation](docs/api/README.md) - API specifications and implementations
 - [📝 ADRs](docs/adrs/README.md) - Architecture Decision Records
+- [🧙 AI Reference](docs/ai-reference/README.md) - AI prompts and reference templates
+
+### Provider Documentation
+- [🔌 Provider Interface](docs/api/provider-interface.md) - Platform adapter interface
+- [📊 qTest Provider](docs/providers/qtest-architecture.md) - qTest provider implementation
+- [📋 Zephyr Provider](docs/user/migration-guide/zephyr-qtest-implementation.md) - Zephyr provider details
 
 ### Component Guides
 - [🎨 LCARS UI Design System](docs/ui/lcars-design-system.md) - Star Trek inspired interface
 - [🔄 API Bridge Architecture](docs/api/api-bridge-architecture.md) - API integration details
-- [🔌 Provider Interface](docs/api/provider-interface.md) - Platform adapters
 - [📦 Containerization](docs/development/containerization.md) - Container setup
 - [🧠 LLM Integration](docs/architecture/local-llm-assistant.md) - AI assistant integration
 

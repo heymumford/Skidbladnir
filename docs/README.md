@@ -7,10 +7,12 @@ This directory contains comprehensive documentation for the Skidbladnir project,
 ```
 docs/
 ├── adrs/                    # Architecture Decision Records (numbered sequences)
+├── ai-reference/            # AI system prompts and reference materials
+├── api/                     # API and general provider integration details
 ├── architecture/            # System architecture documentation
-├── api/                     # API and provider integration details
 ├── development/             # Development guides and standards
 ├── project/                 # Project management documents
+├── providers/               # Specific provider implementation details
 ├── testing/                 # Testing strategies and frameworks
 ├── ui/                      # User interface design and implementation
 └── user/                    # End-user guides and tutorials
@@ -26,6 +28,7 @@ Comprehensive documentation of the system's architecture, including:
 - [Folder Structure](architecture/folder-structure.md)
 - [Architecture Validation Tools](architecture/architecture-validation-tools.md)
 - [Cross-Language Dependency Analysis](architecture/cross-language-dependency-analyzer-guide.md)
+- [Local LLM Assistant](architecture/local-llm-assistant.md)
 
 ### [API](api/README.md)
 Details on API specifications, bridges, and provider implementations:
@@ -35,6 +38,12 @@ Details on API specifications, bridges, and provider implementations:
 - [Operation Dependency System](api/operation-dependency-system.md)
 - [Cross-Component Testing](api/cross-component-testing.md)
 - [Cross-Language Contract Testing](api/cross-language-contract-testing.md)
+
+### [Providers](providers/README.md)
+Documentation for specific provider implementations:
+- [qTest Provider Architecture](providers/qtest-architecture.md)
+- [qTest API Endpoints](providers/qtest-api-endpoints.md)
+- [Zephyr Provider Implementation](user/migration-guide/zephyr-qtest-implementation.md)
 
 ### [Development](development/README.md)
 Development procedures, environments, and practices:
