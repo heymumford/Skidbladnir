@@ -94,7 +94,7 @@ export class QualityAnalyzer {
    */
   public static findTestsWithExcessiveSetup(
     testFiles: TestFile[],
-    threshold: number = 5
+    threshold = 5
   ): { file: string; testCase: TestCase; setupLines: number }[] {
     const results: { file: string; testCase: TestCase; setupLines: number }[] = [];
     
@@ -109,7 +109,7 @@ export class QualityAnalyzer {
    */
   public static findComplexTests(
     testFiles: TestFile[],
-    threshold: number = 10
+    threshold = 10
   ): { file: string; testCase: TestCase; complexity: number }[] {
     const results: { file: string; testCase: TestCase; complexity: number }[] = [];
     
@@ -124,7 +124,7 @@ export class QualityAnalyzer {
    */
   public static findSlowTests(
     testFiles: TestFile[],
-    thresholdMs: number = 1000
+    thresholdMs = 1000
   ): { file: string; testCase: TestCase; executionTimeMs: number }[] {
     const results: { file: string; testCase: TestCase; executionTimeMs: number }[] = [];
     

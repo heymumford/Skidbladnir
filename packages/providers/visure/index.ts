@@ -368,9 +368,9 @@ export class VisureClient {
   /**
    * Get requirements for a project
    */
-  async getRequirements(projectId: string, folderId?: string, includeTraceLinks: boolean = false): Promise<Requirement[]> {
+  async getRequirements(projectId: string, folderId?: string, includeTraceLinks = false): Promise<Requirement[]> {
     try {
-      let url = `/projects/${projectId}/requirements`;
+      const url = `/projects/${projectId}/requirements`;
       const params: Record<string, any> = {};
       
       if (folderId) {
@@ -391,7 +391,7 @@ export class VisureClient {
   /**
    * Get a specific requirement
    */
-  async getRequirement(projectId: string, requirementId: string, includeTraceLinks: boolean = false): Promise<Requirement> {
+  async getRequirement(projectId: string, requirementId: string, includeTraceLinks = false): Promise<Requirement> {
     try {
       const params: Record<string, any> = {};
       
@@ -445,9 +445,9 @@ export class VisureClient {
   /**
    * Get test cases for a project
    */
-  async getTestCases(projectId: string, folderId?: string, includeTraceLinks: boolean = false): Promise<any[]> {
+  async getTestCases(projectId: string, folderId?: string, includeTraceLinks = false): Promise<any[]> {
     try {
-      let url = `/projects/${projectId}/testcases`;
+      const url = `/projects/${projectId}/testcases`;
       const params: Record<string, any> = {};
       
       if (folderId) {
@@ -468,7 +468,7 @@ export class VisureClient {
   /**
    * Get a specific test case
    */
-  async getTestCase(projectId: string, testCaseId: string, includeSteps: boolean = true, includeTraceLinks: boolean = false): Promise<any> {
+  async getTestCase(projectId: string, testCaseId: string, includeSteps = true, includeTraceLinks = false): Promise<any> {
     try {
       const params: Record<string, any> = {};
       
@@ -665,7 +665,7 @@ export class VisureClient {
     let message = 'Unknown error occurred';
     let category = VisureErrorCategory.UNKNOWN;
     let statusCode = 0;
-    let details: Record<string, any> = {};
+    const details: Record<string, any> = {};
     
     if (axios.isAxiosError(error)) {
       // Handle Axios specific errors
@@ -841,9 +841,9 @@ export class VisureClient {
  * Main Visure Solutions Provider implementation
  */
 export class VisureProvider implements SourceProvider, TargetProvider {
-  private id: string = 'visure';
-  private name: string = 'Visure Solutions';
-  private version: string = '1.0.0';
+  private id = 'visure';
+  private name = 'Visure Solutions';
+  private version = '1.0.0';
   private client: VisureClient;
   private resilientClient: ResilientApiClient;
   

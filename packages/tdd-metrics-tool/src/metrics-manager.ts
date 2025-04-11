@@ -112,7 +112,7 @@ export class MetricsManager {
     );
     
     // Start with empty coverage data
-    let combinedCoverageData: CoverageData = {
+    const combinedCoverageData: CoverageData = {
       timestamp: new Date(),
       sourceFiles: [],
       testFiles: [],

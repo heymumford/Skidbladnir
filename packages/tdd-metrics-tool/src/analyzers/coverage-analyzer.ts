@@ -136,7 +136,7 @@ export class CoverageAnalyzer {
    */
   public static findLowCoverageFiles(
     coverageData: CoverageData,
-    threshold: number = 50
+    threshold = 50
   ): SourceFile[] {
     // For now, this is a simplification since we don't have per-file coverage
     // With actual per-file coverage data, we would filter based on that

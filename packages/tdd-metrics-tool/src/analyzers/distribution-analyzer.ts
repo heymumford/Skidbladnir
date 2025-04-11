@@ -68,7 +68,7 @@ export class DistributionAnalyzer {
    */
   public static findUndertestedLayers(
     distribution: TestDistributionMetrics,
-    thresholdPercentage: number = 10
+    thresholdPercentage = 10
   ): ArchitecturalLayer[] {
     const percentageByLayer = distribution.getTestPercentageByLayer();
     const undertestedLayers: ArchitecturalLayer[] = [];

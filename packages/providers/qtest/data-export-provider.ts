@@ -213,7 +213,7 @@ export class QTestDataExportProvider extends QTestProvider {
   async downloadFile(
     projectId: string,
     filePath: string,
-    asBinary: boolean = false
+    asBinary = false
   ): Promise<ExportFile> {
     try {
       this.ensureDataExportClient();
@@ -363,7 +363,7 @@ export class QTestDataExportProvider extends QTestProvider {
   async downloadLatestExport(
     projectId: string,
     pattern?: string,
-    asBinary: boolean = false
+    asBinary = false
   ): Promise<ExportFile | null> {
     try {
       // First get the latest export metadata

@@ -221,7 +221,7 @@ export class ZephyrClient {
     projectKey: string,
     name: string,
     parentId?: string,
-    folderType: string = 'TEST_CASE'
+    folderType = 'TEST_CASE'
   ): Promise<AxiosResponse> {
     const data: any = {
       name,

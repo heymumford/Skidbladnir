@@ -80,8 +80,8 @@ export class QTestClient {
    */
   async getModules(
     projectId: number,
-    page: number = 1,
-    pageSize: number = 100
+    page = 1,
+    pageSize = 100
   ): Promise<AxiosResponse> {
     return this.client.get(
       `/projects/${projectId}/modules?page=${page}&pageSize=${pageSize}`
@@ -109,8 +109,8 @@ export class QTestClient {
   async getTestCases(
     projectId: number,
     moduleId?: number,
-    page: number = 1,
-    pageSize: number = 100
+    page = 1,
+    pageSize = 100
   ): Promise<AxiosResponse> {
     let url = `/projects/${projectId}/test-cases?page=${page}&pageSize=${pageSize}`;
     
@@ -173,8 +173,8 @@ export class QTestClient {
    */
   async getTestCycles(
     projectId: number,
-    page: number = 1,
-    pageSize: number = 100
+    page = 1,
+    pageSize = 100
   ): Promise<AxiosResponse> {
     return this.client.get(
       `/projects/${projectId}/test-cycles?page=${page}&pageSize=${pageSize}`

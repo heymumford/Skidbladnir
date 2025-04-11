@@ -462,7 +462,7 @@ export class QTestTestCaseMapper implements TestCaseMapper<Record<string, any>> 
   /**
    * Get a property value from the qTest test case.
    */
-  private getPropertyValue(qtestCase: Record<string, any>, propertyName: string, defaultValue: string = ''): string {
+  private getPropertyValue(qtestCase: Record<string, any>, propertyName: string, defaultValue = ''): string {
     if (!qtestCase.properties) {
       return defaultValue;
     }
@@ -778,7 +778,7 @@ export class QTestTestExecutionMapper implements TestExecutionMapper<Record<stri
   /**
    * Get a property value from the qTest object.
    */
-  private getPropertyValue(qtestObject: Record<string, any>, propertyName: string, defaultValue: string = ''): string {
+  private getPropertyValue(qtestObject: Record<string, any>, propertyName: string, defaultValue = ''): string {
     if (!qtestObject.properties) {
       return defaultValue;
     }

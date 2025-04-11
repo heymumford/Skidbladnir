@@ -516,7 +516,7 @@ export class QTestScenarioProvider extends QTestProvider {
     };
     
     let currentSection: 'tags' | 'feature' | 'description' | 'steps' = 'tags';
-    let descriptionLines: string[] = [];
+    const descriptionLines: string[] = [];
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();

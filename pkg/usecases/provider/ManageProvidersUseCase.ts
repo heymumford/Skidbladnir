@@ -227,7 +227,9 @@ export class ManageProvidersUseCase {
     const provider = this.getProviderById(providerId);
     
     if ('getProjects' in provider) {
-      return provider.getProjects();
+      // Use type assertion to help TypeScript understand this is a valid function
+      const getProjectsFn = provider.getProjects as () => Promise<Project[]>;
+      return getProjectsFn();
     }
     
     throw new Error(`Provider ${providerId} does not support getting projects`);
@@ -587,7 +589,10 @@ export class ManageProvidersUseCase {
         }
         
         // Then, create child folders
-        for (const parentId of folderMap.keys()) {
+        // Convert keys to array to avoid downlevelIteration issue
+        const parentIds = Array.from(folderMap.keys());
+        
+        for (const parentId of parentIds) {
           if (parentId === undefined) {
             continue;
           }

@@ -96,12 +96,13 @@ export class ZephyrQTestContextAdapter {
    * @returns qTest-compatible operation results
    */
   private static mapResultsToQTest(zephyrResults: Record<OperationType, any>): Record<OperationType, any> {
-    const qtestResults: Record<OperationType, any> = {};
+    // Initialize with all operation types to avoid TypeScript errors
+    const qtestResults = this.createEmptyOperationResults();
     
     // Process each result
     for (const [opType, result] of Object.entries(zephyrResults)) {
       const zephyrOpType = opType as OperationType;
-      const qtestOpType = ZephyrQTestAdapter.findEquivalentQTestOperation(zephyrOpType.toString());
+      const qtestOpType = ZephyrQTestAdapter.findEquivalentQTestOperation(zephyrOpType.toString()) as OperationType;
       
       // Transform the result data structure if needed
       const transformedResult = this.transformResultData(zephyrOpType, result);
@@ -114,13 +115,29 @@ export class ZephyrQTestContextAdapter {
   }
   
   /**
+   * Create an empty results object with all operation types initialized to null
+   * This avoids TypeScript errors about missing properties
+   */
+  private static createEmptyOperationResults(): Record<OperationType, any> {
+    const results: Record<OperationType, any> = {} as Record<OperationType, any>;
+    
+    // Initialize all operation types with null values
+    Object.values(OperationType).forEach((type) => {
+      results[type] = null;
+    });
+    
+    return results;
+  }
+  
+  /**
    * Map operation results from qTest format back to Zephyr Scale format
    * 
    * @param qtestResults qTest operation results
    * @returns Zephyr Scale-compatible operation results
    */
   private static mapResultsToZephyr(qtestResults: Record<OperationType, any>): Record<OperationType, any> {
-    const zephyrResults: Record<OperationType, any> = {};
+    // Initialize with all operation types to avoid TypeScript errors
+    const zephyrResults = this.createEmptyOperationResults();
     const operationMap = ZephyrQTestAdapter.getOperationTypeMap();
     
     // Process each result
@@ -231,7 +248,7 @@ export class ZephyrQTestContextAdapter {
     
     // Map test steps
     if (zephyrTestCase.steps && Array.isArray(zephyrTestCase.steps)) {
-      qtestTestCase.test_steps = zephyrTestCase.steps.map((step: any, index: number) => ({
+      (qtestTestCase as any).test_steps = zephyrTestCase.steps.map((step: any, index: number) => ({
         id: step.id || `step-${index + 1}`,
         order: step.index || index + 1,
         description: step.description || '',
@@ -261,7 +278,7 @@ export class ZephyrQTestContextAdapter {
       for (const [name, value] of Object.entries(zephyrTestCase.customFields)) {
         qtestTestCase.properties.push({
           field_name: name,
-          field_value: value
+          field_value: String(value) // Convert to string to ensure type safety
         });
       }
     }
@@ -314,7 +331,7 @@ export class ZephyrQTestContextAdapter {
     
     // Map test steps
     if (qtestTestCase.test_steps && Array.isArray(qtestTestCase.test_steps)) {
-      zephyrTestCase.steps = qtestTestCase.test_steps.map((step: any) => ({
+      (zephyrTestCase as any).steps = qtestTestCase.test_steps.map((step: any) => ({
         id: step.id,
         index: step.order,
         description: step.description || '',
@@ -337,7 +354,7 @@ export class ZephyrQTestContextAdapter {
     }
     
     if (Object.keys(customFields).length > 0) {
-      zephyrTestCase.customFields = customFields;
+      (zephyrTestCase as any).customFields = customFields;
     }
     
     return zephyrTestCase;

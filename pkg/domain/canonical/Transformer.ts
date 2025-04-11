@@ -364,7 +364,7 @@ export class TransformationService {
     sourceSystem: string,
     targetSystem: string,
     data: Record<string, any>,
-    entityType: string = 'test-case',
+    entityType = 'test-case',
     migrationId?: string,
     fieldMappings?: Record<string, string>,
     valueMappings?: Record<string, Record<string, any>>

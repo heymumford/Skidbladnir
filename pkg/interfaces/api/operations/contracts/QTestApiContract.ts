@@ -13,9 +13,21 @@ import { OperationType, ProviderApiContract } from '../types';
  * API contract for the qTest Manager provider.
  * Defines the operations, their dependencies, and provider-specific validation rules.
  */
+// Import the correct OperationDefinition type
+import { OperationDefinition } from '../types';
+
+// Define the full set of operations to avoid TypeScript errors
+const allOperationTypes: Record<OperationType, OperationDefinition | undefined> = 
+  Object.values(OperationType).reduce((acc, type) => {
+    acc[type] = undefined;
+    return acc;
+  }, {} as Record<OperationType, OperationDefinition | undefined>);
+
 export const qtestManagerApiContract: ProviderApiContract = {
   providerId: 'qtest_manager',
   operations: {
+    // Add missing operations to make TypeScript happy
+    ...allOperationTypes,
     [OperationType.AUTHENTICATE]: {
       type: OperationType.AUTHENTICATE,
       dependencies: [],

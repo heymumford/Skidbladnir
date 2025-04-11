@@ -93,8 +93,8 @@ export class ZephyrClient {
   async getTests(
     projectKey: string,
     folderId?: string,
-    startAt: number = 0,
-    maxResults: number = 50
+    startAt = 0,
+    maxResults = 50
   ): Promise<AxiosResponse> {
     let url = `/tests?projectKey=${projectKey}&startAt=${startAt}&maxResults=${maxResults}`;
     
@@ -117,8 +117,8 @@ export class ZephyrClient {
    */
   async getFolders(
     projectKey: string,
-    startAt: number = 0,
-    maxResults: number = 50
+    startAt = 0,
+    maxResults = 50
   ): Promise<AxiosResponse> {
     return this.client.get(
       `/folders?projectKey=${projectKey}&startAt=${startAt}&maxResults=${maxResults}`
@@ -137,8 +137,8 @@ export class ZephyrClient {
    */
   async getCycles(
     projectKey: string,
-    startAt: number = 0,
-    maxResults: number = 50
+    startAt = 0,
+    maxResults = 50
   ): Promise<AxiosResponse> {
     return this.client.get(
       `/cycles?projectKey=${projectKey}&startAt=${startAt}&maxResults=${maxResults}`
@@ -157,8 +157,8 @@ export class ZephyrClient {
    */
   async getExecutions(
     cycleId: string,
-    startAt: number = 0,
-    maxResults: number = 50
+    startAt = 0,
+    maxResults = 50
   ): Promise<AxiosResponse> {
     return this.client.get(
       `/executions?cycleId=${cycleId}&startAt=${startAt}&maxResults=${maxResults}`

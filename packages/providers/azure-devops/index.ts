@@ -469,7 +469,7 @@ export class AzureDevOpsClient {
     let message = 'Unknown error occurred';
     let category = AzureDevOpsErrorCategory.UNKNOWN;
     let statusCode = 0;
-    let details: Record<string, any> = {};
+    const details: Record<string, any> = {};
     
     if (axios.isAxiosError(error)) {
       // Handle Axios specific errors
@@ -571,9 +571,9 @@ export class AzureDevOpsClient {
  * Azure DevOps Provider implementation
  */
 export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
-  private id: string = 'azure-devops';
-  private name: string = 'Azure DevOps';
-  private version: string = '1.0.0';
+  private id = 'azure-devops';
+  private name = 'Azure DevOps';
+  private version = '1.0.0';
   private client: AzureDevOpsClient;
   private resilientClient: ResilientApiClient;
   

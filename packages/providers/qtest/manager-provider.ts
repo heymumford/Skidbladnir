@@ -351,7 +351,7 @@ export class QTestManagerProvider extends QTestProvider {
   /**
    * Convert qTest modules to internal Folder structure
    */
-  private convertModulesToFolders(modules: any[], parentId: string = ''): Folder[] {
+  private convertModulesToFolders(modules: any[], parentId = ''): Folder[] {
     if (!Array.isArray(modules)) {
       return [];
     }

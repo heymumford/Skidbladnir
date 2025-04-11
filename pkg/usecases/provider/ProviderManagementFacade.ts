@@ -86,7 +86,11 @@ export class ProviderManagementFacade {
    * Get a provider by ID
    */
   getProviderById(providerId: string): TestManagementProvider {
-    return this.providerRegistry.getProvider(providerId)!;
+    const provider = this.providerRegistry.getProvider(providerId);
+    if (!provider) {
+      throw new Error(`Provider not found: ${providerId}`);
+    }
+    return provider;
   }
   
   /**
@@ -119,7 +123,7 @@ export class ProviderManagementFacade {
   async saveProviderConfiguration(input: SaveConfigurationInput): Promise<SaveConfigurationResult> {
     const result = await this.providerConfigurationUseCase.saveConfiguration(input);
     
-    if (result.success) {
+    if (result.success && result.configuration) {
       // Save to repository
       await this.providerRepository.saveConfiguration(result.configuration);
     }

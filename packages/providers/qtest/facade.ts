@@ -949,7 +949,7 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
   async downloadFile(
     projectId: string,
     filePath: string,
-    asBinary: boolean = false
+    asBinary = false
   ): Promise<ExportFile> {
     this.ensureDataExportProvider();
     return this.dataExportProvider!.downloadFile(projectId, filePath, asBinary);
@@ -998,7 +998,7 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
   async downloadLatestExport(
     projectId: string,
     pattern?: string,
-    asBinary: boolean = false
+    asBinary = false
   ): Promise<ExportFile | null> {
     this.ensureDataExportProvider();
     return this.dataExportProvider!.downloadLatestExport(projectId, pattern, asBinary);

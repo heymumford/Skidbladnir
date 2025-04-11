@@ -473,7 +473,7 @@ export class TestRailClient {
     let message = 'Unknown error occurred';
     let category = TestRailErrorCategory.UNKNOWN;
     let statusCode = 0;
-    let details: Record<string, any> = {};
+    const details: Record<string, any> = {};
     
     if (axios.isAxiosError(error)) {
       // Handle Axios specific errors

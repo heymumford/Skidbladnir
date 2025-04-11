@@ -487,7 +487,7 @@ export class GoCollector extends TestCollector {
           let isSkipped = false;
           let hasSubtests = false;
           let isParallel = false;
-          let subtests: { name: string, lineNum: number, hasAssertions: boolean }[] = [];
+          const subtests: { name: string, lineNum: number, hasAssertions: boolean }[] = [];
           let depth = 0;
           let j = i;
           
@@ -619,7 +619,7 @@ export class GoCollector extends TestCollector {
               let namedTestMatch;
               const namedTests: string[] = [];
               
-              let tableContent = testContent;
+              const tableContent = testContent;
               while ((namedTestMatch = namedTestsRegex.exec(tableContent)) !== null) {
                 const testName = namedTestMatch[1] || namedTestMatch[2] || namedTestMatch[3] || namedTestMatch[4];
                 if (testName && !namedTests.includes(testName)) {
@@ -684,7 +684,7 @@ export class GoCollector extends TestCollector {
           if (hasBenchmarkParams) {
             // Look for sub-benchmarks
             const subBenchRegex = /b\.Run\(\s*([^,]+),\s*/g;
-            let benchContent = content.substring(i, j);
+            const benchContent = content.substring(i, j);
             let subBenchMatch;
             
             while ((subBenchMatch = subBenchRegex.exec(benchContent)) !== null) {
@@ -1174,7 +1174,7 @@ export class GoCollector extends TestCollector {
       percentage: number
     }> = {};
     
-    let currentFile = '';
+    const currentFile = '';
     let totalLines = 0;
     let coveredLines = 0;
     

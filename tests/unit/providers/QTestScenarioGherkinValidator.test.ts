@@ -111,7 +111,7 @@ Feature: Login
       };
       
       let currentSection = 'tags';
-      let descriptionLines = [];
+      const descriptionLines = [];
       
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();

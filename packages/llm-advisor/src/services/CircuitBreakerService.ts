@@ -25,8 +25,8 @@ enum CircuitState {
 export class CircuitBreakerService {
   private static instance: CircuitBreakerService;
   private state: CircuitState = CircuitState.CLOSED;
-  private failureCount: number = 0;
-  private lastFailureTime: number = 0;
+  private failureCount = 0;
+  private lastFailureTime = 0;
   private logger = LoggingService.getInstance().getLogger('CircuitBreaker');
   
   // Circuit breaker configuration

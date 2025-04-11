@@ -372,7 +372,7 @@ export class HPALMClient {
    */
   async getTestCases(folderId?: string, filter?: string): Promise<any[]> {
     try {
-      let url = `/rest/domains/${this.config.domain}/projects/${this.config.project}/tests`;
+      const url = `/rest/domains/${this.config.domain}/projects/${this.config.project}/tests`;
       
       // Add query parameters if provided
       const params: Record<string, string> = {};
@@ -460,7 +460,7 @@ export class HPALMClient {
    */
   async getFolders(parentId?: string): Promise<any[]> {
     try {
-      let url = `/rest/domains/${this.config.domain}/projects/${this.config.project}/test-folders`;
+      const url = `/rest/domains/${this.config.domain}/projects/${this.config.project}/test-folders`;
       
       // Add query parameters if provided
       const params: Record<string, string> = {};
@@ -553,7 +553,7 @@ export class HPALMClient {
     let message = 'Unknown error occurred';
     let category = HPALMErrorCategory.UNKNOWN;
     let statusCode = 0;
-    let details: Record<string, any> = {};
+    const details: Record<string, any> = {};
     
     if (axios.isAxiosError(error)) {
       // Handle Axios specific errors

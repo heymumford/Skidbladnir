@@ -164,9 +164,9 @@ export class QTestManagerClient {
   async getTestCaseWithDetails(
     projectId: number,
     testCaseId: number,
-    includeSteps: boolean = true,
-    includeAttachments: boolean = true,
-    includeLinks: boolean = true
+    includeSteps = true,
+    includeAttachments = true,
+    includeLinks = true
   ): Promise<AxiosResponse> {
     try {
       const expandFields = [];

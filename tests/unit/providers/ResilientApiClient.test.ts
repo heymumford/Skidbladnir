@@ -19,7 +19,7 @@ const BASE_URL = 'https://test-api.example.com';
 
 // Mock authentication handler
 class MockAuthHandler extends AuthenticationHandler {
-  public mockToken: string = 'mock-api-token';
+  public mockToken = 'mock-api-token';
   public authenticateCalled = 0;
   public logoutCalled = 0;
   

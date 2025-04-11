@@ -788,7 +788,7 @@ describe('Pause/Resume/Cancel Functionality', () => {
     
     it('should handle the complete pause-resume-cancel lifecycle', async () => {
       let pausePromiseResolve: (value: unknown) => void;
-      let pausePromise = new Promise(resolve => {
+      const pausePromise = new Promise(resolve => {
         pausePromiseResolve = resolve;
       });
 

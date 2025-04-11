@@ -163,12 +163,14 @@ export interface Folder extends BaseEntity {
 export interface MigrationJob {
   id: string;
   projectId: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status: 'pending' | 'in_progress' | 'completed' | 'failed' | 'paused' | 'cancelled';
   startedAt?: Date;
   completedAt?: Date;
   progress?: number;
   error?: string;
   stats?: MigrationStats;
+  sourceProvider?: string;
+  targetProvider?: string;
 }
 
 /**

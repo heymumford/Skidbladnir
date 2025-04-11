@@ -126,14 +126,14 @@ export class RallyRateLimiter {
     resolve: (value: boolean) => void;
     reject: (reason: any) => void;
   }> = [];
-  private activeRequests: number = 0;
+  private activeRequests = 0;
   private maxConcurrentRequests: number;
-  private enabled: boolean = true;
+  private enabled = true;
   
   constructor(
-    requestsPerInterval: number = 5, 
-    intervalMs: number = 1000, 
-    maxConcurrentRequests: number = 3
+    requestsPerInterval = 5, 
+    intervalMs = 1000, 
+    maxConcurrentRequests = 3
   ) {
     this.tokens = requestsPerInterval;
     this.maxTokens = requestsPerInterval;
@@ -248,7 +248,7 @@ export class RallyRateLimiter {
    * Returns a promise that resolves when a request can be made
    * Rejects if timeout is reached
    */
-  async acquireToken(timeoutMs: number = 30000): Promise<boolean> {
+  async acquireToken(timeoutMs = 30000): Promise<boolean> {
     // If rate limiting is disabled, immediately allow the request
     if (!this.enabled) {
       this.activeRequests++;
@@ -578,7 +578,7 @@ export class RallyClient {
     let message = 'Unknown error occurred';
     let category = RallyErrorCategory.UNKNOWN;
     let statusCode = 0;
-    let details: Record<string, any> = {};
+    const details: Record<string, any> = {};
     
     if (axios.isAxiosError(error)) {
       // Handle Axios specific errors
@@ -693,9 +693,9 @@ export class RallyClient {
  * Rally Provider implementation
  */
 export class RallyProvider implements SourceProvider, TargetProvider {
-  private id: string = 'rally';
-  private name: string = 'Rally';
-  private version: string = '1.0.0';
+  private id = 'rally';
+  private name = 'Rally';
+  private version = '1.0.0';
   private client: RallyClient;
   private resilientClient: ResilientApiClient;
   
