@@ -8,9 +8,9 @@
  */
 
 /**
- * HP ALM Provider
+ * Micro Focus ALM Provider
  * 
- * Implements the provider interface for HP Application Lifecycle Management (ALM)
+ * Implements the provider interface for Micro Focus Application Lifecycle Management (formerly HP ALM/Quality Center)
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
@@ -764,14 +764,14 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
       maxRetries: config.maxRetries || 3
     });
     
-    logger.debug('HP ALM Provider initialized', { baseUrl: config.baseUrl, domain: config.domain, project: config.project });
+    logger.debug('Micro Focus ALM Provider initialized', { baseUrl: config.baseUrl, domain: config.domain, project: config.project });
   }
   
   /**
    * Get provider name
    */
   getName(): string {
-    return 'HP ALM';
+    return 'Micro Focus ALM';
   }
   
   /**
@@ -779,12 +779,12 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
    */
   async testConnection(): Promise<ProviderConnectionStatus> {
     try {
-      logger.debug('Testing connection to HP ALM', { baseUrl: this.config.baseUrl });
+      logger.debug('Testing connection to Micro Focus ALM', { baseUrl: this.config.baseUrl });
       
       // Test connection using client
       const result = await this.client.testConnection();
       
-      logger.info('Successfully connected to HP ALM', { baseUrl: this.config.baseUrl });
+      logger.info('Successfully connected to Micro Focus ALM', { baseUrl: this.config.baseUrl });
       
       return {
         connected: result.connected,
@@ -796,7 +796,7 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
         }
       };
     } catch (error) {
-      logger.error('Failed to connect to HP ALM', { error, baseUrl: this.config.baseUrl });
+      logger.error('Failed to connect to Micro Focus ALM', { error, baseUrl: this.config.baseUrl });
       
       return {
         connected: false,
@@ -819,7 +819,7 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
     }
     
     try {
-      logger.debug('Authenticating with HP ALM', { username: this.config.username });
+      logger.debug('Authenticating with Micro Focus ALM', { username: this.config.username });
       
       // Login to get session ID
       const result = await this.client.login();
@@ -850,7 +850,7 @@ export class HPALMProvider implements SourceProvider, TargetProvider {
     try {
       await this.ensureAuthenticated();
       
-      logger.debug('Getting test case from HP ALM', { id });
+      logger.debug('Getting test case from Micro Focus ALM', { id });
       
       // Get the test case from ALM
       const almTestCase = await this.client.getTestCase(id);

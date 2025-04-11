@@ -34,12 +34,42 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Implement consistent error handling across providers (High)
 - [x] Create Karate tests for Zephyr/qTest API interfaces (High)
 
-#### Future Providers (Pending)
-- [ ] Test: HP ALM adapter manages connections correctly (High)
+#### Implementation and Test Pyramid for Providers (High Priority)
+##### Implementation Tasks
+- [x] Create Micro Focus ALM adapter for test case migration (High)
+- [ ] Create TestRail adapter with comprehensive error handling (High)
+- [ ] Create Jama Software adapter with REST API integration (High)
+- [ ] Create Visure Solutions adapter with requirements tracing (High)
+- [ ] Implement cross-provider migration validator (High)
+- [ ] Build provider adapter factory with dynamic registration (Medium)
+- [ ] Create provider-specific UI configuration components (Medium)
+##### Unit Tests (Foundation)
+- [x] Test: Micro Focus ALM (formerly HP ALM) adapter manages connections correctly (High)
+- [ ] Test: TestRail adapter manages connections and authentication (High)
+- [ ] Test: Jama Software adapter correctly authenticates and manages sessions (High)
+- [ ] Test: Visure Solutions adapter performs field mapping correctly (High)
 - [ ] Test: Azure DevOps provider correctly maps work items (High)
 - [ ] Test: Rally provider respects rate limits (Medium)
 - [ ] Test: Excel import/export handles various formats (Medium)
-- [ ] Create provider-specific migration workflows (High)
+
+##### Integration Tests (Verification)
+- [ ] Test: Micro Focus ALM adapter integration with transformation layer (High)
+- [ ] Test: TestRail API contract validation with API mocking (High)
+- [ ] Test: Jama to Micro Focus ALM transformation correctness (High)
+- [ ] Test: Visure Solutions to TestRail migration workflow (High)
+- [ ] Test: Error propagation between adapters and orchestration layer (High)
+
+##### System Tests (Validation)
+- [ ] Test: Cross-provider migration with attachments between all providers (Critical)
+- [ ] Test: End-to-end migration workflows for all provider combinations (Critical)
+- [ ] Test: Performance benchmarking across all provider adapters (Medium)
+- [ ] Test: Connection resiliency under network degradation (Medium)
+
+##### Acceptance Tests (User Perspective)
+- [ ] Test: Full user workflow through UI for each provider combination (Critical)
+- [ ] Test: Internationalization support across all provider interfaces (Medium)
+- [ ] Test: Accessibility compliance for provider configuration screens (Medium)
+- [ ] Test: Cross-browser compatibility for provider interactions (Medium)
 
 ### Phase 2: Use Cases & Translation Layer (High Priority)
 
@@ -122,8 +152,8 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 ## In Progress
 
 ## In Review
-- [x] Test: HP ALM adapter manages connections correctly (High)
-- [x] Create HP ALM adapter for test case migration (High)
+- [x] Test: Micro Focus ALM adapter manages connections correctly (High)
+- [x] Create Micro Focus ALM adapter for test case migration (High)
 
 ## Completed
 - [x] Configure LLM models for containerized deployment (Medium)
