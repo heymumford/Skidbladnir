@@ -758,6 +758,8 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
         id: project.id,
         name: project.name,
         description: project.description || '',
+        sourceProjectId: project.id,
+        targetProjectId: project.id,
         attributes: {
           adoId: project.id,
           adoName: project.name,
@@ -801,7 +803,7 @@ export class AzureDevOpsProvider implements SourceProvider, TargetProvider {
         id: `${suite.planId}-${suite.id}`, // Combine plan and suite ID for uniqueness
         name: suite.name,
         path: suite.path || '',
-        parentId: suite.parentSuite ? `${suite.planId}-${suite.parentSuite.id}` : null,
+        parentId: suite.parentSuite ? `${suite.planId}-${suite.parentSuite.id}` : undefined,
         attributes: {
           adoSuiteId: suite.id,
           adoPlanId: suite.planId,

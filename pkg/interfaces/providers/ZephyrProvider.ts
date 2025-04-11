@@ -115,6 +115,7 @@ export class ZephyrProviderImpl implements ZephyrProvider {
       // For demonstration, we'll return a mock created test case
       return {
         id: `TC-${Math.floor(Math.random() * 10000)}`,
+        name: testCase.title || 'New Test Case',
         title: testCase.title || 'New Test Case',
         description: testCase.description || '',
         status: testCase.status || TestCaseStatus.DRAFT,
@@ -141,6 +142,7 @@ export class ZephyrProviderImpl implements ZephyrProvider {
       return {
         ...existingTestCase,
         title: testCase.title || existingTestCase.title,
+        name: testCase.title || existingTestCase.title,
         description: testCase.description || existingTestCase.description,
         status: testCase.status || existingTestCase.status,
         priority: testCase.priority || existingTestCase.priority,
@@ -243,6 +245,7 @@ export class ZephyrProviderImpl implements ZephyrProvider {
     return [
       {
         id: 'TC-1001',
+        name: 'Verify user login with valid credentials',
         title: 'Verify user login with valid credentials',
         description: 'Test the user login functionality with valid credentials',
         status: TestCaseStatus.READY,
@@ -270,6 +273,7 @@ export class ZephyrProviderImpl implements ZephyrProvider {
       },
       {
         id: 'TC-1002',
+        name: 'Verify user login with invalid credentials',
         title: 'Verify user login with invalid credentials',
         description: 'Test the user login functionality with invalid credentials',
         status: TestCaseStatus.READY,

@@ -1,4 +1,4 @@
-import { TestCase, TestStep } from '../../domain/entities/TestCase';
+import { TestCase, TestStep, TestCaseStatus, Priority } from '../../domain/entities/TestCase';
 import { ValidationError } from '../../domain/errors/DomainErrors';
 
 /**
@@ -143,10 +143,11 @@ export class GenerateTestCasesUseCase {
           // Create a standardized test case object from parsed JSON
           const testCase: TestCase = {
             id: `temp-${parsedTestCases.length + 1}`,
+            name: parsedJson.title || 'Untitled Test Case',
             title: parsedJson.title || 'Untitled Test Case',
             description: parsedJson.description || '',
-            status: 'DRAFT',
-            priority: input.options.priority ? (input.options.priority.toUpperCase() as any) : 'MEDIUM',
+            status: TestCaseStatus.DRAFT,
+            priority: input.options.priority ? (input.options.priority.toUpperCase() as Priority) : Priority.MEDIUM,
             steps: this.parseTestSteps(parsedJson.steps || []),
             tags: parsedJson.tags || [],
             createdAt: new Date(),
