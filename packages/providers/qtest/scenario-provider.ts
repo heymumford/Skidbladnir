@@ -25,7 +25,7 @@ import {
 
 import {
   Project as _Project,
-  TestCase
+  TestCase as _TestCase
 } from '../../common/src/models/entities';
 
 import { PaginatedResult } from '../../common/src/models/paginated';

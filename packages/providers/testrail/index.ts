@@ -13,12 +13,13 @@
  * Implements the provider interface for TestRail test management system
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
 import { ProviderConfig, SourceProvider, TargetProvider } from '../../../pkg/interfaces/providers';
-import { ErrorResponse, ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
+import { ErrorResponse as _ErrorResponse, ProviderConnectionStatus, TestCase } from '../../../pkg/domain/entities';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
 import { Identifier } from '../../../pkg/domain/value-objects/Identifier';
 import * as logger from '../../../internal/typescript/common/logger/LoggerAdapter';
+import * as https from 'https';
 
 // Enum for TestRail error categories
 export enum TestRailErrorCategory {
@@ -154,7 +155,7 @@ export class TestRailClient {
       proxy: proxyConfig,
       // Add option to disable SSL verification if requested (not recommended for production)
       httpsAgent: config.metadata?.disableSSLVerification ? 
-        new (require('https').Agent)({ rejectUnauthorized: false }) : 
+        new https.Agent({ rejectUnauthorized: false }) : 
         undefined,
       // TestRail API uses basic authentication
       auth: {
@@ -201,7 +202,7 @@ export class TestRailClient {
   async testConnection(): Promise<{ connected: boolean }> {
     try {
       // Try to fetch current user to verify API access
-      const response = await this.axiosInstance.get('get_current_user');
+      const _response = await this.axiosInstance.get('get_current_user');
       
       return { connected: true };
     } catch (error) {

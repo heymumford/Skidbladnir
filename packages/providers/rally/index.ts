@@ -14,9 +14,9 @@
  * with specific support for rate limiting to comply with API constraints.
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse as _AxiosResponse } from 'axios';
 import { ProviderConfig, SourceProvider, TargetProvider, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
-import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment } from '../../../packages/common/src/models/entities';
+import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment as _Attachment } from '../../../packages/common/src/models/entities';
 import { FieldDefinition } from '../../../packages/common/src/models/field-definition';
 import { AttachmentContent } from '../../../packages/common/src/models/attachment';
 import { PaginatedResult } from '../../../packages/common/src/models/paginated';
@@ -1142,7 +1142,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
    * Get test folders/hierarchical structure
    * Use folder structure in Rally
    */
-  async getFolders(projectId: string): Promise<Folder[]> {
+  async getFolders(_projectId: string): Promise<Folder[]> {
     // Placeholder implementation
     return [];
   }
@@ -1150,7 +1150,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Get test cycles
    */
-  async getTestCycles(projectId: string, options?: any): Promise<PaginatedResult<TestCycle>> {
+  async getTestCycles(_projectId: string, _options?: any): Promise<PaginatedResult<TestCycle>> {
     // Placeholder implementation
     return {
       items: [],
@@ -1163,7 +1163,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Get test executions
    */
-  async getTestExecutions(projectId: string, testCycleId: string, options?: any): Promise<PaginatedResult<TestExecution>> {
+  async getTestExecutions(_projectId: string, _testCycleId: string, _options?: any): Promise<PaginatedResult<TestExecution>> {
     // Placeholder implementation
     return {
       items: [],
@@ -1176,7 +1176,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Get attachment content
    */
-  async getAttachmentContent(projectId: string, attachmentId: string): Promise<AttachmentContent> {
+  async getAttachmentContent(_projectId: string, _attachmentId: string): Promise<AttachmentContent> {
     // Placeholder implementation
     throw new Error('Get attachment content not implemented for Rally provider');
   }
@@ -1184,7 +1184,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Get field definitions (including custom fields)
    */
-  async getFieldDefinitions(projectId: string): Promise<FieldDefinition[]> {
+  async getFieldDefinitions(_projectId: string): Promise<FieldDefinition[]> {
     // Placeholder implementation
     return [];
   }
@@ -1192,7 +1192,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a folder structure
    */
-  async createFolder(projectId: string, folder: Folder): Promise<string> {
+  async createFolder(_projectId: string, _folder: Folder): Promise<string> {
     // Placeholder implementation
     throw new Error('Folder creation not implemented for Rally provider');
   }
@@ -1302,7 +1302,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update a test cycle
    */
-  async createTestCycle(projectId: string, testCycle: TestCycle): Promise<string> {
+  async createTestCycle(_projectId: string, _testCycle: TestCycle): Promise<string> {
     // Placeholder implementation
     throw new Error('Test cycle creation not implemented for Rally provider');
   }
@@ -1310,7 +1310,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Create or update test executions
    */
-  async createTestExecutions(projectId: string, testCycleId: string, executions: TestExecution[]): Promise<void> {
+  async createTestExecutions(_projectId: string, _testCycleId: string, _executions: TestExecution[]): Promise<void> {
     // Placeholder implementation
     throw new Error('Test execution creation not implemented for Rally provider');
   }
@@ -1318,7 +1318,7 @@ export class RallyProvider implements SourceProvider, TargetProvider {
   /**
    * Upload an attachment
    */
-  async uploadAttachment(projectId: string, entityType: string, entityId: string, attachment: AttachmentContent): Promise<string> {
+  async uploadAttachment(_projectId: string, _entityType: string, _entityId: string, _attachment: AttachmentContent): Promise<string> {
     // Placeholder implementation
     throw new Error('Attachment upload not implemented for Rally provider');
   }

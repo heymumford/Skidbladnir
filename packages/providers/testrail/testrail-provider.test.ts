@@ -8,7 +8,7 @@
  */
 
 import axios from 'axios';
-import { TestRailProvider, TestRailError, TestRailErrorCategory } from './index';
+import { TestRailProvider, TestRailError as _TestRailError, TestRailErrorCategory as _TestRailErrorCategory } from './index';
 import { Identifier } from '../../../pkg/domain/value-objects/Identifier';
 
 // Mock axios and logger
