@@ -9,6 +9,7 @@
 
 import React from 'react';
 import { Box, Typography, styled } from '@mui/material';
+import { LcarsStatusLight } from './LcarsStatusLight';
 
 type OperationState = 'idle' | 'running' | 'paused' | 'completed' | 'error' | 'cancelled';
 type TransactionStatus = 'pending' | 'running' | 'completed' | 'failed';
@@ -58,6 +59,7 @@ const ElbowSection = styled(Box)({
 const StatusSection = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'state'
 })<{ state: OperationState }>(({ theme, state }) => {
+  // Define color mappings for better consistency
   let backgroundColor = 'green';
   
   switch (state) {
@@ -212,6 +214,13 @@ export const LcarsStatusHeader: React.FC<LcarsStatusHeaderProps> = ({
     <HeaderContainer>
       <TopRow>
         <ElbowSection />
+        <Box sx={{ display: 'flex', alignItems: 'center', marginRight: '12px' }}>
+          <LcarsStatusLight 
+            state={operationState} 
+            size="medium" 
+            data-testid="status-light"
+          />
+        </Box>
         <StatusSection state={operationState} data-testid="operation-state">
           {operationState.toUpperCase()}
         </StatusSection>
@@ -247,6 +256,17 @@ export const LcarsStatusHeader: React.FC<LcarsStatusHeaderProps> = ({
         {lastTransactionName && (
           <TransactionContainer>
             <TransactionLabel>LAST ACTION:</TransactionLabel>
+            {lastTransactionStatus && (
+              <Box sx={{ display: 'flex', alignItems: 'center', marginRight: '8px' }}>
+                <LcarsStatusLight 
+                  state={lastTransactionStatus === 'running' ? 'running' : 
+                         lastTransactionStatus === 'completed' ? 'completed' :
+                         lastTransactionStatus === 'failed' ? 'error' : 'pending'}
+                  size="small" 
+                  data-testid="transaction-status-light"
+                />
+              </Box>
+            )}
             <TransactionName>{lastTransactionName}</TransactionName>
             {lastTransactionStatus && (
               <TransactionStatus status={lastTransactionStatus}>
