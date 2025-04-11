@@ -60,6 +60,41 @@ class PerformanceTests {
     Karate testApiBridgePerformance() {
         return Karate.run("api-bridge-performance").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testProviderBenchmarking() {
+        return Karate.run("provider-benchmarking").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate testGetTestCaseBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@getTestCase").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testListTestCasesBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@listTestCases").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testCreateTestCaseBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@createTestCase").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testUpdateTestCaseBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@updateTestCase").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testDeleteTestCaseBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@deleteTestCase").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testComprehensiveBenchmark() {
+        return Karate.run("provider-benchmarking").tags("@comprehensive").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);

@@ -63,7 +63,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 ##### System Tests (Validation)
 - [x] Test: Cross-provider migration with attachments between all providers (Critical)
 - [x] Test: End-to-end migration workflows for all provider combinations (Critical)
-- [ ] Test: Performance benchmarking across all provider adapters (Medium)
+- [x] Test: Performance benchmarking across all provider adapters (Medium)
 - [ ] Test: Connection resiliency under network degradation (Medium)
 
 ##### Acceptance Tests (User Perspective)
@@ -154,7 +154,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [ ] Test: Connection resiliency under network degradation (Medium)
 
 ## In Review
-- [ ] Test: Performance benchmarking across all provider adapters (Medium)
+- [x] Test: Performance benchmarking across all provider adapters (Medium)
 
 ## Completed
 - [x] Test: End-to-end migration workflows for all provider combinations (Critical)
