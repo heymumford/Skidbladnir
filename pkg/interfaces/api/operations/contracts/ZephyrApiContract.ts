@@ -13,15 +13,23 @@ import { OperationType, ProviderApiContract } from '../types';
  * API contract for the Zephyr Scale provider.
  * Defines the operations, their dependencies, and provider-specific validation rules.
  */
-// Import the correct OperationDefinition type
-import { OperationDefinition } from '../types';
+// Import the correct types
+import { OperationDefinition, ValidationRule } from '../types';
 
-// Define the full set of operations to avoid TypeScript errors
-const allOperationTypes: Record<OperationType, OperationDefinition | undefined> = 
+// Define mock implementations for all operations to satisfy TypeScript
+const defaultOperation: OperationDefinition = {
+  type: OperationType.AUTHENTICATE,
+  dependencies: [],
+  required: false,
+  description: 'Default operation implementation',
+  requiredParams: []
+};
+
+const allOperationTypes: Record<OperationType, OperationDefinition> = 
   Object.values(OperationType).reduce((acc, type) => {
-    acc[type] = undefined;
+    acc[type] = { ...defaultOperation, type };
     return acc;
-  }, {} as Record<OperationType, OperationDefinition | undefined>);
+  }, {} as Record<OperationType, OperationDefinition>);
 
 export const zephyrApiContract: ProviderApiContract = {
   providerId: 'zephyr',
@@ -110,8 +118,8 @@ export const zephyrApiContract: ProviderApiContract = {
     }
   },
   validationRules: {
-    projectId: (value: any) => typeof value === 'string' && value.length > 0,
-    testCaseId: (value: any) => typeof value === 'string' && /^[A-Z]+-\d+$/.test(value),
-    attachmentId: (value: any) => typeof value === 'string' && value.length > 0
+    projectId: ((value: any) => typeof value === 'string' && value.length > 0) as ValidationRule,
+    testCaseId: ((value: any) => typeof value === 'string' && /^[A-Z]+-\d+$/.test(value)) as ValidationRule,
+    attachmentId: ((value: any) => typeof value === 'string' && value.length > 0) as ValidationRule
   }
 };

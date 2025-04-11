@@ -29,6 +29,7 @@ export class TestCaseFactory {
     
     const testCase: TestCase = {
       id: Identifier.createRandom().toString(),
+      name: props.title, // Use title as name for compatibility
       title: props.title,
       description: props.description,
       status: props.status || TestCaseStatus.DRAFT,

@@ -194,20 +194,23 @@ export class ZephyrQTestAdapter {
     }
     
     // Check parameter types using qTest validation rules
-    const validationRules = qtestManagerApiContract.validationRules;
+    const validationRules = qtestManagerApiContract.validationRules || {};
     
-    for (const [param, rule] of Object.entries(validationRules)) {
-      if (zephyrParams[param] !== undefined) {
-        const isValid = rule(zephyrParams[param]);
-        
-        if (!isValid) {
-          result.valid = false;
-          result.errors.push({
-            type: 'validation_failed',
-            message: `Parameter ${param} failed validation for qTest compatibility`,
-            operation: operationType,
-            details: { paramName: param, value: zephyrParams[param] }
-          });
+    // Check for null or undefined validationRules before proceeding
+    if (validationRules && typeof validationRules === 'object') {
+      for (const [param, rule] of Object.entries(validationRules)) {
+        if (zephyrParams[param] !== undefined && rule) {
+          const isValid = rule(zephyrParams[param]);
+          
+          if (!isValid) {
+            result.valid = false;
+            result.errors.push({
+              type: 'validation_failed',
+              message: `Parameter ${param} failed validation for qTest compatibility`,
+              operation: operationType,
+              details: { paramName: param, value: zephyrParams[param] }
+            });
+          }
         }
       }
     }

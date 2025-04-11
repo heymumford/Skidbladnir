@@ -21,6 +21,7 @@ module.exports = {
     }],
     '@typescript-eslint/ban-ts-comment': 'off', // Allow ts-ignore for temporary fixes
     '@typescript-eslint/no-empty-function': 'off', // Allow empty functions
+    '@typescript-eslint/no-var-requires': 'warn', // Downgrade to warning for test files
   },
   ignorePatterns: [
     'node_modules/',

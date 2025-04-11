@@ -30,6 +30,7 @@ export interface Field {
   type: string;
   required: boolean;
   description?: string;
+  allowedValues?: string[];
 }
 
 // Field mapping for transformation interface

@@ -36,6 +36,8 @@
     "../node_modules",
     "../dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/tests/**"
   ]
 }

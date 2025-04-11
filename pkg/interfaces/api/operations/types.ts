@@ -50,13 +50,18 @@ export interface OperationDefinition {
 }
 
 /**
+ * Validation rule type for validating operation parameters
+ */
+export type ValidationRule = (value: any) => boolean;
+
+/**
  * Definition of a provider's API contract including supported operations and validation rules.
  */
 export interface ProviderApiContract {
   providerId: string;
   operations: Record<OperationType, OperationDefinition>;
   validationRules?: {
-    [key: string]: (value: any) => boolean;
+    [key: string]: ValidationRule;
   };
 }
 

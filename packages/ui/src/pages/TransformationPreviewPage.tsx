@@ -70,6 +70,8 @@ import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningIcon from '@mui/icons-material/Warning';
 import CodeIcon from '@mui/icons-material/Code';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { TransformationType } from '../components/Transformation/FieldTransformation';
 
 // Sample field mappings for demonstration
@@ -569,7 +571,27 @@ const TransformationPreviewPage: React.FC = () => {
                         if (hasTransformation) {
                           try {
                             const config = JSON.parse(mapping.transformation!);
-                            transformationDescription = TransformationType[config.type] || 'Custom';
+                            switch (config.type) {
+                              case 'concat': transformationDescription = 'Concatenate';
+                                break;
+                              case 'substring': transformationDescription = 'Substring';
+                                break;
+                              case 'replace': transformationDescription = 'Replace';
+                                break;
+                              case 'map_values': transformationDescription = 'Map Values';
+                                break;
+                              case 'split': transformationDescription = 'Split';
+                                break;
+                              case 'join': transformationDescription = 'Join';
+                                break;
+                              case 'uppercase': transformationDescription = 'UPPERCASE';
+                                break;
+                              case 'lowercase': transformationDescription = 'lowercase';
+                                break;
+                              case 'custom': transformationDescription = 'Custom';
+                                break;
+                              default: transformationDescription = 'Custom';
+                            }
                           } catch (e) {
                             transformationDescription = 'Invalid transformation';
                           }

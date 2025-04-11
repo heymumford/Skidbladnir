@@ -13,15 +13,23 @@ import { OperationType, ProviderApiContract } from '../types';
  * API contract for the qTest Manager provider.
  * Defines the operations, their dependencies, and provider-specific validation rules.
  */
-// Import the correct OperationDefinition type
-import { OperationDefinition } from '../types';
+// Import the correct types
+import { OperationDefinition, ValidationRule } from '../types';
 
-// Define the full set of operations to avoid TypeScript errors
-const allOperationTypes: Record<OperationType, OperationDefinition | undefined> = 
+// Define mock implementations for all operations to satisfy TypeScript
+const defaultOperation: OperationDefinition = {
+  type: OperationType.AUTHENTICATE,
+  dependencies: [],
+  required: false,
+  description: 'Default operation implementation',
+  requiredParams: []
+};
+
+const allOperationTypes: Record<OperationType, OperationDefinition> = 
   Object.values(OperationType).reduce((acc, type) => {
-    acc[type] = undefined;
+    acc[type] = { ...defaultOperation, type };
     return acc;
-  }, {} as Record<OperationType, OperationDefinition | undefined>);
+  }, {} as Record<OperationType, OperationDefinition>);
 
 export const qtestManagerApiContract: ProviderApiContract = {
   providerId: 'qtest_manager',
@@ -154,9 +162,9 @@ export const qtestManagerApiContract: ProviderApiContract = {
     }
   },
   validationRules: {
-    projectId: (value: any) => typeof value === 'number' && value > 0,
-    moduleId: (value: any) => typeof value === 'number' && value > 0,
-    testCaseId: (value: any) => typeof value === 'number' && value > 0,
-    testRunId: (value: any) => typeof value === 'number' && value > 0
+    projectId: ((value: any) => typeof value === 'number' && value > 0) as ValidationRule,
+    moduleId: ((value: any) => typeof value === 'number' && value > 0) as ValidationRule,
+    testCaseId: ((value: any) => typeof value === 'number' && value > 0) as ValidationRule,
+    testRunId: ((value: any) => typeof value === 'number' && value > 0) as ValidationRule
   }
 };

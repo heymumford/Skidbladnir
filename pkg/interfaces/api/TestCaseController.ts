@@ -169,6 +169,7 @@ export class TestCaseControllerImpl implements TestCaseController {
     
     // Map request to domain entity
     const testCaseData = {
+      name: data.title, // Add name field for compatibility
       title: data.title,
       description: data.description,
       status: data.status ? data.status as any : 'DRAFT',

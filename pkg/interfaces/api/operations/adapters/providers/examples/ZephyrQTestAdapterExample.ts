@@ -8,7 +8,8 @@
  */
 
 import { OperationType, OperationContext } from '../../../types';
-import { ZephyrQTestAdapter, ZephyrQTestContextAdapter } from '../index';
+import { ZephyrQTestAdapter } from '../ZephyrQTestAdapter';
+import { ZephyrQTestContextAdapter } from '../ZephyrQTestContextAdapter';
 import { OperationDefinition as ProviderOperationDefinition } from '../../../../../../../packages/common/src/interfaces/provider';
 
 /**
@@ -74,6 +75,13 @@ export function demonstrateZephyrQTestAdapter() {
       projectId: 'PROJ'
     },
     results: {
+      // Initialize with all operations to avoid type errors
+      ...Object.values(OperationType).reduce((acc, op) => {
+        acc[op] = null;
+        return acc;
+      }, {} as Record<OperationType, any>),
+      
+      // Then specify the ones we actually use
       [OperationType.AUTHENTICATE]: { token: 'zephyr-auth-token' },
       [OperationType.GET_TEST_CASE]: {
         id: '123',
