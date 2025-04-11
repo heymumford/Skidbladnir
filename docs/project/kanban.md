@@ -67,10 +67,10 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Test: Connection resiliency under network degradation (Medium)
 
 ##### Acceptance Tests (User Perspective)
-- [ ] Test: Full user workflow through UI for each provider combination (Critical)
+- [x] Test: Full user workflow through UI for each provider combination (Critical)
 - [x] Test: Internationalization support across all provider interfaces (Medium)
-- [ ] Test: Accessibility compliance for provider configuration screens (Medium)
-- [ ] Test: Cross-browser compatibility for provider interactions (Medium)
+- [x] Test: Accessibility compliance for provider configuration screens (Medium)
+- [x] Test: Cross-browser compatibility for provider interactions (Medium)
 
 ### Phase 2: Use Cases & Translation Layer (High Priority)
 
