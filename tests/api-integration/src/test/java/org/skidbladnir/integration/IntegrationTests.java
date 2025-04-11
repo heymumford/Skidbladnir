@@ -45,6 +45,11 @@ class IntegrationTests {
     Karate testVisureToTestrailMigration() {
         return Karate.run("visure-to-testrail-migration").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testErrorPropagation() {
+        return Karate.run("error-propagation").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);

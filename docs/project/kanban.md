@@ -58,7 +58,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Test: Jama API contract validation with API mocking (High)
 - [x] Test: Jama to Micro Focus ALM transformation correctness (High)
 - [x] Test: Visure Solutions to TestRail migration workflow (High)
-- [ ] Test: Error propagation between adapters and orchestration layer (High)
+- [x] Test: Error propagation between adapters and orchestration layer (High)
 
 ##### System Tests (Validation)
 - [ ] Test: Cross-provider migration with attachments between all providers (Critical)
@@ -151,12 +151,12 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Configure LLM models for containerized deployment (Medium)
 
 ## In Progress
-- [ ] Test: Error propagation between adapters and orchestration layer (High)
 
 ## In Review
-- [x] Test: Visure Solutions to TestRail migration workflow (High)
 
 ## Completed
+- [x] Test: Error propagation between adapters and orchestration layer (High)
+- [x] Test: Visure Solutions to TestRail migration workflow (High)
 - [x] Test: Rally provider respects rate limits (Medium)
 - [x] Test: Azure DevOps provider correctly maps work items (High)
 - [x] Test: Visure Solutions adapter performs field mapping correctly (High)
