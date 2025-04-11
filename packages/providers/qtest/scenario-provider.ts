@@ -15,16 +15,16 @@
  */
 
 import {
-  ProviderConfig,
+  ProviderConfig as _ProviderConfig,
   ConnectionStatus,
-  TestCaseQueryOptions,
-  EntityType,
-  SourceProvider,
-  TargetProvider
+  TestCaseQueryOptions as _TestCaseQueryOptions,
+  EntityType as _EntityType,
+  SourceProvider as _SourceProvider,
+  TargetProvider as _TargetProvider
 } from '../../common/src/interfaces/provider';
 
 import {
-  Project,
+  Project as _Project,
   TestCase
 } from '../../common/src/models/entities';
 
@@ -38,7 +38,7 @@ import {
   Step,
   StepType
 } from './api-client/scenario-client';
-import { ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { ExternalServiceError as _ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 
 /**
  * Enhanced qTest Scenario provider configuration

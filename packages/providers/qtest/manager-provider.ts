@@ -15,28 +15,28 @@
  */
 
 import {
-  ProviderConfig,
-  ConnectionStatus,
+  ProviderConfig as _ProviderConfig,
+  ConnectionStatus as _ConnectionStatus,
   TestCaseQueryOptions,
   EntityType,
-  SourceProvider,
-  TargetProvider
+  SourceProvider as _SourceProvider,
+  TargetProvider as _TargetProvider
 } from '../../common/src/interfaces/provider';
 
 import {
-  Project,
-  Folder,
+  Project as _Project,
+  Folder as _Folder,
   TestCase
 } from '../../common/src/models/entities';
 
-import { AttachmentContent } from '../../common/src/models/attachment';
-import { FieldDefinition } from '../../common/src/models/field-definition';
+import { AttachmentContent as _AttachmentContent } from '../../common/src/models/attachment';
+import { FieldDefinition as _FieldDefinition } from '../../common/src/models/field-definition';
 import { PaginatedResult } from '../../common/src/models/paginated';
 
 import { QTestProviderConfig, QTestProvider } from './index';
 import { QTestManagerClient } from './api-client/manager-client';
 import { QTestMapper } from './models/mappers';
-import { DomainError, ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { DomainError as _DomainError, ExternalServiceError as _ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 
 /**
  * Enhanced qTest Manager provider configuration

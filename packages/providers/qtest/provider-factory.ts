@@ -15,15 +15,15 @@
 
 import {
   TestManagementProvider,
-  ProviderConfig
+  ProviderConfig as _ProviderConfig
 } from '../../common/src/interfaces/provider';
 
 import { QTestProvider, QTestProviderConfig } from './index';
-import { QTestManagerProvider, QTestManagerProviderConfig } from './manager-provider';
-import { QTestParametersProvider, QTestParametersProviderConfig } from './parameters-provider';
-import { QTestScenarioProvider, QTestScenarioProviderConfig } from './scenario-provider';
-import { QTestPulseProvider, QTestPulseProviderConfig } from './pulse-provider';
-import { QTestDataExportProvider, QTestDataExportProviderConfig } from './data-export-provider';
+import { QTestManagerProvider, QTestManagerProviderConfig as _QTestManagerProviderConfig } from './manager-provider';
+import { QTestParametersProvider, QTestParametersProviderConfig as _QTestParametersProviderConfig } from './parameters-provider';
+import { QTestScenarioProvider, QTestScenarioProviderConfig as _QTestScenarioProviderConfig } from './scenario-provider';
+import { QTestPulseProvider, QTestPulseProviderConfig as _QTestPulseProviderConfig } from './pulse-provider';
+import { QTestDataExportProvider, QTestDataExportProviderConfig as _QTestDataExportProviderConfig } from './data-export-provider';
 
 /**
  * qTest product types

@@ -14,7 +14,7 @@
  */
 
 import {
-  ProviderConfig,
+  ProviderConfig as _ProviderConfig,
   ConnectionStatus,
   ProviderMetadata,
   ProviderCapabilities,

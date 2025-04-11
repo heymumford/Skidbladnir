@@ -13,17 +13,17 @@ import {
   TestExecution,
   TestStep,
   Attachment,
-  Folder,
+  Folder as _Folder,
   Project
 } from '../../../common/src/models/entities';
 
 import { 
   FieldDefinition,
   FieldType,
-  FieldOption
+  FieldOption as _FieldOption
 } from '../../../common/src/models/field-definition';
 
-import { AttachmentContent } from '../../../common/src/models/attachment';
+import { AttachmentContent as _AttachmentContent } from '../../../common/src/models/attachment';
 
 /**
  * Mapper to convert between qTest API models and internal models
@@ -169,7 +169,7 @@ export class QTestMapper {
    * Convert internal TestStep array to qTest test step format
    */
   static fromTestSteps(steps: TestStep[]): any[] {
-    return steps.map((step, index) => ({
+    return steps.map((step, _index) => ({
       order: step.sequence,
       description: step.action,
       expected_result: step.expectedResult || '',
