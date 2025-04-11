@@ -11,7 +11,9 @@ import {
   MigrateTestCasesUseCase, 
   MigrateTestCasesInput, 
   MigrateTestCasesResult,
-  MigrationStatus
+  MigrationStatus,
+  ProviderFactory,
+  TestManagementProvider
 } from './MigrateTestCases';
 
 import { OperationDependencyResolver } from '../../interfaces/api/operations/OperationDependencyResolver';
@@ -41,7 +43,17 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
     private readonly targetProvider: TargetProvider,
     private readonly loggerService?: LoggerService
   ) {
-    super();
+    // Create simple provider factories that return the provided providers
+    const sourceProviderFactory: ProviderFactory = {
+      createProvider: (_providerType: string) => sourceProvider as unknown as TestManagementProvider
+    };
+    
+    const targetProviderFactory: ProviderFactory = {
+      createProvider: (_providerType: string) => targetProvider as unknown as TestManagementProvider
+    };
+    
+    // Call parent constructor with required parameters
+    super(sourceProviderFactory, targetProviderFactory, loggerService);
   }
   
   /**
@@ -168,8 +180,8 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
       
       // Execute operations in order
       const orderedOperations = executionOrder.map(type => 
-        migrationPlan.operationsMap[String(type)]
-      ).filter(op => op !== undefined); // Filter out undefined operations
+        migrationPlan.operationsMap[type as keyof typeof migrationPlan.operationsMap]
+      ).filter((op): op is Operation => op !== undefined); // Filter out undefined operations
       
       this.loggerService?.debug(`Executing operations in order: ${executionOrder.join(', ')}`);
       const opResults = await this.operationExecutor.executeOperations(
@@ -429,17 +441,23 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
    * Create the operation context
    */
   private createOperationContext(input: MigrateTestCasesInput): OperationContext {
+    const operationTypes = Object.values(OperationType);
+    const initialResults: Record<OperationType, any> = {} as Record<OperationType, any>;
+    
+    // Initialize results with all operation types
+    operationTypes.forEach(type => {
+      initialResults[type] = null;
+    });
+    
     return {
       input: {
         sourceSystem: input.sourceSystem,
         targetSystem: input.targetSystem,
         projectKey: input.projectKey,
-        testCaseIds: input.options.filters?.ids || [],
-        includeAttachments: input.options.includeAttachments || false,
-        includeHistory: input.options.includeHistory || false,
-        ...input.options
+        testCaseIds: input.options.filters?.ids || []
+        // Don't duplicate these as they're already in input.options
       },
-      results: {},
+      results: initialResults,
       sourceProvider: this.sourceProvider,
       targetProvider: this.targetProvider,
       metadata: {
@@ -493,7 +511,8 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
     context: OperationContext
   ): Promise<any> {
     this.loggerService?.debug(`Getting project ${projectKey} from source provider`);
-    const projects = context.results['get_projects'] || [];
+    const resultsAny = context.results as any;
+    const projects = resultsAny[OperationType.GET_PROJECTS] || [];
     return projects.find((p: any) => p.id === projectKey || p.key === projectKey);
   }
   
@@ -505,7 +524,8 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
     context: OperationContext
   ): Promise<any> {
     this.loggerService?.debug(`Getting project ${projectKey} from target provider`);
-    const projects = context.results['get_projects'] || [];
+    const resultsAny = context.results as any;
+    const projects = resultsAny[OperationType.GET_PROJECTS] || [];
     return projects.find((p: any) => p.id === projectKey || p.key === projectKey);
   }
   
@@ -518,7 +538,17 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
   ): Promise<any[]> {
     this.loggerService?.debug(`Getting all test cases from project ${projectKey}`);
     const result = await this.sourceProvider.getTestCases(projectKey);
-    return result.items || result;
+    
+    // Handle both array results and paginated results with items property
+    if (Array.isArray(result)) {
+      return result;
+    } else if (result && typeof result === 'object' && 'items' in result && Array.isArray(result.items)) {
+      return result.items;
+    } else {
+      // Return empty array for safety if the result is not in expected format
+      this.loggerService?.warn(`Unexpected result format from getTestCases: ${JSON.stringify(result)}`);
+      return [];
+    }
   }
   
   /**
@@ -543,13 +573,18 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
     context: OperationContext
   ): Promise<any[]> {
     this.loggerService?.debug(`Getting attachments for test case ${testCaseId}`);
-    const testCase = context.results[`get_test_case_${testCaseId}`];
-    if (!testCase || !testCase.attachments || testCase.attachments.length === 0) {
+    
+    // We'll need to access the result by a dynamic key
+    // Save it in the context using a type assertion
+    const specificKey = `get_test_case_${testCaseId}`;
+    const testCaseResult = (context.results as any)[specificKey];
+    
+    if (!testCaseResult || !testCaseResult.attachments || testCaseResult.attachments.length === 0) {
       return [];
     }
     
     const attachments = [];
-    for (const attachment of testCase.attachments) {
+    for (const attachment of testCaseResult.attachments) {
       const content = await this.sourceProvider.getAttachmentContent(
         context.input.projectKey,
         attachment.id
@@ -568,24 +603,46 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
     context: OperationContext
   ): Promise<string[]> {
     const createdIds: string[] = [];
+    const resultsAny = context.results as any;
     
     if (context.input.testCaseIds && context.input.testCaseIds.length > 0) {
       // Process specific test cases
       for (const testCaseId of context.input.testCaseIds) {
-        const testCase = context.results[`get_test_case_${testCaseId}`];
+        const testCaseKey = `get_test_case_${testCaseId}`;
+        const testCase = resultsAny[testCaseKey];
+        
         if (!testCase) {
           this.loggerService?.warn(`Test case ${testCaseId} not found in results`);
           continue;
         }
         
-        this.loggerService?.debug(`Creating test case ${testCase.name} in target project ${projectKey}`);
+        this.loggerService?.debug(`Creating test case ${testCase.name || testCase.title} in target project ${projectKey}`);
         const result = await this.targetProvider.createTestCase(projectKey, testCase);
-        const id = typeof result === 'string' ? result : result.id;
+        // Handle different return types safely
+        let id: string;
+        if (typeof result === 'string') {
+          id = result;
+        } else if (result && typeof result === 'object') {
+          // Using type assertion after checking for object type
+          // This avoids the "Property 'id' does not exist on type 'never'" error
+          const objResult = result as { id?: string };
+          if (objResult.id) {
+            id = objResult.id;
+          } else {
+            id = `generated-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+            this.loggerService?.warn(`Could not determine ID from result object, generated: ${id}`);
+          }
+        } else {
+          id = `generated-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+          this.loggerService?.warn(`Could not determine ID from result, generated: ${id}`);
+        }
         createdIds.push(id);
         
         // Upload attachments if needed
         if (context.input.includeAttachments) {
-          const attachments = context.results[`get_attachments_${testCaseId}`] || [];
+          const attachmentsKey = `get_attachments_${testCaseId}`;
+          const attachments = resultsAny[attachmentsKey] || [];
+          
           for (const attachment of attachments) {
             await this.targetProvider.uploadAttachment(
               projectKey,
@@ -598,11 +655,29 @@ export class DependencyAwareMigrationUseCase extends MigrateTestCasesUseCase {
       }
     } else {
       // Process all test cases
-      const testCases = context.results['get_test_cases'] || [];
+      const testCases = resultsAny[OperationType.GET_TEST_CASES] || [];
+      
       for (const testCase of testCases) {
         this.loggerService?.debug(`Creating test case ${testCase.name || testCase.title} in target project ${projectKey}`);
         const result = await this.targetProvider.createTestCase(projectKey, testCase);
-        const id = typeof result === 'string' ? result : result.id;
+        // Handle different return types safely
+        let id: string;
+        if (typeof result === 'string') {
+          id = result;
+        } else if (result && typeof result === 'object') {
+          // Using type assertion after checking for object type
+          // This avoids the "Property 'id' does not exist on type 'never'" error
+          const objResult = result as { id?: string };
+          if (objResult.id) {
+            id = objResult.id;
+          } else {
+            id = `generated-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+            this.loggerService?.warn(`Could not determine ID from result object, generated: ${id}`);
+          }
+        } else {
+          id = `generated-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+          this.loggerService?.warn(`Could not determine ID from result, generated: ${id}`);
+        }
         createdIds.push(id);
       }
     }
