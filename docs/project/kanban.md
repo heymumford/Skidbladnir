@@ -93,14 +93,14 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Create Zephyr→qTest migration workflow UI wizard with connection testing (Critical)
 - [x] Test: Data transformation interface handles complex Zephyr to qTest field mappings (Critical)
 - [x] Test: Test case data viewer renders complex test data correctly (Critical)
-- [ ] Test: Attachment previewer handles different file types (High)
+- [x] Test: Attachment previewer handles different file types (High)
 - [x] Test: Connection verification provides clear feedback for Zephyr/qTest APIs (Critical)
 - [x] Test: Progress indicators accurately reflect operation status (Critical)
-- [ ] Test: Error handling provides detailed information and options for API failures (Critical)
-- [ ] Test: Pause/resume/cancel functionality works correctly (Critical)
-- [ ] Test: LCARS-inspired design is implemented correctly (Medium)
-- [ ] Test: UI is responsive across devices (Medium)
-- [ ] Test: Real-time indicators reflect system state (Medium)
+- [x] Test: Error handling provides detailed information and options for API failures (Critical)
+- [x] Test: Pause/resume/cancel functionality works correctly (Critical)
+- [x] Test: LCARS-inspired design is implemented correctly (Medium)
+- [x] Test: UI is responsive across devices (Medium)
+- [x] Test: Real-time indicators reflect system state (Medium)
 - [ ] Implement LCARS styling with blinking lights for active operations (Medium)
 - [ ] Implement user interactions based on tests (Medium)
 - [ ] Implement real-time indicators based on tests (Medium)
@@ -122,10 +122,15 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 ## In Progress
 
 ## In Review
-- [x] Implement API Operation Dependency System for Ordered Operations (High)
-- [x] Test: API Bridge correctly handles authentication flows (High)
 
 ## Completed
+- [x] Test: LCARS-inspired design is implemented correctly (Medium)
+- [x] Test: UI is responsive across devices (Medium)
+- [x] Test: Real-time indicators reflect system state (Medium)
+- [x] Test: Attachment previewer handles different file types (High)
+- [x] Test: Error handling provides detailed information and options for API failures (Critical)
+- [x] Implement API Operation Dependency System for Ordered Operations (High)
+- [x] Test: API Bridge correctly handles authentication flows (High)
 - [x] Test: Infrastructure scripts are idempotent (Medium)
 - [x] Create Karate tests for Zephyr/qTest API interfaces (High)
 - [x] Implement Binary Processor based on tests (Medium)
