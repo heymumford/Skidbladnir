@@ -135,7 +135,7 @@ describe('LLM Advisor Container Deployment', () => {
     );
     
     // Add a new model file to the volume
-    const testModelPath = path.join(rootDir, 'test-resources/models/test-model.bin');
+    const _testModelPath = path.join(rootDir, 'test-resources/models/test-model.bin');
     const targetModelPath = path.join(rootDir, 'packages/llm-advisor/models/new-model.bin');
     
     // Create directory if it doesn't exist

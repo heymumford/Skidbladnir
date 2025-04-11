@@ -11,7 +11,7 @@ import { ManageProvidersUseCase } from '../../../../pkg/usecases/provider/Manage
 import { LoggerService } from '../../../../pkg/domain/services/LoggerService';
 import { 
   TestManagementProvider, 
-  ProviderCapabilities, 
+  ProviderCapabilities as _ProviderCapabilities, 
   EntityType, 
   ProviderRegistry, 
   SourceProvider,

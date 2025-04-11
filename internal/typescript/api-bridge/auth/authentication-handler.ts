@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse, AxiosRequestConfig as _AxiosRequestConfig } from 'axios';
 import { stringify } from 'querystring';
 
 /**

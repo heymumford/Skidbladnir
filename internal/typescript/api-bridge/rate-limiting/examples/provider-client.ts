@@ -143,7 +143,7 @@ export class ProviderClient {
 }
 
 // Example usage
-async function example() {
+async function _example() {
   const rallyClient = new ProviderClient(
     'rally',
     'https://rally1.rallydev.com/slm/webservice/v2.0',

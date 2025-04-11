@@ -14,7 +14,7 @@ import i18n from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import { LanguageProvider } from '../../../../packages/ui/src/i18n/LanguageProvider';
 import ZephyrConfigPanel from '../../../../packages/ui/src/components/Providers/ZephyrConfigPanel';
-import QTestConfigPanel from '../../../../packages/ui/src/components/Providers/QTestConfigPanel';
+import { default as _QTestConfigPanel } from '../../../../packages/ui/src/components/Providers/QTestConfigPanel';
 import { ProviderConfigFactory } from '../../../../packages/ui/src/components/Providers/ProviderConfigFactory';
 
 // Initialize i18n for testing

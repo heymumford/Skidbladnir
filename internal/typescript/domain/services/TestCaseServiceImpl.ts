@@ -1,7 +1,7 @@
 import { TestCase, TestCaseStatus, Priority, TestStep } from '../../../../pkg/domain/entities/TestCase';
 import { TestCaseService } from '../../../../pkg/domain/services/TestCaseService';
 import { EntityValidator } from '../../../../pkg/domain/entities/EntityValidator';
-import { ValidationError } from '../../../../pkg/domain/errors/DomainErrors';
+import { ValidationError as _ValidationError } from '../../../../pkg/domain/errors/DomainErrors';
 
 /**
  * Implementation of TestCaseService that operates without infrastructure dependencies
@@ -248,7 +248,7 @@ export class TestCaseServiceImpl implements TestCaseService {
    * @param testCase The test case to check for duplicates
    * @returns Array of potential duplicate test cases
    */
-  async checkForDuplicates(testCase: TestCase): Promise<TestCase[]> {
+  async checkForDuplicates(_testCase: TestCase): Promise<TestCase[]> {
     // This would typically call a repository, but for a domain service we'll return an empty array
     // to indicate no duplicates found while maintaining the method signature
     return Promise.resolve([]);

@@ -1,7 +1,7 @@
 import { TestSuite } from '../../../../pkg/domain/entities/TestSuite';
 import { TestSuiteService } from '../../../../pkg/domain/services/TestSuiteService';
 import { EntityValidator } from '../../../../pkg/domain/entities/EntityValidator';
-import { ValidationError } from '../../../../pkg/domain/errors/DomainErrors';
+import { ValidationError as _ValidationError } from '../../../../pkg/domain/errors/DomainErrors';
 
 /**
  * Implementation of TestSuiteService that operates without infrastructure dependencies
@@ -25,7 +25,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
    * @param suiteId The ID of the test suite
    * @returns Coverage percentage (0-100)
    */
-  async calculateSuiteCoverage(suiteId: string): Promise<number> {
+  async calculateSuiteCoverage(_suiteId: string): Promise<number> {
     // Without infrastructure dependencies, we can't calculate real coverage
     // Return a placeholder value (could be based on test suite attributes in future)
     return Promise.resolve(0);
@@ -38,7 +38,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
    * @param suiteId The ID of the test suite
    * @returns Array of related test suites
    */
-  async getTestSuiteHierarchy(suiteId: string): Promise<TestSuite[]> {
+  async getTestSuiteHierarchy(_suiteId: string): Promise<TestSuite[]> {
     // Without infrastructure dependencies, we can't fetch the hierarchy
     return Promise.resolve([]);
   }
@@ -51,7 +51,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
    * @param targetSuiteId The ID of the target test suite
    * @returns The merged test suite
    */
-  async mergeSuites(sourceSuiteId: string, targetSuiteId: string): Promise<TestSuite> {
+  async mergeSuites(_sourceSuiteId: string, _targetSuiteId: string): Promise<TestSuite> {
     // Without infrastructure dependencies, we can't actually merge suites
     // Return a placeholder empty suite
     const emptySuite: TestSuite = {

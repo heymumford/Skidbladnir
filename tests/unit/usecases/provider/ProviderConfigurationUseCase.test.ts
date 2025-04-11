@@ -47,7 +47,7 @@ describe('ProviderConfigurationUseCase', () => {
 
   const mockProviderResolver = jest.fn().mockReturnValue(mockProvider);
   let useCase: ProviderConfigurationUseCase;
-  let mockConfig: ProviderConfiguration;
+  let _mockConfig: ProviderConfiguration;
 
   beforeEach(() => {
     jest.clearAllMocks();

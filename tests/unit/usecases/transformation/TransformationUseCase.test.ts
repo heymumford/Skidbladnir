@@ -10,7 +10,7 @@
 import { 
   TransformTestCasesUseCase, 
   TransformTestCasesInput,
-  TransformTestCasesResult,
+  TransformTestCasesResult as _TransformTestCasesResult,
   TransformationPort,
   TransformationConfigurationPort
 } from '../../../../pkg/usecases/transformation/TransformTestCasesUseCase';

@@ -1,5 +1,5 @@
 import { createLogger, LogLevel, Logger } from '../logger';
-import { getResilienceFacade, getAllHealthStatus } from './resilience-factory';
+import { getResilienceFacade as _getResilienceFacade, getAllHealthStatus } from './resilience-factory';
 
 export interface ProviderHealth {
   status: 'UP' | 'DEGRADED' | 'DOWN';

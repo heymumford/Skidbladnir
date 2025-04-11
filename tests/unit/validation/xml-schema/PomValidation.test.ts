@@ -4,7 +4,7 @@
  * This test validates that POM files in the project adhere to the Maven POM schema.
  */
 
-import * as fs from 'fs';
+import * as _fs from 'fs';
 import * as path from 'path';
 import { XmlSchemaValidator } from './XmlSchemaValidator';
 

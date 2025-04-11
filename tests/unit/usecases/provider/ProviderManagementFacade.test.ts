@@ -118,7 +118,7 @@ describe('ProviderManagementFacade', () => {
   });
 
   describe('Configuration Management', () => {
-    const mockConfig: ProviderConfiguration = {
+    const _mockConfig: ProviderConfiguration = {
       id: 'config-1',
       name: 'Test Config',
       providerId: 'mock-provider',

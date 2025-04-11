@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { MigrateTestCasesUseCase, MigrateTestCasesInput, MigrateTestCasesResult } from '../../../../pkg/usecases/migration/MigrateTestCases';
+import { MigrateTestCasesUseCase, MigrateTestCasesInput, MigrateTestCasesResult as _MigrateTestCasesResult } from '../../../../pkg/usecases/migration/MigrateTestCases';
 import { TestCase } from '../../../../pkg/domain/entities/TestCase';
 import { EntityNotFoundError } from '../../../../pkg/domain/errors/DomainErrors';
 
@@ -308,7 +308,7 @@ describe('MigrateTestCasesUseCase', () => {
   
   it('should handle errors during attachment processing', async () => {
     // Arrange
-    mockTargetProvider.addTestCaseAttachment.mockImplementation((testCaseId, attachment) => {
+    mockTargetProvider.addTestCaseAttachment.mockImplementation((testCaseId, _attachment) => {
       if (testCaseId === 'NEW-TC-1002') {
         return Promise.reject(new Error('Error adding attachment'));
       }

@@ -88,8 +88,8 @@ describe('Pause/Resume/Cancel Functionality', () => {
   const onPauseMock = jest.fn().mockResolvedValue(undefined);
   const onResumeMock = jest.fn().mockResolvedValue(undefined);
   const onCancelMock = jest.fn().mockResolvedValue(undefined);
-  const onStatusChangeMock = jest.fn();
-  const onRestartMock = jest.fn();
+  const _onStatusChangeMock = jest.fn();
+  const _onRestartMock = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -1131,7 +1131,7 @@ describe('Pause/Resume/Cancel Functionality', () => {
       
       // Create a component in paused state to test resume error
       const ResumeErrorComponent = () => {
-        const [status, setStatus] = React.useState({
+        const [status, _setStatus] = React.useState({
           ...runningStatus,
           state: 'paused' // Start in paused state to test resume
         });
@@ -1167,7 +1167,7 @@ describe('Pause/Resume/Cancel Functionality', () => {
       };
       
       // Render the component for testing resume
-      const { unmount, rerender } = render(<ResumeErrorComponent />);
+      const { unmount, rerender: _rerender } = render(<ResumeErrorComponent />);
       
       // Verify we have a Resume button
       expect(screen.getByRole('button', { name: /^resume$/i })).toBeInTheDocument();
@@ -1191,7 +1191,7 @@ describe('Pause/Resume/Cancel Functionality', () => {
       
       // Create a component in running state to test pause error
       const PauseErrorComponent = () => {
-        const [status, setStatus] = React.useState(runningStatus); // Start in running state
+        const [status, _setStatus] = React.useState(runningStatus); // Start in running state
         const [pauseAttempted, setPauseAttempted] = React.useState(false);
         
         const handleFailingPause = async (reason?: string) => {
@@ -1344,7 +1344,7 @@ describe('Pause/Resume/Cancel Functionality', () => {
       // Component to test resume recovery
       const ResumeRecoveryTest = () => {
         const [attemptCount, setAttemptCount] = React.useState(0);
-        const [status, setStatus] = React.useState({...runningStatus, state: 'paused'});
+        const [status, _setStatus] = React.useState({...runningStatus, state: 'paused'});
         
         const handleResume = async () => {
           const newCount = attemptCount + 1;

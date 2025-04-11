@@ -71,12 +71,12 @@ export class MockZephyrClient {
     return { status: 200, data: this.mockProjects };
   }
 
-  async getFolders(projectKey: string) {
+  async getFolders(_projectKey: string) {
     this.checkFailures();
     return { status: 200, data: this.mockFolders };
   }
 
-  async getTestCases(projectKey: string, options?: any) {
+  async getTestCases(_projectKey: string, _options?: any) {
     this.checkFailures();
     return { 
       status: 200, 
@@ -94,7 +94,7 @@ export class MockZephyrClient {
     return { status: 200, data: testCase };
   }
 
-  async getExecutions(options?: any) {
+  async getExecutions(_options?: any) {
     this.checkFailures();
     return { 
       status: 200, 

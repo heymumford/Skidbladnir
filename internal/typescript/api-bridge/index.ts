@@ -7,9 +7,9 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { AuthenticationHandler, AuthenticationMethod, AuthCredentials } from './auth/authentication-handler';
+import { AuthenticationHandler, AuthenticationMethod as _AuthenticationMethod, AuthCredentials } from './auth/authentication-handler';
 import { ResilientApiClient, ApiClientOptions } from './clients/resilient-api-client';
-import { ApiRateLimiter, ProviderRateLimitConfig } from './rate-limiting/api-rate-limiter';
+import { ApiRateLimiter, ProviderRateLimitConfig as _ProviderRateLimitConfig } from './rate-limiting/api-rate-limiter';
 import { AxiosRequestConfig, AxiosResponse, CancelTokenSource } from 'axios';
 import { 
   ServiceHealthMonitor, 

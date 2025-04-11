@@ -33,7 +33,7 @@ export class RetryService {
     let attempt = 0;
     let delay = mergedOptions.initialDelayMs;
     const errors: Error[] = [];
-    let totalRetryMs = 0;
+    let _totalRetryMs = 0;
 
     while (attempt < mergedOptions.maxAttempts) {
       try {
@@ -52,7 +52,7 @@ export class RetryService {
         }
 
         await this.delay(delay);
-        totalRetryMs += delay;
+        _totalRetryMs += delay;
         delay = Math.min(
           delay * mergedOptions.backoffFactor,
           mergedOptions.maxDelayMs

@@ -20,7 +20,7 @@ import {
   TestCase,
   TestCycle,
   TestExecution,
-  Attachment
+  Attachment as _Attachment
 } from '../models/entities';
 import { AttachmentContent } from '../models/attachment';
 import { FieldDefinition } from '../models/field-definition';

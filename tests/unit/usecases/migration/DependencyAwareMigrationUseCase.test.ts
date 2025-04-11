@@ -27,7 +27,7 @@ import {
 import { 
   SourceProvider, 
   TargetProvider,
-  ProviderApiContract 
+  ProviderApiContract as _ProviderApiContract 
 } from '../../../../packages/common/src/interfaces/provider';
 
 import { LoggerService } from '../../../../pkg/domain/services/LoggerService';

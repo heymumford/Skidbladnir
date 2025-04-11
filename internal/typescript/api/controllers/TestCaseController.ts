@@ -101,7 +101,7 @@ export class ExpressTestCaseController {
   /**
    * Error handler middleware
    */
-  errorHandler = (error: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  errorHandler = (error: Error, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     console.error('API Error:', error);
     
     if (error instanceof ValidationError) {

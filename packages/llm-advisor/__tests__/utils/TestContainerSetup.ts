@@ -176,7 +176,7 @@ export class TestContainerSetup {
     
     // Start all containers
     console.log(`Starting test stack with ${containers.length} containers`);
-    const results = await this.containerManager.deployApplication(containers);
+    const _results = await this.containerManager.deployApplication(containers);
     
     // Store deployed container names
     this.deployedContainers = containers.map(c => c.name);

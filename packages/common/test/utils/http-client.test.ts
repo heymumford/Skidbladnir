@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { HttpClient, HttpMethod, HttpError, createHttpClient } from '../../src/utils/http-client';
+import { HttpClient, HttpMethod as _HttpMethod, HttpError, createHttpClient } from '../../src/utils/http-client';
 import { RateLimiter } from '../../src/utils/rate-limiter';
 
 // Create a mock for global fetch
@@ -172,7 +172,7 @@ describe('HttpClient', () => {
   
       // Override the internal timeout mechanism for testing
       const originalTimeoutPromise = Promise.race;
-      Promise.race = jest.fn(promises => {
+      Promise.race = jest.fn(_promises => {
         // Immediately return the rejected timeout promise
         return Promise.reject(new Error('Request timeout'));
       });

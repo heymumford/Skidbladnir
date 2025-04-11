@@ -1,7 +1,7 @@
 import { ServiceHealthMonitor } from './service-health-monitor';
 export { ServiceHealthMonitor } from './service-health-monitor';
 import axios from 'axios';
-import { getRateLimiter } from './resilience-factory';
+import { getRateLimiter as _getRateLimiter } from './resilience-factory';
 
 // Singleton instance of the service health monitor
 let globalHealthMonitor: ServiceHealthMonitor | null = null;

@@ -1,4 +1,4 @@
-import { TestCase, TestCaseStatus, Priority, TestStep } from '../../../../pkg/domain/entities/TestCase';
+import { TestCase, TestCaseStatus, Priority, TestStep as _TestStep } from '../../../../pkg/domain/entities/TestCase';
 import { TestCaseRepository, TestCaseFilters } from '../../../../pkg/domain/repositories/TestCaseRepository';
 import { v4 as uuidv4 } from 'uuid';
 

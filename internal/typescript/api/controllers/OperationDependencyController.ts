@@ -9,7 +9,7 @@
 
 import { Request, Response } from 'express';
 import { OperationDependencyResolver } from '../../../../pkg/interfaces/api/operations/OperationDependencyResolver';
-import { DependencyGraph } from '../../../../pkg/interfaces/api/operations/DependencyGraph';
+import { DependencyGraph as _DependencyGraph } from '../../../../pkg/interfaces/api/operations/DependencyGraph';
 import { DependencyGraphVisualizer } from '../../../../pkg/interfaces/api/operations/DependencyGraphVisualizer';
 import { ProviderRegistry } from '../../../../packages/common/src/interfaces/provider';
 import { LoggerService } from '../../../../pkg/domain/services/LoggerService';
@@ -424,8 +424,8 @@ export class OperationDependencyController {
         
         // Get the operation definitions for the specified operation types
         operationDefinitions = operations.map(opType => {
-          // Convert the string operation type to OperationType enum
-          const operationType = OperationTypeAdapter.stringToOperationType(opType);
+          // Convert the string operation type to OperationType enum (not used directly)
+          const _operationType = OperationTypeAdapter.stringToOperationType(opType);
           
           // Find the operation in the contract
           const providerDefinition = contract.operations[opType];

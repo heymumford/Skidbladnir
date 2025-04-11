@@ -90,7 +90,7 @@ export class PerformanceMonitor {
   /**
    * Measure a complete request
    */
-  async measureRequest<T>(
+  async measureRequest<_T>(
     endpoint: string,
     method: string,
     options: RequestInit = {}

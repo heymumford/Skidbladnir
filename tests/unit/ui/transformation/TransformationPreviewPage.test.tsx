@@ -21,7 +21,7 @@ jest.mock('react-json-tree', () => ({
 }));
 
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent as _fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -69,7 +69,7 @@ jest.mock('../../../../packages/ui/src/components/Transformation', () => ({
       BatchPreviewComponent for {testCaseIds.length} test cases
     </div>
   ),
-  DataStructureComparison: ({ preview }: any) => (
+  DataStructureComparison: ({ preview: _preview }: any) => (
     <div data-testid="data-structure-comparison">
       DataStructureComparison component
     </div>

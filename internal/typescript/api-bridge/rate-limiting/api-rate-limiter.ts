@@ -8,7 +8,7 @@
  */
 
 import { RateLimiter } from '../../../../packages/common/src/utils/rate-limiter';
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 
 export interface ProviderRateLimitConfig {
   providerName: string;

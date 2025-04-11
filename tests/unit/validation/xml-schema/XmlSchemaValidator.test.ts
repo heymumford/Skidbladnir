@@ -310,7 +310,7 @@ describe('XmlSchemaValidator', () => {
     it('should validate all XML files in a directory', () => {
       // Mock the method for test stability
       const mockMethod = jest.spyOn(XmlSchemaValidator, 'validateDirectory');
-      mockMethod.mockImplementation((xmlDir, schemaDir, pattern = '**/*.xml') => {
+      mockMethod.mockImplementation((xmlDir, schemaDir, _pattern = '**/*.xml') => {
         // Return test data for this specific test
         return [
           {

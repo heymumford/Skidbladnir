@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { Cache, createCache, CacheOptions } from '../../src/utils/cache';
+import { Cache, createCache, CacheOptions as _CacheOptions } from '../../src/utils/cache';
 
 describe('Cache', () => {
   beforeEach(() => {
