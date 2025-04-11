@@ -1,6 +1,6 @@
 # Skíðblaðnir
 
-[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](https://github.com/heymumford/Skidbladnir/releases)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](https://github.com/heymumford/Skidbladnir/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
