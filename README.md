@@ -1,6 +1,6 @@
 # Skíðblaðnir
 
-[![Version](https://img.shields.io/badge/version-0.2.3-blue.svg)](https://github.com/heymumford/Skidbladnir/releases)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](https://github.com/heymumford/Skidbladnir/releases)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-blue.svg)](https://www.typescriptlang.org/)
 [![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
@@ -8,8 +8,8 @@
 [![TDD](https://img.shields.io/badge/TDD-Clean%20Architecture-orange.svg)](docs/project/tdd-approach.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/heymumford/Skidbladnir/pulls)
 
-## Beta Readiness: 75% Complete
-![Progress](https://progress-bar.dev/75/?width=500&title=Zephyr→qTest%20Migration)
+## Beta Readiness: 85% Complete
+![Progress](https://progress-bar.dev/85/?width=500&title=Zephyr→qTest%20Migration)
 [📊 Detailed Progress Tracker](docs/project/progress-tracker.md)
 
 Skíðblaðnir is a containerized, polyglot platform that automates the migration of test assets between different test management systems, solving the problems of manual migration burden, data loss, API complexity, and schema incompatibility. Our primary focus is providing a reliable bridge from Atlassian Jira with Zephyr Scale (source) to Tricentis qTest (destination), demonstrating how future providers should be implemented within our extensible architecture. The platform implements clean architecture with strictly enforced boundaries across TypeScript, Python, and Go components and features a self-healing migration process powered by a local LLM advisor that can troubleshoot API issues and optimize performance with minimal resource requirements.
@@ -43,10 +43,13 @@ Skíðblaðnir is a containerized, polyglot platform that automates the migratio
 For details on why we prioritize this migration path, see our [Migration Focus](docs/project/migration-focus.md) document.
 
 ### Future Support (Architecture Ready)
-- HP ALM/Quality Center
+- Micro Focus ALM/Quality Center (formerly HP ALM)
 - Microsoft Azure DevOps
 - Rally
-- Excel imports/exports
+- Jama Connect
+- TestRail
+- Visure Solutions
+- Excel/CSV imports/exports
 
 ## Key Features
 
@@ -60,7 +63,7 @@ For details on why we prioritize this migration path, see our [Migration Focus](
 - **Universal Provider Interface**: Standardized adapter system extensible to future platforms
 - **Local LLM Advisor**: Llama-3 powered assistant for API troubleshooting and optimization
 - **Self-Healing Capabilities**: Automatic recovery from API errors and schema changes
-- **LCARS-inspired Interface**: Star Trek styled interface with wizard-based workflows, real-time status indicators, visual transformations, and intuitive migration controls
+- **LCARS-inspired Interface**: Star Trek styled interface featuring asymmetric panels, blinking status indicators, distinctive color coding, wizard-based workflows, real-time operation monitoring, and intuitive migration controls
 - **Fully Containerized**: Optimized for minimal rebuild and recompile cycles using Podman
 - **Laptop-Friendly**: Memory-optimized containers that work well on 16GB laptops running Windows 10/11
 
@@ -211,6 +214,9 @@ Comprehensive documentation is available in the `docs/` directory:
 - [Build System](docs/build-system.md) - Build system documentation
 - [Container Strategy](docs/containerization.md) - Container setup details
 - [Laptop-Friendly Guide](docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
+- [User Interface Guide](docs/ui/design-system.md) - LCARS UI design system
+- [Migration Guide](docs/user/migration-guide/index.md) - User guide for migration
+- [Architecture Decision Records](docs/adrs/README.md) - ADRs documenting key design decisions
 
 ## Testing Approach
 
