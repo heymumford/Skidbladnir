@@ -44,9 +44,49 @@ The versioning system ensures that the version is synchronized across:
 5. Go version constants in source files
 6. Other XML files with version attributes
 
-### Version Update Script
+## Enhanced Version Management Tools
 
-The `scripts/update-version.sh` script handles all version management:
+The project now features an improved version management system that provides better XML handling for POM files and a more consistent user experience.
+
+### Consolidated Version Tools
+
+The main CLI tool for version management is:
+
+```bash
+./scripts/util/consolidated-version-tools.sh [command] [options]
+```
+
+Commands:
+- `update` - Update version numbers across all files
+- `check` - Check version consistency across project files  
+- `get` - Get current version information
+
+Update options:
+- `-M, --major` - Bump major version (X.Y.Z → X+1.0.0)
+- `-m, --minor` - Bump minor version (X.Y.Z → X.Y+1.0)
+- `-p, --patch` - Bump patch version (X.Y.Z → X.Y.Z+1) [default]
+- `-b, --build` - Bump build number only (X.Y.Z-bN → X.Y.Z-bN+1)
+- `-v, --version VER` - Set specific version (format: X.Y.Z[-bN])
+- `-g, --git` - Commit changes to Git
+
+Examples:
+```bash
+# Bump patch version (e.g., 1.2.3 → 1.2.4)
+./scripts/util/consolidated-version-tools.sh update --patch
+
+# Bump minor version and commit to git
+./scripts/util/consolidated-version-tools.sh update -m -g
+
+# Set specific version
+./scripts/util/consolidated-version-tools.sh update -v 2.0.0
+
+# Check version consistency
+./scripts/util/consolidated-version-tools.sh check
+```
+
+### Legacy Scripts
+
+For backward compatibility, the following scripts are still available:
 
 ```bash
 # Just update the build number
@@ -55,72 +95,108 @@ The `scripts/update-version.sh` script handles all version management:
 # Bump patch version and increment build number
 ./scripts/update-version.sh --patch
 
-# Bump minor version and increment build number
-./scripts/update-version.sh --minor
-
-# Bump major version and increment build number
-./scripts/update-version.sh --major
-
-# Set a specific version
-./scripts/update-version.sh --version 1.2.3
-
-# Update version and commit to Git
-./scripts/update-version.sh --build --push-git
+# NPM scripts
+npm run version:bump    # Increment build number
+npm run version:patch   # Bump patch version
+npm run version:minor   # Bump minor version
+npm run version:major   # Bump major version
+npm run version:push    # Update build number and push to Git
 ```
-
-### NPM Scripts
-
-For convenience, the following npm scripts are available:
-
-```bash
-# Increment build number
-npm run version:bump
-
-# Bump patch version
-npm run version:patch
-
-# Bump minor version
-npm run version:minor
-
-# Bump major version
-npm run version:major
-
-# Update build number and push to Git
-npm run version:push
-```
-
-## Build System Integration
-
-The version management is integrated with the build system:
-
-1. Each build automatically increments the build number
-2. The build system synchronizes version numbers across all files
-3. Version can be committed and tagged in Git (with --push-git flag)
-4. Different environments (dev, qa, prod) are tracked in the version file
-
-## Version Validation
-
-A Git pre-push hook checks that all version numbers are synchronized:
-
-1. Ensures package.json, build-versions.json, and pyproject.toml have the same version
-2. Verifies Maven POM files have the correct version (major.minor.patch part)
-3. Warns if versions are not synchronized (but allows the push to continue)
 
 ## XML Handling with xmlstarlet
 
-The version system uses `xmlstarlet` to properly update XML files (like pom.xml) while maintaining their structure:
+The enhanced version system uses `xmlstarlet` for precise updates to XML files, particularly Maven POM files:
 
-- Updates version nodes in Maven POM files
-- Handles parent POM versions
-- Updates version properties in XML files
-- Preserves XML formatting and structure
+- Only updates the project's own version, not dependency versions
+- Updates both the project version tag and the `skidbladnir.version` property if present
+- Preserves XML formatting, structure, and comments
+- Falls back to limited sed-based updates when xmlstarlet is not available
+
+Example of proper POM update:
+
+```xml
+<!-- Before -->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.skidbladnir</groupId>
+  <artifactId>api-integration-tests</artifactId>
+  <version>0.3.3</version>  <!-- Only this version is updated -->
+  <properties>
+    <skidbladnir.version>0.3.3</skidbladnir.version>  <!-- This property is updated -->
+    <karate.version>1.4.1</karate.version>  <!-- This dependency version is preserved -->
+  </properties>
+</project>
+
+<!-- After update to 0.4.0 -->
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.skidbladnir</groupId>
+  <artifactId>api-integration-tests</artifactId>
+  <version>0.4.0</version>  <!-- Updated to new version -->
+  <properties>
+    <skidbladnir.version>0.4.0</skidbladnir.version>  <!-- Updated to new version -->
+    <karate.version>1.4.1</karate.version>  <!-- Preserved unchanged -->
+  </properties>
+</project>
+```
+
+## Version Consistency Checking
+
+The new version management tools include a consistency checker that verifies versions across all files:
+
+```bash
+./scripts/util/consolidated-version-tools.sh check
+```
+
+This will:
+1. Read the version from the source of truth (`build-versions.json`)
+2. Check all relevant files for version information
+3. Report any inconsistencies found
+4. Provide instructions for fixing inconsistencies
+
+## Implementation Details
+
+The improved version management system consists of several components:
+
+1. `consolidated-version-tools.sh` - Main entry point script (bash)
+2. `simple-version-update.sh` - Handles file updates with xmlstarlet support
+3. `version-update.js` - Node.js component for updating build-versions.json
+
+This modular approach allows for:
+- Precise XML handling through xmlstarlet
+- JavaScript-based processing of JSON files
+- Command-line consistency checking
+- Single source of truth with propagation to other files
 
 ## Recommendations
 
-1. For routine development, let the build system handle version increments automatically
-2. For releases, explicitly update the version with an appropriate bump:
-   - `npm run version:patch` for bug fixes
-   - `npm run version:minor` for new features
-   - `npm run version:major` for breaking changes
-3. Always commit version changes separately from code changes
-4. Build numbers should always increment monotonically
+1. Use the consolidated tools for all version management:
+   ```bash
+   ./scripts/util/consolidated-version-tools.sh update -p -g
+   ```
+
+2. Periodically check version consistency:
+   ```bash
+   ./scripts/util/consolidated-version-tools.sh check
+   ```
+
+3. For Maven-based components, define and use a `skidbladnir.version` property:
+   ```xml
+   <properties>
+     <skidbladnir.version>0.3.3</skidbladnir.version>
+   </properties>
+   <dependencies>
+     <dependency>
+       <groupId>org.skidbladnir</groupId>
+       <artifactId>common</artifactId>
+       <version>${skidbladnir.version}</version>
+     </dependency>
+   </dependencies>
+   ```
+
+4. Always commit version changes separately from code changes with a consistent message format:
+   ```
+   chore: bump [type] version to X.Y.Z-bN
+   ```
+
+5. Build numbers should always increment monotonically

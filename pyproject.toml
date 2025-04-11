@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "skidbladnir-python"
-version = "0.3.3-b63"
+version = "1.0.0-b65"
 description = "Python components for Skidbladnir test asset migration platform"
 authors = ["Your Name <your.email@example.com>"]
 readme = "README.md"
