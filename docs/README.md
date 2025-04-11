@@ -1,48 +1,107 @@
 # Skidbladnir Documentation
 
-This directory contains comprehensive documentation for the Skidbladnir project, organized by category:
+This directory contains comprehensive documentation for the Skidbladnir project, organized into a structured hierarchy for easy navigation and reference.
 
-## Directory Structure
+## Documentation Structure
 
-- **adrs/** - Architecture Decision Records documenting key architectural decisions
-- **archive/** - Historical documents related to project migration (reference only)
-- **project/** - Project management documents (kanban, strategy, etc.)
+```
+docs/
+├── adrs/                    # Architecture Decision Records (numbered sequences)
+├── architecture/            # System architecture documentation
+├── api/                     # API and provider integration details
+├── development/             # Development guides and standards
+├── project/                 # Project management documents
+├── testing/                 # Testing strategies and frameworks
+├── ui/                      # User interface design and implementation
+└── user/                    # End-user guides and tutorials
+    └── migration-guide/     # Specific migration path documentation
+```
 
-## Documentation Files
+## Main Documentation Categories
 
-### Architecture & Design
-- [Architecture Overview](architecture.md) - High-level architecture documentation
-- [Architecture Diagrams (C4)](c4-diagrams.md) - System visualizations with C4 model
-- [Clean Architecture Guide](clean-architecture-guide.md) - Implementation details of clean architecture
-- [Architecture Validation](architecture-validation.md) - Tools for validating architecture compliance
+### [Architecture](architecture/README.md)
+Comprehensive documentation of the system's architecture, including:
+- [Clean Architecture Implementation](architecture/clean-architecture-guide.md)
+- [C4 Diagrams](architecture/c4-diagrams.md)
+- [Folder Structure](architecture/folder-structure.md)
+- [Architecture Validation Tools](architecture/architecture-validation-tools.md)
+- [Cross-Language Dependency Analysis](architecture/cross-language-dependency-analyzer-guide.md)
 
-### Component Documentation
-- [API Bridge Architecture](api-bridge-architecture.md) - API integration details
-- [API Comparison](api-comparison.md) - Comparison of test management system APIs
-- [Provider Interface](provider-interface.md) - Provider implementation details
-- [Local LLM Assistant](local-llm-assistant.md) - LLM integration and usage
-- [Containerization Strategy](containerization.md) - Container setup details
-- [Binary Processor Large Test Cases](binary-processor-large-testcases.md) - Large test case handling
+### [API](api/README.md)
+Details on API specifications, bridges, and provider implementations:
+- [Provider Interface Design](api/provider-interface.md)
+- [API Comparison](api/api-comparison.md)
+- [API Bridge Architecture](api/api-bridge-architecture.md)
+- [Operation Dependency System](api/operation-dependency-system.md)
+- [Cross-Component Testing](api/cross-component-testing.md)
+- [Cross-Language Contract Testing](api/cross-language-contract-testing.md)
 
-### Development & Testing
-- [Development Guide](development-guide.md) - Guide for developers
-- [Laptop-Friendly Guide](laptop-friendly-guide.md) - Optimized for 16GB laptops
-- [Test Documentation Standards](test-documentation-standards.md) - Standards for test documentation
-- [Karate Testing Strategy](karate-testing-strategy.md) - API testing with Karate
-- [Karate Test Syntax Guide](karate-test-syntax-guide.md) - Karate syntax reference
-- [Karate API Mocking](karate-api-mocking.md) - API mocking with Karate
-- [LLM Advisor Tests](llm-advisor-tests.md) - LLM component testing
-- [Security Audit Guidelines](security-audit-guidelines.md) - Security practices
+### [Development](development/README.md)
+Development procedures, environments, and practices:
+- [Development Guide](development/development-guide.md)
+- [Build System](development/build-system.md)
+- [Containerization Strategy](development/containerization.md)
+- [Laptop-Friendly Development](development/laptop-friendly-guide.md)
+- [Security Guidelines](development/security-audit-guidelines.md)
+- [Copilot Agent Integration](development/copilot-agent-refactoring.md)
 
-### User Interface
-- [UI Requirements](ui-requirements.md) - UI specifications and requirements
-- [UI Implementation Summary](ui-implementation-summary.md) - Overview of UI implementation
-- [UI Test Plan](ui-test-plan.md) - Testing plan for the UI
+### [Testing](testing/README.md)
+Test methodologies, frameworks, and standards:
+- [Test Pyramid Approach](testing/test-pyramid-approach.md)
+- [Test Documentation Standards](testing/test-documentation-standards.md)
+- [Acceptance Testing](testing/acceptance-testing.md)
+- [Karate Testing Strategy](testing/karate-testing-strategy.md)
+- [Karate API Mocking](testing/karate-api-mocking.md)
+- [LLM Component Testing](testing/llm-advisor-tests.md)
 
-## Maintaining Documentation
+### [UI](ui/README.md)
+User interface design principles and implementation:
+- [Design System](ui/design-system.md)
+- [LCARS Design System](ui/lcars-design-system.md)
+- [User Interface Guide](ui/user-interface-guide.md)
 
-When adding new documentation:
-1. Place it in the appropriate category folder
-2. Update the relevant README file
-3. Link to it from other documents as needed
-4. Follow the established format and style guidelines
+### [User Guides](user/README.md)
+End-user documentation for using the system:
+- [Migration Guide](user/migration-guide/README.md)
+  - [API Token Guide](user/migration-guide/api-token-guide.md)
+  - [Field Mapping Reference](user/migration-guide/field-mapping-reference.md)
+  - [Transformation Examples](user/migration-guide/transformation-examples.md)
+  - [Zephyr to qTest Implementation](user/migration-guide/zephyr-qtest-implementation.md)
+  - [Troubleshooting](user/migration-guide/troubleshooting.md)
+- [Quick Start Guide](user/quick-start.md)
+- [Accessibility Guide](user/accessibility-guide.md)
+- [Cross-Browser Testing Guide](user/cross-browser-testing-guide.md)
+
+### [Project](project/README.md)
+Project management documents and tracking:
+- [About](project/about.md)
+- [Kanban Board](project/kanban.md)
+- [Progress Tracker](project/progress-tracker.md)
+- [Strategy](project/strategy.md)
+- [TDD Approach](project/tdd-approach.md)
+- [Versioning](project/versioning.md)
+
+### [Architecture Decision Records](adrs/README.md)
+Chronological record of architecture decisions:
+- [ADR-0001: Architectural Foundations](adrs/0001-architectural-foundations.md)
+- [ADR-0002: Provider Interface Design](adrs/0002-provider-interface-design.md)
+- [ADR-0003: API Bridge Architecture](adrs/0003-api-bridge-architecture.md)
+- [ADR-0014: LCARS UI Implementation](adrs/0014-lcars-ui-implementation.md)
+- [ADR-0015: UI Workflow Testing Strategy](adrs/0015-ui-workflow-testing-strategy.md)
+
+## Getting Started
+
+- [Quick Start Guide](./quick-start.md) - Get up and running quickly
+- [Development Guide](./development/development-guide.md) - Guide for developers
+- [Migration Guide](./user/migration-guide/README.md) - End-user migration guide
+
+## Documentation Standards
+
+When adding or updating documentation:
+1. Follow the established directory structure
+2. Use Markdown formatting consistently
+3. Link related documents together
+4. Update the appropriate README.md files
+5. Ensure content is accurate and up-to-date
+6. Include code examples where appropriate
+7. Use relative links for internal references

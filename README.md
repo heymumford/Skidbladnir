@@ -211,16 +211,29 @@ When running in development mode, services are available at:
 
 ## Documentation
 
-Comprehensive documentation is available in the `docs/` directory:
+Comprehensive documentation is organized by category in the `docs/` directory:
 
-- [Architecture](docs/architecture.md) - Architecture documentation and diagrams
-- [Development Guide](docs/development-guide.md) - Guide for developers
-- [Build System](docs/build-system.md) - Build system documentation
-- [Container Strategy](docs/containerization.md) - Container setup details
-- [Laptop-Friendly Guide](docs/laptop-friendly-guide.md) - Optimized for 16GB laptops
-- [User Interface Guide](docs/ui/design-system.md) - LCARS UI design system
-- [Migration Guide](docs/user/migration-guide/index.md) - User guide for migration
-- [Architecture Decision Records](docs/adrs/README.md) - ADRs documenting key design decisions
+### For Users
+- [🚀 Quick Start Guide](docs/quick-start.md) - Get up and running quickly
+- [📘 Migration Guide](docs/user/migration-guide/README.md) - Complete migration user guide
+- [🎮 User Interface Guide](docs/ui/user-interface-guide.md) - How to use the LCARS interface
+
+### For Developers
+- [🏗️ Architecture Overview](docs/architecture/README.md) - System architecture and design
+- [💻 Development Guide](docs/development/development-guide.md) - For developers
+- [🧪 Testing Guide](docs/testing/README.md) - Testing standards and practices
+- [🏠 Laptop-Friendly Guide](docs/development/laptop-friendly-guide.md) - Optimized for 16GB laptops
+- [🔍 API Documentation](docs/api/README.md) - API specifications and implementations
+- [📝 ADRs](docs/adrs/README.md) - Architecture Decision Records
+
+### Component Guides
+- [🎨 LCARS UI Design System](docs/ui/lcars-design-system.md) - Star Trek inspired interface
+- [🔄 API Bridge Architecture](docs/api/api-bridge-architecture.md) - API integration details
+- [🔌 Provider Interface](docs/api/provider-interface.md) - Platform adapters
+- [📦 Containerization](docs/development/containerization.md) - Container setup
+- [🧠 LLM Integration](docs/architecture/local-llm-assistant.md) - AI assistant integration
+
+Complete documentation is available in the [Documentation Index](docs/README.md)
 
 ## Testing Approach
 
