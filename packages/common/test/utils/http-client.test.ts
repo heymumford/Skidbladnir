@@ -15,7 +15,7 @@ const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
 // Mock responses
-const mockJsonResponse = (status: number, data: any, headers = {}) => {
+const mockJsonResponse = (status: number, data: any, headers: Record<string, string> = {}) => {
   const mockHeaders = {
     get: jest.fn((name: string) => headers[name.toLowerCase()]),
     has: jest.fn((name: string) => name.toLowerCase() in headers),
@@ -144,9 +144,9 @@ describe('HttpClient', () => {
       try {
         await httpClient.get('/endpoint');
         fail('Should have thrown an error');
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(HttpError);
-        expect(error).toMatchObject({
+        expect(error as HttpError).toMatchObject({
           status: 400,
           message: 'Invalid request parameters',
           code: 'VALIDATION_ERROR'
@@ -166,7 +166,7 @@ describe('HttpClient', () => {
         timeout: 100,
         fetchFn: () => new Promise(resolve => {
           // This promise never resolves, causing a timeout
-          setTimeout(() => resolve({ status: 200 }), 1000);
+          setTimeout(() => resolve(new Response(JSON.stringify({ status: 'success' }), { status: 200 })), 1000);
         })
       });
   
@@ -180,8 +180,8 @@ describe('HttpClient', () => {
       try {
         await timeoutClient.get('/endpoint');
         fail('Should have thrown a timeout error');
-      } catch (error) {
-        expect(error.message).toBe('Request timeout');
+      } catch (error: unknown) {
+        expect((error as Error).message).toBe('Request timeout');
       } finally {
         Promise.race = originalTimeoutPromise;
       }
@@ -217,9 +217,9 @@ describe('HttpClient', () => {
       try {
         await clientWithRateLimiter.get('/endpoint');
         fail('Should have thrown an HttpError');
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(HttpError);
-        expect(error.status).toBe(429);
+        expect((error as any).status).toBe(429);
         expect(rateHandleSpy).toHaveBeenCalled();
       }
     });
@@ -282,9 +282,9 @@ describe('HttpClient', () => {
       try {
         await clientWithRetries.get('/endpoint');
         fail('Should have thrown HttpError');
-      } catch (error) {
+      } catch (error: unknown) {
         expect(error).toBeInstanceOf(HttpError);
-        expect(error.status).toBe(400);
+        expect((error as any).status).toBe(400);
         expect(mockFetch).toHaveBeenCalledTimes(1);
       }
     });

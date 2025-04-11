@@ -169,12 +169,7 @@ export class FeatureFlagService {
     this.config = createConfig({
       defaults: { flags: initialFlags },
       schemas: {
-        'flags': {
-          properties: Object.keys(initialFlags).reduce((acc, key) => {
-            acc[key] = featureFlagSchema;
-            return acc;
-          }, {} as Record<string, Schema['properties']>)
-        }
+        'flags': featureFlagSchema
       }
     });
     

@@ -1,4 +1,4 @@
-import { Logger } from '../logger';
+import { createLogger, LogLevel, Logger } from '../logger';
 import { getResilienceFacade, getAllHealthStatus } from './resilience-factory';
 
 export interface ProviderHealth {
@@ -18,10 +18,10 @@ export class ServiceHealthMonitor {
   constructor(
     private readonly providers: string[],
     private readonly healthCheckFns: Map<string, () => Promise<boolean>>,
-    checkIntervalMs: number = 60000
+    checkIntervalMs = 60000
   ) {
     this.checkInterval = checkIntervalMs;
-    this.logger = new Logger('ServiceHealthMonitor');
+    this.logger = createLogger({ context: 'ServiceHealthMonitor', level: LogLevel.INFO });
     
     // Initialize health statuses
     this.providers.forEach(provider => {

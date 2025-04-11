@@ -1,5 +1,5 @@
 import { getAllHealthStatus } from './resilience-factory';
-import { Logger } from '../logger';
+import { createLogger, LogLevel, Logger } from '../logger';
 
 export enum ServiceHealth {
   HEALTHY = 'HEALTHY',
@@ -24,7 +24,7 @@ export class ServiceHealthMonitor {
   private logger: Logger;
   
   private constructor() {
-    this.logger = new Logger('ServiceHealthMonitor');
+    this.logger = createLogger({ context: 'ServiceHealthMonitor', level: LogLevel.INFO });
     this.health = {
       status: ServiceHealth.HEALTHY,
       timestamp: Date.now(),

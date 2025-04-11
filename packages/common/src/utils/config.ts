@@ -116,8 +116,9 @@ function convertValue(value: string, type: ValueType): any {
     case 'json':
       try {
         return JSON.parse(value);
-      } catch (error) {
-        throw new Error(`Failed to parse JSON value: ${error.message}`);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        throw new Error(`Failed to parse JSON value: ${errorMessage}`);
       }
     case 'string':
     default:
@@ -293,9 +294,10 @@ export class Config {
       
       // Merge with existing values
       this.values = { ...this.values, ...data };
-    } catch (error) {
-      this.logger.error(`Failed to load config from file: ${error.message}`, error);
-      throw new Error(`Failed to load config from file: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.logger.error(`Failed to load config from file: ${errorMessage}`, error);
+      throw new Error(`Failed to load config from file: ${errorMessage}`);
     }
   }
   

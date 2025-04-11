@@ -119,7 +119,7 @@ The universal installer (`install.sh`) automatically:
 - Configures optimized settings for your environment
 - Makes the quick-start script executable
 
-For more details, see the [Quick Start Guide](docs/quick-start.md).
+For more details, see the [Quick Start Guide](docs/user/quick-start.md).
 
 ### Prerequisites
 
@@ -214,9 +214,10 @@ When running in development mode, services are available at:
 Comprehensive documentation is organized by category in the `docs/` directory:
 
 ### For Users
-- [🚀 Quick Start Guide](docs/quick-start.md) - Get up and running quickly
+- [🚀 Quick Start Guide](docs/user/quick-start.md) - Get up and running quickly
 - [📘 Migration Guide](docs/user/migration-guide/README.md) - Complete migration user guide
 - [🎮 User Interface Guide](docs/ui/user-interface-guide.md) - How to use the LCARS interface
+- [♿ Accessibility Guide](docs/user/accessibility-guide.md) - Accessibility features and guidelines
 
 ### For Developers
 - [🏗️ Architecture Overview](docs/architecture/README.md) - System architecture and design

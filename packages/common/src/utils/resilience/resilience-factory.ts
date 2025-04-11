@@ -134,19 +134,20 @@ export function createResilientAxiosClient(
   ): Promise<R> {
     const cacheKey = `${config.method || 'GET'}:${config.url}:${JSON.stringify(config.params)}`;
     
-    return resilience.execute<R>(
+    return (resilience.execute(
       cacheKey,
       async () => originalRequest.call(axiosInstance, config),
       async (error) => {
         // If we have a fallback function, use it
-        if (typeof config.fallback === 'function') {
-          return config.fallback(error) as Promise<R>;
+        const customConfig = config as AxiosRequestConfig & { fallback?: (error: any) => Promise<R> };
+        if (typeof customConfig.fallback === 'function') {
+          return customConfig.fallback(error);
         }
         
         // Otherwise, reject with the original error
         throw error;
       }
-    );
+    )) as Promise<R>;
   };
   
   return axiosInstance;

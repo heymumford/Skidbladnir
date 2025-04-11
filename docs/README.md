@@ -91,7 +91,7 @@ Chronological record of architecture decisions:
 
 ## Getting Started
 
-- [Quick Start Guide](./quick-start.md) - Get up and running quickly
+- [Quick Start Guide](./user/quick-start.md) - Get up and running quickly
 - [Development Guide](./development/development-guide.md) - Guide for developers
 - [Migration Guide](./user/migration-guide/README.md) - End-user migration guide
 

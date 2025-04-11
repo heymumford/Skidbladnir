@@ -2,7 +2,7 @@ import { CircuitBreaker, CircuitBreakerOptions } from './circuit-breaker';
 import { RetryService, RetryOptions } from './retry';
 import { Bulkhead, BulkheadOptions } from './bulkhead';
 import { ResponseCache, CacheOptions } from './cache';
-import { Logger } from '../logger';
+import { createLogger, LogLevel, Logger } from '../logger';
 
 export interface ResilienceFacadeOptions {
   retryOptions?: Partial<RetryOptions>;
@@ -32,7 +32,7 @@ export class ResilienceFacade<T = any> {
 
   constructor(private readonly options: ResilienceFacadeOptions = {}) {
     this.serviceName = options.serviceName || 'UnnamedService';
-    this.logger = new Logger('ResilienceFacade:' + this.serviceName);
+    this.logger = createLogger({ context: 'ResilienceFacade:' + this.serviceName, level: LogLevel.INFO });
     
     // Initialize retry service
     this.retryService = new RetryService(options.retryOptions);
