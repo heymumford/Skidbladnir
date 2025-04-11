@@ -78,7 +78,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Create streamlined installation documentation with step-by-step instructions (Critical)
 - [x] Test: Beautiful and elegant UI follows design system principles (Critical)
 - [x] Test: UI components render correctly (High)
-- [ ] Test: User interactions work as expected (High)
+- [x] Test: User interactions work as expected (High)
 - [ ] Implement beautiful and elegant React UI with streamlined workflow (Critical)
 - [ ] Implement Zephyr/qTest provider configuration screens with auth token support (Critical)
 - [x] Implement Zephyr→qTest data transformation interface with field-by-field adjustments (Critical)
