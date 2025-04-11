@@ -4,10 +4,10 @@ This guide helps you get started with Skidbladnir in the fastest way possible - 
 
 ## Prerequisites
 
-- **Docker** or **Podman** installed on your system
-- Git (to clone the repository)
 - A web browser (Chrome, Firefox, Safari, or Edge)
 - At least 4GB of available RAM
+
+That's all you need to get started! Our universal installer will handle everything else.
 
 ## Quick Start: One Command Setup
 
@@ -16,14 +16,62 @@ This guide helps you get started with Skidbladnir in the fastest way possible - 
 git clone https://github.com/heymumford/skidbladnir.git
 cd skidbladnir
 
+# Run the universal installer - it will detect your platform and install everything needed
+./install.sh
+```
+
+That's it! The installer will:
+
+1. Detect your platform (Windows, WSL, macOS, or Linux)
+2. Install Docker or Podman if needed
+3. Configure the optimal settings for your environment
+4. Launch the Skidbladnir user interface
+
+A browser window will automatically open to the Skidbladnir web interface.
+
+## Platform-Specific Installation
+
+If you prefer to use our platform-specific installers directly:
+
+### Windows
+
+```bash
+# In Git Bash or Windows Terminal with Bash
+./scripts/install-windows.sh
+```
+
+### WSL (Windows Subsystem for Linux)
+
+```bash
+# In your WSL terminal
+./scripts/install-wsl.sh
+```
+
+### Linux (Ubuntu, Fedora, etc.)
+
+```bash
+# In your terminal
+./scripts/install-linux.sh
+```
+
+### macOS
+
+```bash
+# In your terminal
+./scripts/install-macos.sh
+```
+
+## Manual Setup (Advanced)
+
+If you already have Docker or Podman installed and just want to run Skidbladnir directly:
+
+```bash
 # Make the script executable
 chmod +x scripts/quick-start.sh
 
 # Run the quick-start script (this will build and start everything)
 ./scripts/quick-start.sh
 ```
-
-That's it! A browser window will automatically open to the Skidbladnir web interface.
 
 ## What Happens Behind the Scenes
 

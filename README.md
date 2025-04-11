@@ -60,7 +60,7 @@ For details on why we prioritize this migration path, see our [Migration Focus](
 - **Universal Provider Interface**: Standardized adapter system extensible to future platforms
 - **Local LLM Advisor**: Llama-3 powered assistant for API troubleshooting and optimization
 - **Self-Healing Capabilities**: Automatic recovery from API errors and schema changes
-- **LCARS-inspired Interface**: Star Trek styled real-time status displays with TX/RX indicators
+- **LCARS-inspired Interface**: Star Trek styled interface with wizard-based workflows, real-time status indicators, visual transformations, and intuitive migration controls
 - **Fully Containerized**: Optimized for minimal rebuild and recompile cycles using Podman
 - **Laptop-Friendly**: Memory-optimized containers that work well on 16GB laptops running Windows 10/11
 
@@ -96,14 +96,21 @@ For the simplest possible setup to start migrating from Zephyr Scale to qTest, j
 git clone https://github.com/heymumford/Skidbladnir.git
 cd Skidbladnir
 
-# Make the script executable
-chmod +x scripts/quick-start.sh
+# Run the universal installer (detects your platform and sets up everything)
+./install.sh
 
-# Run the quick-start script (this will build and start everything)
+# Or run the quick-start script directly
+chmod +x scripts/quick-start.sh
 ./scripts/quick-start.sh
 ```
 
 That's it! A browser window will automatically open to the Skidbladnir web interface where you can configure your Zephyr Scale and qTest connections.
+
+The universal installer (`install.sh`) automatically:
+- Detects your platform (Windows, WSL, macOS, or Linux)
+- Installs required dependencies (Docker/Podman)
+- Configures optimized settings for your environment
+- Makes the quick-start script executable
 
 For more details, see the [Quick Start Guide](docs/quick-start.md).
 
