@@ -61,7 +61,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Test: Error propagation between adapters and orchestration layer (High)
 
 ##### System Tests (Validation)
-- [ ] Test: Cross-provider migration with attachments between all providers (Critical)
+- [x] Test: Cross-provider migration with attachments between all providers (Critical)
 - [ ] Test: End-to-end migration workflows for all provider combinations (Critical)
 - [ ] Test: Performance benchmarking across all provider adapters (Medium)
 - [ ] Test: Connection resiliency under network degradation (Medium)
@@ -151,8 +151,10 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Configure LLM models for containerized deployment (Medium)
 
 ## In Progress
+- [ ] Test: End-to-end migration workflows for all provider combinations (Critical)
 
 ## In Review
+- [x] Test: Cross-provider migration with attachments between all providers (Critical)
 
 ## Completed
 - [x] Test: Error propagation between adapters and orchestration layer (High)

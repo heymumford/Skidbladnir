@@ -50,6 +50,11 @@ class IntegrationTests {
     Karate testErrorPropagation() {
         return Karate.run("error-propagation").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testCrossProviderAttachments() {
+        return Karate.run("cross-provider-attachments").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
