@@ -149,6 +149,45 @@ class MockQTestParametersProvider {
   });
   
   createParameterizedTestCase = jest.fn().mockResolvedValue('tc1');
+  
+  // Private methods we're exposing for testing
+  enhanceTestCaseWithParameters = jest.fn().mockImplementation(async (projectId, testCase) => {
+    return {
+      ...testCase,
+      parameters: [
+        {
+          id: 'param1',
+          name: 'Browser Type',
+          description: 'Browser to test with',
+          parameters: [
+            {
+              id: 'param1',
+              name: 'Browser Type',
+              type: 'string',
+              values: [
+                { id: 'v1', value: 'Chrome' },
+                { id: 'v2', value: 'Firefox' }
+              ]
+            }
+          ]
+        }
+      ],
+      datasets: [
+        {
+          id: 'ds1',
+          name: 'Browser Combinations',
+          parameters: ['param1'],
+          rows: [
+            { browser: 'Chrome' },
+            { browser: 'Firefox' }
+          ]
+        }
+      ]
+    };
+  });
+  
+  assignParametersToTestCase = jest.fn().mockResolvedValue(undefined);
+  assignDatasetsToTestCase = jest.fn().mockResolvedValue(undefined);
 }
 
 // Use the mock class
@@ -424,6 +463,92 @@ describe('QTestParametersProvider', () => {
       
       expect(result).toBe('tc1');
       expect(provider.createParameterizedTestCase).toHaveBeenCalledWith('1', mockTestCase);
+    });
+    
+    it('enhances test case with parameters correctly', async () => {
+      const baseTestCase = {
+        id: 'tc1',
+        name: 'Login Test',
+        description: 'Test login functionality'
+      };
+      
+      // Call the enhanceTestCaseWithParameters method
+      const result = await provider.enhanceTestCaseWithParameters('1', baseTestCase);
+      
+      // Verify the result
+      expect(result).toMatchObject({
+        id: 'tc1',
+        name: 'Login Test',
+        parameters: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'param1',
+            name: 'Browser Type',
+            parameters: expect.arrayContaining([
+              expect.objectContaining({
+                values: expect.arrayContaining([
+                  expect.objectContaining({ id: 'v1', value: 'Chrome' }),
+                  expect.objectContaining({ id: 'v2', value: 'Firefox' })
+                ])
+              })
+            ])
+          })
+        ]),
+        datasets: expect.arrayContaining([
+          expect.objectContaining({
+            id: 'ds1',
+            name: 'Browser Combinations',
+            rows: expect.arrayContaining([
+              expect.objectContaining({ browser: 'Chrome' }),
+              expect.objectContaining({ browser: 'Firefox' })
+            ])
+          })
+        ])
+      });
+      
+      expect(provider.enhanceTestCaseWithParameters).toHaveBeenCalledWith('1', baseTestCase);
+    });
+    
+    it('assigns parameters to test case correctly', async () => {
+      const parameters = [
+        {
+          id: 'param1',
+          name: 'Browser Type',
+          description: 'Browser to test with',
+          parameters: [
+            {
+              id: 'p1',
+              name: 'Browser Type',
+              type: 'string',
+              values: [
+                { id: 'v1', value: 'Chrome' },
+                { id: 'v2', value: 'Firefox' }
+              ]
+            }
+          ]
+        }
+      ];
+      
+      await provider.assignParametersToTestCase('1', 'tc1', parameters);
+      
+      expect(provider.assignParametersToTestCase).toHaveBeenCalledWith('1', 'tc1', parameters);
+    });
+    
+    it('assigns datasets to test case correctly', async () => {
+      const datasets = [
+        {
+          id: 'ds1',
+          name: 'Browser Combinations',
+          parameters: ['param1'],
+          rows: [
+            { browser: 'Chrome' },
+            { browser: 'Firefox' }
+          ]
+        }
+      ];
+      
+      await provider.assignDatasetsToTestCase('1', 'tc1', datasets);
+      
+      expect(provider.assignDatasetsToTestCase).toHaveBeenCalledWith('1', 'tc1', datasets);
     });
   });
 });

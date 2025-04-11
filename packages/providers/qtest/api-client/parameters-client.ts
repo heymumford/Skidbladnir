@@ -928,4 +928,82 @@ export class QTestParametersClient {
       });
     }
   }
+  
+  // Test Case Parameter Methods
+  
+  /**
+   * Get test case parameters
+   */
+  async getTestCaseParameters(testCaseId: number): Promise<AxiosResponse> {
+    try {
+      return await this.client.get(`/api/v3/test-cases/${testCaseId}/parameters`);
+    } catch (error) {
+      if (error instanceof QTestError) {
+        throw error;
+      }
+      throw QTestError.fromAxiosError(error as AxiosError, {
+        operation: 'getTestCaseParameters',
+        resourceId: testCaseId.toString(),
+        resourceType: 'test-case-parameters'
+      });
+    }
+  }
+
+  /**
+   * Assign parameters to test case
+   */
+  async assignParametersToTestCase(
+    testCaseId: number,
+    parameterIds: number[]
+  ): Promise<AxiosResponse> {
+    try {
+      if (!Array.isArray(parameterIds) || parameterIds.length === 0) {
+        throw QTestError.validation('Parameter IDs array is required and must not be empty', {
+          parameterIds: ['Parameter IDs array is required and must not be empty']
+        });
+      }
+      
+      return await this.client.post(`/api/v3/test-cases/${testCaseId}/parameters`, {
+        parameterIds: parameterIds
+      });
+    } catch (error) {
+      if (error instanceof QTestError) {
+        throw error;
+      }
+      throw QTestError.fromAxiosError(error as AxiosError, {
+        operation: 'assignParametersToTestCase',
+        resourceId: testCaseId.toString(),
+        resourceType: 'test-case-parameters'
+      });
+    }
+  }
+
+  /**
+   * Assign datasets to test case
+   */
+  async assignDatasetsToTestCase(
+    testCaseId: number,
+    datasetIds: number[]
+  ): Promise<AxiosResponse> {
+    try {
+      if (!Array.isArray(datasetIds) || datasetIds.length === 0) {
+        throw QTestError.validation('Dataset IDs array is required and must not be empty', {
+          datasetIds: ['Dataset IDs array is required and must not be empty']
+        });
+      }
+      
+      return await this.client.post(`/api/v3/test-cases/${testCaseId}/datasets`, {
+        datasetIds: datasetIds
+      });
+    } catch (error) {
+      if (error instanceof QTestError) {
+        throw error;
+      }
+      throw QTestError.fromAxiosError(error as AxiosError, {
+        operation: 'assignDatasetsToTestCase',
+        resourceId: testCaseId.toString(),
+        resourceType: 'test-case-datasets'
+      });
+    }
+  }
 }

@@ -811,16 +811,74 @@ export class QTestParametersProvider extends QTestProvider {
     const parameterizedTestCase: ParameterizedTestCase = { ...testCase };
     
     try {
-      // TODO: Call qTest API to get parameters for this test case
-      // This would be implemented when qTest provides an API to get parameters for a test case
+      this.ensureParametersClient();
       
-      // For now, we'll simulate by creating an empty array
+      const numericTestCaseId = parseInt(testCase.id, 10);
+      
+      if (isNaN(numericTestCaseId)) {
+        throw new Error(`Invalid test case ID: ${testCase.id}`);
+      }
+      
+      // Get parameters for the test case
+      const response = await this.parametersClient!.getTestCaseParameters(numericTestCaseId);
+      
+      // Initialize empty arrays
       parameterizedTestCase.parameters = [];
       parameterizedTestCase.datasets = [];
+      
+      if (response.data && Array.isArray(response.data.parameters)) {
+        // For each parameter, get full details including values
+        for (const parameterRef of response.data.parameters) {
+          const parameterId = parameterRef.id;
+          const parameterDetail = await this.getParameter(projectId, parameterId.toString());
+          
+          // Get parameter values
+          const values = await this.getParameterValues(projectId, parameterId.toString());
+          
+          // Build parameter set structure
+          parameterizedTestCase.parameters.push({
+            id: parameterId.toString(),
+            name: parameterDetail.name,
+            description: parameterDetail.description || '',
+            parameters: [{
+              id: parameterId.toString(),
+              name: parameterDetail.name,
+              type: parameterDetail.type,
+              values: values.items.map(v => ({
+                id: v.id?.toString() || '',
+                value: v.value
+              }))
+            }]
+          });
+        }
+      }
+      
+      // If datasets are present, process them too
+      if (response.data && Array.isArray(response.data.datasets)) {
+        for (const datasetRef of response.data.datasets) {
+          const datasetId = datasetRef.id;
+          const datasetDetail = await this.getDataset(projectId, datasetId.toString());
+          
+          // Get dataset rows
+          const rows = await this.getDatasetRows(projectId, datasetId.toString());
+          
+          parameterizedTestCase.datasets.push({
+            id: datasetId.toString(),
+            name: datasetDetail.name,
+            parameters: datasetDetail.parameters?.map(p => p.id?.toString() || '') || [],
+            rows: rows.items.map(row => row.row)
+          });
+        }
+      }
       
       return parameterizedTestCase;
     } catch (error) {
       // If we can't get parameters, still return the test case without them
+      this.logger?.warn(`Error getting parameters for test case ${testCase.id}:`, error);
+      
+      // Return basic structure with empty arrays
+      parameterizedTestCase.parameters = [];
+      parameterizedTestCase.datasets = [];
       return parameterizedTestCase;
     }
   }
@@ -834,11 +892,53 @@ export class QTestParametersProvider extends QTestProvider {
     parameters: ParameterSet[]
   ): Promise<void> {
     try {
-      // TODO: Call qTest API to assign parameters to test case
-      // This would be implemented when qTest provides an API for this
+      this.ensureParametersClient();
       
-      // Currently, the API for assigning parameters to test cases
-      // is not documented in the provided specification
+      const numericTestCaseId = parseInt(testCaseId, 10);
+      
+      if (isNaN(numericTestCaseId)) {
+        throw new Error(`Invalid test case ID: ${testCaseId}`);
+      }
+      
+      // Create any parameters that don't exist yet
+      const parameterIds: number[] = [];
+      
+      for (const paramSet of parameters) {
+        for (const param of paramSet.parameters) {
+          let parameterId: number;
+          
+          // If the parameter has no ID, we need to create it first
+          if (!param.id || param.id === '0' || param.id === '') {
+            // Create parameter
+            const parameter: Parameter = {
+              name: param.name,
+              type: param.type as ParameterType,
+              description: paramSet.description,
+              status: ParameterStatus.ACTIVE
+            };
+            
+            const newId = await this.createParameter(projectId, parameter);
+            parameterId = parseInt(newId, 10);
+            
+            // Add all values
+            for (const value of param.values) {
+              await this.addParameterValue(projectId, newId, {
+                value: value.value,
+                type: param.type as ParameterType
+              });
+            }
+          } else {
+            parameterId = parseInt(param.id, 10);
+          }
+          
+          parameterIds.push(parameterId);
+        }
+      }
+      
+      // Now assign all parameters to the test case
+      if (parameterIds.length > 0) {
+        await this.parametersClient!.assignParametersToTestCase(numericTestCaseId, parameterIds);
+      }
     } catch (error) {
       throw this.wrapError(`Failed to assign parameters to test case ${testCaseId}`, error);
     }
@@ -853,11 +953,56 @@ export class QTestParametersProvider extends QTestProvider {
     datasets: ParameterizedTestCase['datasets']
   ): Promise<void> {
     try {
-      // TODO: Call qTest API to assign datasets to test case
-      // This would be implemented when qTest provides an API for this
+      this.ensureParametersClient();
       
-      // Currently, the API for assigning datasets to test cases
-      // is not documented in the provided specification
+      const numericTestCaseId = parseInt(testCaseId, 10);
+      
+      if (isNaN(numericTestCaseId)) {
+        throw new Error(`Invalid test case ID: ${testCaseId}`);
+      }
+      
+      // Create any datasets that don't exist yet
+      const datasetIds: number[] = [];
+      
+      if (!datasets || datasets.length === 0) {
+        return; // No datasets to assign
+      }
+      
+      for (const dataset of datasets) {
+        let datasetId: number;
+        
+        // If the dataset has no ID, we need to create it first
+        if (!dataset.id || dataset.id === '0' || dataset.id === '') {
+          // First, we need to get parameter IDs
+          const parameterIds = dataset.parameters.map(id => parseInt(id, 10))
+            .filter(id => !isNaN(id));
+          
+          // Create dataset
+          const newDataset: Dataset = {
+            name: dataset.name,
+            status: ParameterStatus.ACTIVE,
+            parameters: parameterIds.map(id => ({ id }))
+          };
+          
+          const newId = await this.createDataset(projectId, newDataset);
+          datasetId = parseInt(newId, 10);
+          
+          // Add rows
+          if (dataset.rows && dataset.rows.length > 0) {
+            const datasetRows = dataset.rows.map(row => ({ row }));
+            await this.addDatasetRows(projectId, newId, datasetRows);
+          }
+        } else {
+          datasetId = parseInt(dataset.id, 10);
+        }
+        
+        datasetIds.push(datasetId);
+      }
+      
+      // Now assign all datasets to the test case
+      if (datasetIds.length > 0) {
+        await this.parametersClient!.assignDatasetsToTestCase(numericTestCaseId, datasetIds);
+      }
     } catch (error) {
       throw this.wrapError(`Failed to assign datasets to test case ${testCaseId}`, error);
     }
