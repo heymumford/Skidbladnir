@@ -10,14 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Run unit tests: `npm run test:unit`
 - Run integration tests: `npm run test:integration`
 - Run specific test: `npm test -- -t "test name pattern"`
-- Run UI tests: `npm run test:ui` or `npm test -- --env=jsdom packages/ui/src/path/to/test.tsx`
+- Run UI tests: `npm test -- --env=jsdom packages/ui/src/path/to/test.tsx`
 - Run Python tests: `npm run test:py` or `npm run test:py:unit`
 - Run Go tests: `npm run test:go` or `cd cmd/binary-processor && go test ./...`
 - Run API tests: `npm run test:api`
 - Run TDD metrics: `npm run tdd-metrics:all`
+- Generate code coverage: `npm run coverage:check`
 
 ## Code Style Guidelines
-- TypeScript: Use strict typing, follow ESLint rules
+- TypeScript: Use strict typing, follow ESLint rules, use path aliases (@domain, @usecases, etc.)
 - Python: Follow PEP 8, use type hints, docstrings for classes and methods
 - Go: Follow standard Go conventions with gofmt
 - Follow Clean Architecture principles and TDD approach
@@ -27,6 +28,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - File organization: One class/interface per file
 - Tests: Follow Arrange-Act-Assert pattern with descriptive names
 - Documentation: Include JSDoc, typedoc in TypeScript; docstrings in Python
-- Logging: Use consistent logger from respective language
+- Logging: Use consistent logger from respective language (LoggerAdapter in TS, logger in Go/Python)
+- Security: No hardcoded credentials, use environment variables for sensitive data
 
 Always validate code with `npm run lint && npm run typecheck` before committing changes.
