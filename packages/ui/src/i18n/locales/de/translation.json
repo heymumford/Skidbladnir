@@ -1,0 +1,199 @@
+{
+  "common": {
+    "source": "Quelle",
+    "target": "Ziel",
+    "connection": {
+      "test": "Verbindung testen",
+      "success": "Verbindung erfolgreich",
+      "failure": "Verbindung fehlgeschlagen",
+      "configuring": "Verbindung konfigurieren"
+    },
+    "actions": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "delete": "Löschen",
+      "edit": "Bearbeiten",
+      "start": "Starten",
+      "pause": "Pausieren",
+      "resume": "Fortsetzen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "confirm": "Bestätigen"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "error": "Fehler",
+      "completed": "Abgeschlossen",
+      "inProgress": "In Bearbeitung",
+      "paused": "Pausiert",
+      "cancelled": "Abgebrochen"
+    },
+    "dateFormats": {
+      "short": "DD.MM.YYYY",
+      "long": "D. MMMM YYYY",
+      "time": "HH:mm",
+      "dateTime": "DD.MM.YYYY, HH:mm"
+    }
+  },
+  "providers": {
+    "common": {
+      "baseUrl": "Basis-URL",
+      "apiKey": "API-Schlüssel",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "project": "Projekt",
+      "domain": "Domain",
+      "showPassword": "Passwort anzeigen",
+      "hidePassword": "Passwort ausblenden",
+      "showApiKey": "API-Schlüssel anzeigen",
+      "hideApiKey": "API-Schlüssel ausblenden",
+      "connectionDetails": "Verbindungsdetails",
+      "testingConnection": "Verbindung wird getestet...",
+      "connectionSuccess": "Erfolgreich mit {{provider}} verbunden",
+      "connectionFailure": "Verbindung zu {{provider}} fehlgeschlagen"
+    },
+    "zephyr": {
+      "name": "Zephyr Scale",
+      "projectKey": "Projektschlüssel",
+      "baseUrl": "Basis-URL",
+      "apiKey": "API-Schlüssel"
+    },
+    "qtest": {
+      "name": "qTest",
+      "instanceUrl": "Instanz-URL",
+      "apiToken": "API-Token",
+      "projectId": "Projekt-ID"
+    },
+    "testrail": {
+      "name": "TestRail",
+      "url": "URL",
+      "username": "Benutzername/E-Mail",
+      "apiKey": "API-Schlüssel",
+      "projectId": "Projekt-ID"
+    },
+    "hp-alm": {
+      "name": "Micro Focus ALM",
+      "url": "URL",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "domain": "Domain",
+      "project": "Projekt"
+    },
+    "jama": {
+      "name": "Jama",
+      "url": "URL",
+      "clientId": "Client-ID",
+      "clientSecret": "Client-Secret",
+      "projectId": "Projekt-ID"
+    },
+    "azure-devops": {
+      "name": "Azure DevOps",
+      "url": "Organisations-URL",
+      "token": "Persönliches Zugriffstoken",
+      "project": "Projekt"
+    },
+    "visure": {
+      "name": "Visure",
+      "url": "URL",
+      "apiKey": "API-Schlüssel",
+      "projectId": "Projekt-ID"
+    },
+    "rally": {
+      "name": "Rally",
+      "url": "URL",
+      "apiKey": "API-Schlüssel",
+      "workspace": "Arbeitsbereich",
+      "project": "Projekt"
+    }
+  },
+  "migration": {
+    "title": "Test-Asset-Migration",
+    "sourceProvider": "Quellanbieter",
+    "targetProvider": "Zielanbieter",
+    "selectSource": "Quellanbieter auswählen",
+    "selectTarget": "Zielanbieter auswählen",
+    "configureSource": "Quellanbieter konfigurieren",
+    "configureTarget": "Zielanbieter konfigurieren",
+    "selectAssets": "Test-Assets auswählen",
+    "configureMapping": "Feldmapping konfigurieren",
+    "startMigration": "Migration starten",
+    "pauseMigration": "Migration pausieren",
+    "resumeMigration": "Migration fortsetzen",
+    "cancelMigration": "Migration abbrechen",
+    "migrationStatus": "Migrationsstatus",
+    "migrationSummary": "Migrationszusammenfassung",
+    "confirm": {
+      "cancel": "Sind Sie sicher, dass Sie diese Migration abbrechen möchten?",
+      "cancelWarning": "Jeglicher Fortschritt geht verloren.",
+      "confirmCancel": "Ja, Migration abbrechen",
+      "cancelAction": "Nein, Migration fortsetzen"
+    },
+    "metrics": {
+      "totalItems": "Gesamtanzahl",
+      "successfulItems": "Erfolgreich migriert",
+      "failedItems": "Fehlgeschlagen",
+      "warnings": "Warnungen",
+      "duration": "Dauer",
+      "progress": "Fortschritt"
+    }
+  },
+  "fieldMapping": {
+    "title": "Feldmapping",
+    "sourceField": "Quellfeld",
+    "targetField": "Zielfeld",
+    "transform": "Transformation",
+    "requiredField": "Pflichtfeld",
+    "optionalField": "Optionales Feld",
+    "transformations": {
+      "direct": "Direktes Mapping",
+      "concatenation": "Verkettung",
+      "slice": "Textausschnitt",
+      "prefix": "Präfix hinzufügen",
+      "suffix": "Suffix hinzufügen",
+      "replace": "Suchen und Ersetzen"
+    },
+    "preview": "Vorschau",
+    "original": "Originalwert",
+    "transformed": "Transformierter Wert",
+    "saveMapping": "Mapping speichern",
+    "configureTransformations": "Transformationen konfigurieren"
+  },
+  "attachments": {
+    "title": "Anhänge",
+    "filename": "Dateiname",
+    "fileType": "Dateityp",
+    "fileSize": "Dateigröße",
+    "created": "Erstellt",
+    "options": {
+      "title": "Anhangoptionen",
+      "migrateAll": "Alle Anhänge migrieren",
+      "sizeLimit": "Größenbegrenzung",
+      "includeTypes": "Dateitypen einschließen",
+      "excludeTypes": "Dateitypen ausschließen"
+    }
+  },
+  "errors": {
+    "title": "Fehler",
+    "connectionFailed": "Verbindung fehlgeschlagen. Überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.",
+    "invalidCredentials": "Ungültige Anmeldeinformationen. Bitte überprüfen Sie Ihre Zugangsdaten.",
+    "serverError": "Serverfehler aufgetreten. Bitte versuchen Sie es später erneut.",
+    "timeoutError": "Zeitüberschreitung bei der Verbindung. Bitte überprüfen Sie Ihr Netzwerk und versuchen Sie es erneut.",
+    "permissionError": "Sie haben nicht ausreichende Berechtigungen, um diese Aktion durchzuführen.",
+    "remediation": {
+      "title": "Empfohlene Lösungen",
+      "checkCredentials": "Überprüfen Sie, ob Ihr API-Schlüssel gültig ist und nicht abgelaufen ist",
+      "verifyUrl": "Stellen Sie sicher, dass die URL korrekt formatiert ist und auf die richtige Umgebung zeigt",
+      "checkPermissions": "Stellen Sie sicher, dass Sie die notwendigen Berechtigungen im Zielsystem haben"
+    }
+  },
+  "ui": {
+    "language": "Sprache",
+    "theme": "Thema",
+    "lcars": {
+      "systemStatus": "Systemstatus",
+      "operations": "Aktive Operationen",
+      "alerts": "Systemwarnungen"
+    }
+  }
+}

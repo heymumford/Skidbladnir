@@ -1,10 +1,20 @@
+/**
+ * Copyright (C) 2025 Eric C. Mumford (@heymumford)
+ * 
+ * This file is part of Skidbladnir.
+ * 
+ * Skidbladnir is free software: you can redistribute it and/or modify
+ * it under the terms of the MIT License as published in the LICENSE file.
+ */
+
 import React from 'react';
 import { 
   Box, Chip, Typography, Button, Select, MenuItem, FormControl,
-  InputLabel, SelectChangeEvent
+  InputLabel, SelectChangeEvent, Tooltip, Badge
 } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import ClearIcon from '@mui/icons-material/Clear';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 export interface ErrorCategory {
   id: string;

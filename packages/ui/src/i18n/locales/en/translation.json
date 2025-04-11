@@ -1,0 +1,205 @@
+{
+  "common": {
+    "source": "Source",
+    "target": "Target",
+    "connection": {
+      "test": "Test Connection",
+      "success": "Connection Successful",
+      "failure": "Connection Failed",
+      "configuring": "Configuring Connection"
+    },
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "edit": "Edit",
+      "start": "Start",
+      "pause": "Pause",
+      "resume": "Resume",
+      "back": "Back",
+      "next": "Next",
+      "confirm": "Confirm"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "error": "Error",
+      "completed": "Completed",
+      "inProgress": "In Progress",
+      "paused": "Paused",
+      "cancelled": "Cancelled"
+    },
+    "dateFormats": {
+      "short": "MM/DD/YYYY",
+      "long": "MMMM D, YYYY",
+      "time": "h:mm A",
+      "dateTime": "MM/DD/YYYY, h:mm A"
+    }
+  },
+  "providers": {
+    "common": {
+      "baseUrl": "Base URL",
+      "apiKey": "API Key",
+      "username": "Username",
+      "password": "Password",
+      "project": "Project",
+      "domain": "Domain",
+      "showPassword": "Show Password",
+      "hidePassword": "Hide Password",
+      "showApiKey": "Show API Key",
+      "hideApiKey": "Hide API Key",
+      "connectionDetails": "Connection Details",
+      "testingConnection": "Testing Connection...",
+      "connectionSuccess": "Successfully connected to {{provider}}",
+      "connectionFailure": "Failed to connect to {{provider}}"
+    },
+    "zephyr": {
+      "name": "Zephyr Scale",
+      "projectKey": "Project Key",
+      "baseUrl": "Base URL",
+      "apiKey": "API Key",
+      "baseUrlTooltip": "The base URL for the Zephyr Scale API. For Cloud instances, use the default value. For Server instances, use your server URL."
+    },
+    "qtest": {
+      "name": "qTest",
+      "instanceUrl": "Instance URL",
+      "apiToken": "API Token",
+      "projectId": "Project ID"
+    },
+    "testrail": {
+      "name": "TestRail",
+      "url": "URL",
+      "username": "Username/Email",
+      "apiKey": "API Key",
+      "projectId": "Project ID"
+    },
+    "hp-alm": {
+      "name": "Micro Focus ALM",
+      "url": "URL",
+      "username": "Username",
+      "password": "Password",
+      "domain": "Domain",
+      "project": "Project"
+    },
+    "jama": {
+      "name": "Jama",
+      "url": "URL",
+      "clientId": "Client ID",
+      "clientSecret": "Client Secret",
+      "projectId": "Project ID"
+    },
+    "azure-devops": {
+      "name": "Azure DevOps",
+      "url": "Organization URL",
+      "token": "Personal Access Token",
+      "project": "Project"
+    },
+    "visure": {
+      "name": "Visure",
+      "url": "URL",
+      "apiKey": "API Key",
+      "projectId": "Project ID"
+    },
+    "rally": {
+      "name": "Rally",
+      "url": "URL",
+      "apiKey": "API Key",
+      "workspace": "Workspace",
+      "project": "Project"
+    }
+  },
+  "migration": {
+    "title": "Test Asset Migration",
+    "sourceProvider": "Source Provider",
+    "targetProvider": "Target Provider",
+    "selectSource": "Select Source Provider",
+    "selectTarget": "Select Target Provider",
+    "configureSource": "Configure Source Provider",
+    "configureTarget": "Configure Target Provider",
+    "selectAssets": "Select Test Assets",
+    "configureMapping": "Configure Field Mapping",
+    "startMigration": "Start Migration",
+    "pauseMigration": "Pause Migration",
+    "resumeMigration": "Resume Migration",
+    "cancelMigration": "Cancel Migration",
+    "migrationStatus": "Migration Status",
+    "migrationSummary": "Migration Summary",
+    "confirm": {
+      "cancel": "Are you sure you want to cancel this migration?",
+      "cancelWarning": "Any progress will be lost.",
+      "confirmCancel": "Yes, Cancel Migration",
+      "cancelAction": "No, Continue Migration"
+    },
+    "metrics": {
+      "totalItems": "Total Items",
+      "successfulItems": "Successfully Migrated",
+      "failedItems": "Failed",
+      "warnings": "Warnings",
+      "duration": "Duration",
+      "progress": "Progress"
+    }
+  },
+  "fieldMapping": {
+    "title": "Field Mapping",
+    "sourceField": "Source Field",
+    "targetField": "Target Field",
+    "transform": "Transformation",
+    "requiredField": "Required Field",
+    "optionalField": "Optional Field",
+    "transformations": {
+      "direct": "Direct Mapping",
+      "concatenation": "Concatenation",
+      "slice": "Text Slice",
+      "prefix": "Add Prefix",
+      "suffix": "Add Suffix",
+      "replace": "Find and Replace"
+    },
+    "preview": "Preview",
+    "original": "Original Value",
+    "transformed": "Transformed Value",
+    "saveMapping": "Save Mapping",
+    "configureTransformations": "Configure Transformations"
+  },
+  "attachments": {
+    "title": "Attachments",
+    "filename": "Filename",
+    "fileType": "File Type",
+    "fileSize": "File Size",
+    "created": "Created",
+    "options": {
+      "title": "Attachment Options",
+      "migrateAll": "Migrate All Attachments",
+      "sizeLimit": "Size Limit",
+      "includeTypes": "Include File Types",
+      "excludeTypes": "Exclude File Types"
+    }
+  },
+  "errors": {
+    "title": "Error",
+    "connectionFailed": "Connection failed. Please check your credentials and try again.",
+    "invalidCredentials": "Invalid credentials. Please verify your login details.",
+    "serverError": "Server error occurred. Please try again later.",
+    "timeoutError": "Connection timed out. Please check your network and try again.",
+    "permissionError": "You don't have sufficient permissions to perform this action.",
+    "remediation": {
+      "title": "Suggested Solutions",
+      "checkCredentials": "Check that your API key is valid and has not expired",
+      "verifyUrl": "Verify that the URL is correctly formatted and points to the right environment",
+      "checkPermissions": "Ensure you have the necessary permissions in the target system"
+    }
+  },
+  "ui": {
+    "language": "Language",
+    "theme": "Theme",
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "designSystem": "Design System",
+    "featureFlags": "Feature Flags",
+    "about": "About",
+    "lcars": {
+      "systemStatus": "System Status",
+      "operations": "Active Operations",
+      "alerts": "System Alerts"
+    }
+  }
+}

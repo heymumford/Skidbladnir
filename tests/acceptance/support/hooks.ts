@@ -83,6 +83,18 @@ Before({ tags: '@migration' }, async function(this: SkidbladnirWorld) {
   console.log('Setting up for migration test');
 });
 
+Before({ tags: '@workflow' }, async function(this: SkidbladnirWorld) {
+  // Setup specific to UI workflow tests
+  console.log('Setting up for UI workflow test');
+  
+  // Set authentication to true for UI workflow tests
+  this.context.authenticated = true;
+  
+  // Mock auth token
+  this.context.authToken = 'mock-auth-token-for-ui-tests';
+  this.context.requestHeaders['Authorization'] = `Bearer ${this.context.authToken}`;
+});
+
 /**
  * Teardown for each scenario
  */

@@ -22,15 +22,27 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Chip
+  Chip,
+  IconButton,
+  ButtonGroup,
+  Tooltip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import DifferenceIcon from '@mui/icons-material/Difference';
 import JSONTree from 'react-json-tree';
 
-import { TransformationPreview } from '../../types';
+import { TransformationPreview, FieldMapping } from '../../types';
 import { TransformationService } from '../../services/TransformationService';
 import { FieldComparisonTable } from './FieldComparisonTable';
+import { TestCasePreviewComponent } from './TestCasePreviewComponent';
+import { BatchPreviewComponent } from './BatchPreviewComponent';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,8 +74,10 @@ interface TransformationPreviewPanelProps {
   testCaseId: string;
   sourceProviderId: string;
   targetProviderId: string;
-  fieldMappings: any[];
+  fieldMappings: FieldMapping[];
+  onEditMapping?: (fieldMapping: FieldMapping) => void;
   onClose?: () => void;
+  additionalTestCaseIds?: string[];
 }
 
 // Create a function to extract flat field mappings from preview data for the comparison table
@@ -182,13 +196,18 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
   sourceProviderId,
   targetProviderId,
   fieldMappings,
-  onClose
+  onEditMapping,
+  onClose,
+  additionalTestCaseIds = []
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [preview, setPreview] = useState<TransformationPreview | null>(null);
   const [tabValue, setTabValue] = useState(0);
   const [extractedMappings, setExtractedMappings] = useState<any[]>([]);
+  const [previewMode, setPreviewMode] = useState<'standard' | 'enhanced' | 'batch'>('standard');
+  const [batchPreviewOpen, setBatchPreviewOpen] = useState(false);
+  const [enhancedPreviewOpen, setEnhancedPreviewOpen] = useState(false);
 
   const transformationService = new TransformationService();
 
@@ -229,6 +248,26 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
     
     fetchPreview();
   }, [testCaseId, sourceProviderId, targetProviderId, fieldMappings]);
+
+  // Handle enhanced preview open
+  const handleEnhancedPreviewOpen = () => {
+    setEnhancedPreviewOpen(true);
+  };
+
+  // Handle enhanced preview close
+  const handleEnhancedPreviewClose = () => {
+    setEnhancedPreviewOpen(false);
+  };
+
+  // Handle batch preview open
+  const handleBatchPreviewOpen = () => {
+    setBatchPreviewOpen(true);
+  };
+
+  // Handle batch preview close
+  const handleBatchPreviewClose = () => {
+    setBatchPreviewOpen(false);
+  };
 
   if (loading) {
     return (
@@ -288,6 +327,8 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
     base0F: '#cc6633'
   };
 
+  const allTestCaseIds = [testCaseId, ...additionalTestCaseIds];
+
   return (
     <Paper elevation={3} sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -296,12 +337,34 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
         </Typography>
         
         <Stack direction="row" spacing={2}>
+          <ButtonGroup variant="outlined" size="small">
+            <Tooltip title="View Enhanced Preview">
+              <Button 
+                startIcon={<DifferenceIcon />} 
+                onClick={handleEnhancedPreviewOpen}
+              >
+                Enhanced
+              </Button>
+            </Tooltip>
+            {additionalTestCaseIds.length > 0 && (
+              <Tooltip title="View Batch Preview">
+                <Button 
+                  startIcon={<ListAltIcon />} 
+                  onClick={handleBatchPreviewOpen}
+                >
+                  Batch ({allTestCaseIds.length})
+                </Button>
+              </Tooltip>
+            )}
+          </ButtonGroup>
+          
           <Chip 
             icon={<CompareArrowsIcon />}
             label={`${sourceProviderId} → ${targetProviderId}`}
             color="primary" 
             variant="outlined"
           />
+          
           <Button variant="outlined" onClick={onClose}>
             Close
           </Button>
@@ -385,6 +448,44 @@ export const TransformationPreviewPanel: React.FC<TransformationPreviewPanelProp
           </AccordionDetails>
         </Accordion>
       </TabPanel>
+      
+      {/* Enhanced Preview Dialog */}
+      <Dialog 
+        open={enhancedPreviewOpen} 
+        onClose={handleEnhancedPreviewClose} 
+        maxWidth="lg" 
+        fullWidth
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <TestCasePreviewComponent
+            testCaseId={testCaseId}
+            sourceProviderId={sourceProviderId}
+            targetProviderId={targetProviderId}
+            fieldMappings={fieldMappings}
+            onEditMapping={onEditMapping}
+            onClose={handleEnhancedPreviewClose}
+          />
+        </DialogContent>
+      </Dialog>
+      
+      {/* Batch Preview Dialog */}
+      <Dialog 
+        open={batchPreviewOpen} 
+        onClose={handleBatchPreviewClose} 
+        maxWidth="lg" 
+        fullWidth
+      >
+        <DialogContent sx={{ p: 0 }}>
+          <BatchPreviewComponent
+            testCaseIds={allTestCaseIds}
+            sourceProviderId={sourceProviderId}
+            targetProviderId={targetProviderId}
+            fieldMappings={fieldMappings}
+            onEditMapping={onEditMapping}
+            onClose={handleBatchPreviewClose}
+          />
+        </DialogContent>
+      </Dialog>
     </Paper>
   );
 };

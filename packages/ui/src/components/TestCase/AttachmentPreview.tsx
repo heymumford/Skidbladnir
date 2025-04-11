@@ -7,11 +7,12 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Box, Typography, Paper, CircularProgress, IconButton, 
   Card, CardContent, CardHeader, CardMedia, CardActions,
-  Tooltip, Chip, Button, Divider
+  Tooltip, Chip, Button, Divider, Alert, Link, Stack,
+  Dialog, DialogContent, DialogTitle, DialogActions
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -20,14 +21,130 @@ import ImageIcon from '@mui/icons-material/Image';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import CodeIcon from '@mui/icons-material/Code';
+import ArticleIcon from '@mui/icons-material/Article';
+import DataObjectIcon from '@mui/icons-material/DataObject';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import ErrorIcon from '@mui/icons-material/Error';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import { TestCaseAttachment, TestExecutionAttachment, testExecutionService } from '../../services';
 
 // File type groups for rendering different previews
-const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/bmp', 'image/webp'];
-const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg'];
+const IMAGE_TYPES = [
+  'image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/bmp', 'image/webp', 
+  'image/tiff', 'image/svg+xml'
+];
+const VIDEO_TYPES = [
+  'video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo',
+  'video/x-ms-wmv', 'video/x-flv', 'video/3gpp'
+];
+const AUDIO_TYPES = [
+  'audio/mpeg', 'audio/ogg', 'audio/wav', 'audio/webm', 'audio/aac',
+  'audio/x-m4a', 'audio/flac'
+];
 const PDF_TYPES = ['application/pdf'];
-const TEXT_TYPES = ['text/plain', 'text/html', 'text/css', 'text/javascript', 'application/json', 'application/xml'];
+const TEXT_TYPES = [
+  'text/plain', 'text/html', 'text/css', 'text/javascript', 'text/markdown',
+  'text/csv', 'text/xml', 'text/x-log'
+];
+const CODE_TYPES = [
+  'application/json', 'application/xml', 'application/javascript',
+  'application/typescript', 'application/x-httpd-php', 'application/x-sh',
+  'application/x-python', 'application/x-ruby'
+];
+const DOCUMENT_TYPES = [
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // docx
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // xlsx
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation', // pptx
+  'application/msword', // doc
+  'application/vnd.ms-excel', // xls
+  'application/vnd.ms-powerpoint', // ppt
+  'application/rtf',
+  'application/vnd.oasis.opendocument.text', // odt
+  'application/vnd.oasis.opendocument.spreadsheet', // ods
+  'application/vnd.oasis.opendocument.presentation' // odp
+];
+const ARCHIVE_TYPES = [
+  'application/zip', 'application/x-zip-compressed', 'application/x-tar',
+  'application/x-gzip', 'application/x-7z-compressed', 'application/x-rar-compressed'
+];
+
+// File extensions mapped to proper MIME types for better detection
+const FILE_EXTENSION_MAP: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.gif': 'image/gif',
+  '.bmp': 'image/bmp',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.tiff': 'image/tiff',
+  '.tif': 'image/tiff',
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
+  '.ogg': 'video/ogg',
+  '.mov': 'video/quicktime',
+  '.avi': 'video/x-msvideo',
+  '.wmv': 'video/x-ms-wmv',
+  '.flv': 'video/x-flv',
+  '.3gp': 'video/3gpp',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
+  '.ogg': 'audio/ogg',
+  '.m4a': 'audio/x-m4a',
+  '.aac': 'audio/aac',
+  '.flac': 'audio/flac',
+  '.pdf': 'application/pdf',
+  '.txt': 'text/plain',
+  '.log': 'text/x-log',
+  '.html': 'text/html',
+  '.htm': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.ts': 'application/typescript',
+  '.json': 'application/json',
+  '.xml': 'application/xml',
+  '.md': 'text/markdown',
+  '.csv': 'text/csv',
+  '.php': 'application/x-httpd-php',
+  '.sh': 'application/x-sh',
+  '.py': 'application/x-python',
+  '.rb': 'application/x-ruby',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  '.doc': 'application/msword',
+  '.xls': 'application/vnd.ms-excel',
+  '.ppt': 'application/vnd.ms-powerpoint',
+  '.rtf': 'application/rtf',
+  '.odt': 'application/vnd.oasis.opendocument.text',
+  '.ods': 'application/vnd.oasis.opendocument.spreadsheet',
+  '.odp': 'application/vnd.oasis.opendocument.presentation',
+  '.zip': 'application/zip',
+  '.tar': 'application/x-tar',
+  '.gz': 'application/x-gzip',
+  '.7z': 'application/x-7z-compressed',
+  '.rar': 'application/x-rar-compressed'
+};
+
+// Gets correct MIME type based on file name and provided type
+const getReliableMimeType = (fileName: string, providedType: string): string => {
+  // Extract file extension
+  const extension = fileName.substring(fileName.lastIndexOf('.')).toLowerCase();
+  
+  // Check if we have a mapping for this extension
+  if (extension && FILE_EXTENSION_MAP[extension]) {
+    return FILE_EXTENSION_MAP[extension];
+  }
+  
+  // Fall back to the provided MIME type
+  return providedType;
+};
 
 /**
  * Props for the AttachmentPreview component
@@ -73,11 +190,45 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [attachmentUrl, setAttachmentUrl] = useState<string | null>(null);
   const [attachmentData, setAttachmentData] = useState<string | null>(null);
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
+  const [zoomLevel, setZoomLevel] = useState<number>(1);
+  const [unsupportedFormat, setUnsupportedFormat] = useState<boolean>(false);
+  const [detectedFileType, setDetectedFileType] = useState<string | null>(null);
+  
+  // References for elements
+  const imageRef = useRef<HTMLImageElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Get corrected MIME type
+  const reliableMimeType = getReliableMimeType(attachment.name, attachment.fileType);
 
   // Load attachment data on component mount
   useEffect(() => {
     loadAttachment();
-  }, [attachment.id, executionId, testCaseId]);
+    
+    // Update detected file type
+    setDetectedFileType(reliableMimeType);
+    
+    // Check if format is supported for preview
+    const isSupported = (
+      IMAGE_TYPES.includes(reliableMimeType) ||
+      VIDEO_TYPES.includes(reliableMimeType) ||
+      AUDIO_TYPES.includes(reliableMimeType) ||
+      PDF_TYPES.includes(reliableMimeType) ||
+      TEXT_TYPES.includes(reliableMimeType) ||
+      CODE_TYPES.includes(reliableMimeType)
+    );
+    
+    setUnsupportedFormat(!isSupported);
+    
+    // Clean up URLs on unmount
+    return () => {
+      if (attachmentUrl) {
+        URL.revokeObjectURL(attachmentUrl);
+      }
+    };
+  }, [attachment.id, attachment.fileType, reliableMimeType, executionId, testCaseId]);
 
   // Format file size for display
   const formatFileSize = (bytes: number): string => {
@@ -104,16 +255,42 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
       if (executionId) {
         const blob = await testExecutionService.getAttachment(executionId, attachment.id);
         handleAttachmentBlob(blob);
+      } else if (testCaseId) {
+        // If implementing test case attachment fetching, add here
+        // For now, fallback to placeholder
+        fallbackToPlaceholder();
       } else {
         // Fallback to a placeholder for development
-        setAttachmentUrl(null);
-        setAttachmentData(`Mock attachment data for ${attachment.name}`);
-        setLoading(false);
+        fallbackToPlaceholder();
       }
     } catch (err: any) {
       setError(`Error loading attachment: ${err.message}`);
       setLoading(false);
     }
+  };
+
+  // Use placeholder data for development purposes
+  const fallbackToPlaceholder = () => {
+    setAttachmentUrl(null);
+    
+    // Generate different placeholder content based on file type
+    if (TEXT_TYPES.includes(reliableMimeType) || CODE_TYPES.includes(reliableMimeType)) {
+      setAttachmentData(`
+# Mock ${reliableMimeType} content for "${attachment.name}"
+
+This is a placeholder for demonstration purposes. In a real application, 
+this would contain the actual content of your ${attachment.name} file.
+
+File size: ${formatFileSize(attachment.size)}
+MIME type: ${reliableMimeType}
+
+Sample content would appear here based on the file type.`);
+    } else {
+      // For non-text types, just set a simple message
+      setAttachmentData(`Mock attachment data for ${attachment.name}`);
+    }
+    
+    setLoading(false);
   };
 
   // Process attachment blob based on file type
@@ -123,7 +300,8 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
     setAttachmentUrl(url);
     
     // For text files, also create a text representation
-    if (TEXT_TYPES.includes(attachment.fileType)) {
+    const isTextOrCode = TEXT_TYPES.includes(reliableMimeType) || CODE_TYPES.includes(reliableMimeType);
+    if (isTextOrCode) {
       blob.text().then(text => {
         setAttachmentData(text);
       });
@@ -150,19 +328,104 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
     }
   };
 
+  // Handle zoom in
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(prev + 0.25, 3));
+  };
+
+  // Handle zoom out
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(prev - 0.25, 0.5));
+  };
+
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    setFullscreen(!fullscreen);
+  };
+
   // Get file type icon based on MIME type
   const getFileTypeIcon = () => {
-    if (IMAGE_TYPES.includes(attachment.fileType)) {
+    if (IMAGE_TYPES.includes(reliableMimeType)) {
       return <ImageIcon />;
-    } else if (VIDEO_TYPES.includes(attachment.fileType)) {
+    } else if (VIDEO_TYPES.includes(reliableMimeType)) {
       return <VideoLibraryIcon />;
-    } else if (PDF_TYPES.includes(attachment.fileType)) {
+    } else if (AUDIO_TYPES.includes(reliableMimeType)) {
+      return <FilePresentIcon />;
+    } else if (PDF_TYPES.includes(reliableMimeType)) {
       return <PictureAsPdfIcon />;
-    } else if (TEXT_TYPES.includes(attachment.fileType)) {
+    } else if (TEXT_TYPES.includes(reliableMimeType)) {
       return <DescriptionIcon />;
+    } else if (CODE_TYPES.includes(reliableMimeType)) {
+      return <CodeIcon />;
+    } else if (DOCUMENT_TYPES.includes(reliableMimeType)) {
+      return <ArticleIcon />;
+    } else if (ARCHIVE_TYPES.includes(reliableMimeType)) {
+      return <FilePresentIcon />;
     } else {
       return <InsertDriveFileIcon />;
     }
+  };
+
+  // Get a human-readable file type description
+  const getFileTypeDescription = (): string => {
+    if (IMAGE_TYPES.includes(reliableMimeType)) {
+      return 'Image';
+    } else if (VIDEO_TYPES.includes(reliableMimeType)) {
+      return 'Video';
+    } else if (AUDIO_TYPES.includes(reliableMimeType)) {
+      return 'Audio';
+    } else if (PDF_TYPES.includes(reliableMimeType)) {
+      return 'PDF Document';
+    } else if (reliableMimeType === 'text/plain') {
+      return 'Text File';
+    } else if (reliableMimeType === 'text/html') {
+      return 'HTML Document';
+    } else if (reliableMimeType === 'text/csv') {
+      return 'CSV File';
+    } else if (reliableMimeType === 'text/markdown') {
+      return 'Markdown Document';
+    } else if (reliableMimeType === 'application/json') {
+      return 'JSON File';
+    } else if (reliableMimeType === 'application/xml' || reliableMimeType === 'text/xml') {
+      return 'XML Document';
+    } else if (reliableMimeType.includes('javascript') || reliableMimeType.includes('typescript')) {
+      return 'Source Code';
+    } else if (DOCUMENT_TYPES.includes(reliableMimeType)) {
+      if (reliableMimeType.includes('word')) return 'Word Document';
+      if (reliableMimeType.includes('excel') || reliableMimeType.includes('spreadsheet')) return 'Spreadsheet';
+      if (reliableMimeType.includes('presentation') || reliableMimeType.includes('powerpoint')) return 'Presentation';
+      return 'Office Document';
+    } else if (ARCHIVE_TYPES.includes(reliableMimeType)) {
+      return 'Archive File';
+    }
+    
+    return 'File';
+  };
+
+  // Format code with syntax highlighting (basic version)
+  const formatCode = (code: string): React.ReactNode => {
+    if (!code) return null;
+    
+    // Basic syntax highlighting for demonstration
+    // In a real app, you'd use a library like highlight.js or prism
+    return (
+      <Box
+        component="pre"
+        sx={{
+          p: 2,
+          maxHeight: 500,
+          overflow: 'auto',
+          backgroundColor: '#f5f5f5',
+          borderRadius: 1,
+          fontSize: '0.875rem',
+          whiteSpace: 'pre-wrap',
+          wordBreak: 'break-word',
+          fontFamily: 'monospace'
+        }}
+      >
+        {code}
+      </Box>
+    );
   };
 
   // Render preview based on file type
@@ -178,43 +441,240 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
     if (error) {
       return (
         <Box sx={{ p: 2 }}>
-          <Typography color="error">{error}</Typography>
+          <Alert 
+            severity="error" 
+            icon={<ErrorIcon />}
+            sx={{ mb: 2 }}
+          >
+            {error}
+          </Alert>
+          <Typography variant="body2" color="text.secondary" paragraph>
+            The attachment could not be loaded. You can try the following:
+          </Typography>
+          <ul>
+            <li>
+              <Typography variant="body2">
+                Download the file and open it with an appropriate application
+              </Typography>
+            </li>
+            <li>
+              <Typography variant="body2">
+                Check if you have the necessary permissions to view this attachment
+              </Typography>
+            </li>
+            <li>
+              <Typography variant="body2">
+                Ensure the attachment hasn't been deleted or moved
+              </Typography>
+            </li>
+          </ul>
+          <Button
+            variant="outlined"
+            startIcon={<DownloadIcon />}
+            onClick={handleDownload}
+            sx={{ mt: 2 }}
+          >
+            Download File
+          </Button>
+        </Box>
+      );
+    }
+    
+    // If format is not supported for preview
+    if (unsupportedFormat) {
+      return (
+        <Box sx={{ p: 3 }}>
+          <Alert 
+            severity="warning" 
+            icon={<WarningIcon />}
+            sx={{ mb: 3 }}
+          >
+            Preview not available for this file format: {reliableMimeType}
+          </Alert>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            mb: 3
+          }}>
+            <Box sx={{ fontSize: 80, color: 'action.active', mb: 2 }}>
+              {getFileTypeIcon()}
+            </Box>
+            <Typography variant="h6" gutterBottom>
+              {getFileTypeDescription()}: {attachment.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              {formatFileSize(attachment.size)}
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<DownloadIcon />}
+            onClick={handleDownload}
+          >
+            Download File
+          </Button>
         </Box>
       );
     }
     
     // Image preview
-    if (IMAGE_TYPES.includes(attachment.fileType) && attachmentUrl) {
-      return (
-        <CardMedia
-          component="img"
-          image={attachmentUrl}
-          alt={attachment.name}
-          sx={{ 
-            objectFit: 'contain',
-            maxHeight: 500
-          }}
-        />
+    if (IMAGE_TYPES.includes(reliableMimeType) && attachmentUrl) {
+      const imageContent = (
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: 'column',
+          alignItems: 'center',
+          position: 'relative'
+        }}>
+          <CardMedia
+            component="img"
+            image={attachmentUrl}
+            alt={attachment.name}
+            ref={imageRef}
+            sx={{ 
+              objectFit: 'contain',
+              maxHeight: fullscreen ? '80vh' : 500,
+              transform: `scale(${zoomLevel})`,
+              transition: 'transform 0.2s ease-in-out'
+            }}
+          />
+          
+          {/* Zoom controls */}
+          <Stack 
+            direction="row" 
+            spacing={1} 
+            sx={{ 
+              position: 'absolute', 
+              bottom: 8, 
+              right: 8,
+              bgcolor: 'rgba(0,0,0,0.5)',
+              borderRadius: 1,
+              p: 0.5
+            }}
+          >
+            <IconButton 
+              size="small" 
+              onClick={handleZoomOut}
+              disabled={zoomLevel <= 0.5}
+              sx={{ color: 'white' }}
+            >
+              <ZoomOutIcon />
+            </IconButton>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'white', 
+                alignSelf: 'center',
+                minWidth: 40,
+                textAlign: 'center'
+              }}
+            >
+              {Math.round(zoomLevel * 100)}%
+            </Typography>
+            <IconButton 
+              size="small" 
+              onClick={handleZoomIn}
+              disabled={zoomLevel >= 3}
+              sx={{ color: 'white' }}
+            >
+              <ZoomInIcon />
+            </IconButton>
+            <IconButton 
+              size="small" 
+              onClick={toggleFullscreen}
+              sx={{ color: 'white' }}
+            >
+              <FullscreenIcon />
+            </IconButton>
+          </Stack>
+        </Box>
       );
+      
+      // Return either fullscreen dialog or normal view
+      return fullscreen ? (
+        <Dialog
+          open={fullscreen}
+          onClose={toggleFullscreen}
+          maxWidth="xl"
+          fullWidth
+        >
+          <DialogTitle>
+            {attachment.name}
+          </DialogTitle>
+          <DialogContent>
+            {imageContent}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={toggleFullscreen}>Close</Button>
+            <Button 
+              variant="contained" 
+              startIcon={<DownloadIcon />}
+              onClick={handleDownload}
+            >
+              Download
+            </Button>
+          </DialogActions>
+        </Dialog>
+      ) : imageContent;
     }
     
     // Video preview
-    if (VIDEO_TYPES.includes(attachment.fileType) && attachmentUrl) {
+    if (VIDEO_TYPES.includes(reliableMimeType) && attachmentUrl) {
       return (
         <Box sx={{ p: 2 }}>
           <video
             controls
-            style={{ width: '100%', maxHeight: 500 }}
+            ref={videoRef}
+            style={{ 
+              width: '100%', 
+              maxHeight: 500 
+            }}
           >
-            <source src={attachmentUrl} type={attachment.fileType} />
+            <source src={attachmentUrl} type={reliableMimeType} />
             Your browser does not support the video tag.
           </video>
+          
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            Note: If the video doesn't play, your browser may not support the format. Try downloading the file.
+          </Typography>
+        </Box>
+      );
+    }
+    
+    // Audio preview
+    if (AUDIO_TYPES.includes(reliableMimeType) && attachmentUrl) {
+      return (
+        <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <Box sx={{ fontSize: 60, color: 'primary.main', mb: 3 }}>
+            <FilePresentIcon fontSize="inherit" />
+          </Box>
+          
+          <Typography variant="subtitle1" gutterBottom>
+            Audio File: {attachment.name}
+          </Typography>
+          
+          <Box sx={{ width: '100%', mb: 2 }}>
+            <audio
+              controls
+              ref={audioRef}
+              style={{ width: '100%' }}
+            >
+              <source src={attachmentUrl} type={reliableMimeType} />
+              Your browser does not support the audio element.
+            </audio>
+          </Box>
+          
+          <Typography variant="caption" color="text.secondary">
+            Note: If the audio doesn't play, your browser may not support the format. Try downloading the file.
+          </Typography>
         </Box>
       );
     }
     
     // PDF preview
-    if (PDF_TYPES.includes(attachment.fileType) && attachmentUrl) {
+    if (PDF_TYPES.includes(reliableMimeType) && attachmentUrl) {
       return (
         <Box sx={{ p: 2, height: 500 }}>
           <iframe
@@ -223,12 +683,24 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
             width="100%"
             height="100%"
           />
+          
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+            If the PDF doesn't display correctly, you can {' '}
+            <Link 
+              href={attachmentUrl} 
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              open it in a new tab
+            </Link>
+            {' '} or download it.
+          </Typography>
         </Box>
       );
     }
     
-    // Text preview
-    if (TEXT_TYPES.includes(attachment.fileType)) {
+    // Text preview - plain text files
+    if (TEXT_TYPES.includes(reliableMimeType)) {
       return (
         <Box 
           component="pre"
@@ -240,7 +712,8 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
             borderRadius: 1,
             fontSize: '0.875rem',
             whiteSpace: 'pre-wrap',
-            wordBreak: 'break-word'
+            wordBreak: 'break-word',
+            fontFamily: 'monospace'
           }}
         >
           {attachmentData || 'No preview available'}
@@ -248,7 +721,12 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
       );
     }
     
-    // Generic file preview
+    // Code preview - JSON, XML, source code, etc.
+    if (CODE_TYPES.includes(reliableMimeType)) {
+      return formatCode(attachmentData || '');
+    }
+    
+    // Generic file preview (fallback for unsupported types)
     return (
       <Box sx={{ 
         p: 4, 
@@ -263,8 +741,8 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
         <Typography variant="body1" gutterBottom>
           {attachment.name}
         </Typography>
-        <Typography variant="body2" color="textSecondary">
-          {attachment.fileType} - {formatFileSize(attachment.size)}
+        <Typography variant="body2" color="textSecondary" gutterBottom>
+          {getFileTypeDescription()} - {formatFileSize(attachment.size)}
         </Typography>
         <Button 
           variant="contained" 
@@ -282,6 +760,7 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
   const getSubtitle = () => {
     const parts = [];
     
+    parts.push(getFileTypeDescription());
     parts.push(formatFileSize(attachment.size));
     
     if ('uploadedBy' in attachment && attachment.uploadedBy) {
@@ -293,7 +772,7 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
       parts.push(`on ${date.toLocaleDateString()}`);
     }
     
-    return parts.join(' ');
+    return parts.join(' • ');
   };
 
   // Get description if available
@@ -318,16 +797,23 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
               </IconButton>
             </Tooltip>
             {attachmentUrl && (
-              <Tooltip title="Open in new tab">
-                <IconButton 
-                  component="a" 
-                  href={attachmentUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <OpenInNewIcon />
-                </IconButton>
-              </Tooltip>
+              <>
+                <Tooltip title="Open in new tab">
+                  <IconButton 
+                    component="a" 
+                    href={attachmentUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    <OpenInNewIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="View fullscreen">
+                  <IconButton onClick={toggleFullscreen}>
+                    <FullscreenIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
             )}
           </Box>
         }
@@ -356,18 +842,54 @@ export const AttachmentPreview: React.FC<AttachmentPreviewProps> = ({
       
       {/* File info */}
       <CardActions sx={{ justifyContent: 'space-between', px: 2 }}>
-        <Chip
-          label={attachment.fileType}
-          size="small"
-          variant="outlined"
-        />
-        {attachment.stepId && (
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Chip
-            label={`Step ${attachment.stepId}`}
+            label={detectedFileType || reliableMimeType}
             size="small"
-            color="primary"
             variant="outlined"
           />
+          
+          {attachment.stepId && (
+            <Chip
+              label={`Step ${attachment.stepId}`}
+              size="small"
+              color="primary"
+              variant="outlined"
+            />
+          )}
+          
+          {unsupportedFormat && (
+            <Chip
+              label="Preview not available"
+              size="small"
+              color="warning"
+              variant="outlined"
+              icon={<VisibilityIcon fontSize="small" />}
+            />
+          )}
+        </Box>
+        
+        {/* Zoom controls for the card view */}
+        {(IMAGE_TYPES.includes(reliableMimeType) || PDF_TYPES.includes(reliableMimeType)) && !fullscreen && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <IconButton 
+              size="small" 
+              onClick={handleZoomOut}
+              disabled={zoomLevel <= 0.5}
+            >
+              <ZoomOutIcon fontSize="small" />
+            </IconButton>
+            <Typography variant="caption" sx={{ mx: 1 }}>
+              {Math.round(zoomLevel * 100)}%
+            </Typography>
+            <IconButton 
+              size="small" 
+              onClick={handleZoomIn}
+              disabled={zoomLevel >= 3}
+            >
+              <ZoomInIcon fontSize="small" />
+            </IconButton>
+          </Box>
         )}
       </CardActions>
     </Card>

@@ -1,15 +1,16 @@
-# Performance and Load Testing
+# Performance and Resilience Testing
 
-This directory contains Karate feature files for performance, load, stress, and soak testing of the Skidbladnir API services.
+This directory contains Karate feature files for performance, load, stress, soak, and connection resilience testing of the Skidbladnir API services.
 
 ## Overview
 
-These tests evaluate how the system behaves under various load conditions and help identify performance bottlenecks, breaking points, and resource leaks. The tests are organized into several categories:
+These tests evaluate how the system behaves under various load conditions and network degradations to help identify performance bottlenecks, breaking points, resource leaks, and resilience issues. The tests are organized into several categories:
 
 1. **Performance Testing**: Measures response times and throughput for individual API endpoints
 2. **Load Testing**: Tests how the system performs under expected load
 3. **Stress Testing**: Tests how the system performs under extreme load to find breaking points
 4. **Soak Testing**: Tests how the system performs over an extended period to find memory leaks or performance degradation
+5. **Connection Resilience**: Tests how the system handles network degradation and disruption
 
 ## Features
 
@@ -113,3 +114,51 @@ In a production environment, these tests should be integrated with:
 4. Alerting systems
 
 This ensures both proactive testing and reactive monitoring for performance issues.
+
+## Connection Resilience Testing
+
+### `connection-resilience.feature`
+
+This feature tests how the system handles various network degradation scenarios:
+
+- **Network Latency**: Tests the system's ability to handle high latency connections
+- **Connection Drops**: Verifies the API client can handle connection drops and reconnect
+- **Packet Loss**: Tests resilience to packet loss in network connections
+- **Intermittent Failures**: Validates handling of intermittent 5xx errors
+- **Rate Limiting**: Ensures adapters properly handle rate limiting responses (429)
+- **Combined Degradation**: Tests the system under multiple simultaneous network issues
+- **Circuit Breaker**: Verifies that the circuit breaker pattern prevents cascading failures
+- **Long-Running Operations**: Tests system operation under fluctuating network conditions
+
+### Running Resilience Tests
+
+To run all resilience tests:
+
+```bash
+mvn test -Dtest=PerformanceTests#testConnectionResilience
+```
+
+Individual resilience test scenarios can be run with:
+
+```bash
+mvn test -Dtest=PerformanceTests#testNetworkLatency
+mvn test -Dtest=PerformanceTests#testConnectionDrops
+mvn test -Dtest=PerformanceTests#testPacketLoss
+mvn test -Dtest=PerformanceTests#testIntermittentFailures
+mvn test -Dtest=PerformanceTests#testRateLimitResilience
+mvn test -Dtest=PerformanceTests#testCombinedDegradation
+mvn test -Dtest=PerformanceTests#testCircuitBreaker
+mvn test -Dtest=PerformanceTests#testLongRunningResilience
+```
+
+### Resilience Expectations
+
+The resilience tests enforce these expectations:
+
+- System should handle connections with latency up to 1000ms
+- Requests should retry automatically after connection drops (up to 5 attempts)
+- Circuit breaker should trip after 3-5 consecutive failures to prevent cascade failures
+- System should respect rate limits and implement backoff based on Retry-After headers
+- Authentication tokens should refresh automatically on 401 responses
+- Long-running operations should recover from intermittent failures
+- Success rate should be at least 90% under combined network degradation

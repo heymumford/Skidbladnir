@@ -9,5 +9,9 @@
 
 export * from './DetailedErrorReport';
 export * from './ErrorDetailPanel';
+export * from './ErrorRemediationPanel';
+export * from './ErrorSummaryPanel';
 export * from './RemediationSuggestionCard';
 export * from './ErrorCategoryFilter';
+export * from './AiRemediationPanel';
+export * from './ApiErrorHandling';

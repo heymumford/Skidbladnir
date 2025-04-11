@@ -9,3 +9,10 @@
 
 export * from './TransformationPreviewPanel';
 export * from './FieldComparisonTable';
+export * from './TestCasePreviewComponent';
+export * from './BatchPreviewComponent';
+export * from './TransformationPreviewComponent';
+export * from './FieldTransformation';
+export * from './DataStructureComparison';
+export * from './ZephyrQTestMigrationDemo';
+export { default as FieldMappingPanel } from './FieldMappingPanel';

@@ -1,16 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Card, CardHeader, CardContent, Typography, Box, 
-  Chip, Divider, Grid, IconButton, Collapse,
-  Table, TableBody, TableCell, TableContainer, TableRow, Paper
+/**
+ * Copyright (C) 2025 Eric C. Mumford (@heymumford)
+ * 
+ * This file is part of Skidbladnir.
+ * 
+ * Skidbladnir is free software: you can redistribute it and/or modify
+ * it under the terms of the MIT License as published in the LICENSE file.
+ */
+
+import React, { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Chip,
+  Collapse,
+  Button,
+  Divider,
+  Grid,
+  useTheme,
+  Paper
 } from '@mui/material';
-import CodeIcon from '@mui/icons-material/Code';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import CategoryIcon from '@mui/icons-material/Category';
-import LabelIcon from '@mui/icons-material/Label';
+import MemoryIcon from '@mui/icons-material/Memory';
+import CodeIcon from '@mui/icons-material/Code';
+import LanIcon from '@mui/icons-material/Lan';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { ErrorDetails } from '../../services/MigrationService';
 
 interface ErrorDetailPanelProps {
@@ -18,180 +36,204 @@ interface ErrorDetailPanelProps {
   expanded?: boolean;
 }
 
-const getErrorTypeColor = (errorType: string): string => {
-  switch (errorType) {
-    case 'auth': return '#ffa726'; // orange
-    case 'validation': return '#7cb342'; // light green
-    case 'network': return '#42a5f5'; // blue
-    case 'resource': return '#9c27b0'; // purple
-    case 'system': return '#d32f2f'; // red
-    default: return '#757575'; // grey
-  }
-};
-
-const errorTypeLabels: Record<string, string> = {
-  auth: 'Authentication',
-  validation: 'Validation',
-  network: 'Network',
-  resource: 'Resource',
-  system: 'System',
-  unknown: 'Unknown'
-};
-
-export const ErrorDetailPanel: React.FC<ErrorDetailPanelProps> = ({ error, expanded = false }) => {
-  const [isExpanded, setIsExpanded] = useState(expanded);
-  const [showStackTrace, setShowStackTrace] = useState(false);
-
-  const formattedTime = new Date(error.timestamp).toLocaleString();
-  const errorColor = getErrorTypeColor(error.errorType);
-  const errorTypeLabel = errorTypeLabels[error.errorType] || 'Unknown';
-
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded);
+export const ErrorDetailPanel: React.FC<ErrorDetailPanelProps> = ({
+  error,
+  expanded: initialExpanded = false
+}) => {
+  const theme = useTheme();
+  const [expanded, setExpanded] = useState(initialExpanded);
+  const [stackTraceExpanded, setStackTraceExpanded] = useState(false);
+  
+  // Toggle expanded state
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
   };
-
-  const toggleStackTrace = () => {
-    setShowStackTrace(!showStackTrace);
+  
+  // Toggle stack trace expanded state
+  const toggleStackTraceExpanded = () => {
+    setStackTraceExpanded(!stackTraceExpanded);
   };
-
+  
+  // Format timestamp to readable format
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+  };
+  
+  // Get error type color
+  const getErrorTypeColor = (errorType: string): string => {
+    switch (errorType) {
+      case 'auth': return theme.palette.warning.main; // orange
+      case 'validation': return theme.palette.success.main; // green
+      case 'network': return theme.palette.info.main; // blue
+      case 'resource': return theme.palette.secondary.main; // purple
+      case 'system': return theme.palette.error.main; // red
+      default: return theme.palette.grey[500]; // grey
+    }
+  };
+  
+  // Get human-readable error type
+  const getErrorTypeLabel = (errorType: string): string => {
+    switch (errorType) {
+      case 'auth': return 'Authentication';
+      case 'validation': return 'Validation';
+      case 'network': return 'Network';
+      case 'resource': return 'Resource';
+      case 'system': return 'System';
+      default: return 'Unknown';
+    }
+  };
+  
   return (
-    <Card sx={{ mb: 2, borderLeft: `4px solid ${errorColor}` }}>
-      <CardHeader
-        title={
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Box display="flex" alignItems="center" gap={1}>
-              <ErrorOutlineIcon color="error" />
-              <Typography variant="h6" component="div" sx={{ mr: 2 }}>
-                {error.message}
-              </Typography>
-            </Box>
-            <IconButton 
-              onClick={toggleExpand}
-              aria-expanded={isExpanded}
-              aria-label="show more"
-              size="small"
-            >
-              {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </Box>
-        }
-        subheader={
-          <Box display="flex" flexWrap="wrap" gap={1} alignItems="center" mt={1}>
-            <Chip 
-              icon={<CategoryIcon />} 
-              label={errorTypeLabel} 
-              size="small" 
-              sx={{ bgcolor: errorColor, color: 'white' }} 
-            />
-            <Chip 
-              icon={<LabelIcon />} 
-              label={error.component} 
-              size="small" 
-              variant="outlined" 
-            />
-            <Chip 
-              icon={<AccessTimeIcon />} 
-              label={formattedTime} 
-              size="small" 
-              variant="outlined" 
-            />
-          </Box>
-        }
-        sx={{ pb: 0 }}
-      />
-      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+    <Card 
+      variant="outlined" 
+      sx={{ 
+        mb: 2, 
+        borderLeft: '4px solid',
+        borderLeftColor: getErrorTypeColor(error.errorType)
+      }}
+    >
+      <CardContent sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <Typography variant="h6" component="div" sx={{ display: 'flex', alignItems: 'center' }}>
+            <ErrorOutlineIcon sx={{ mr: 1, color: getErrorTypeColor(error.errorType) }} />
+            {error.message}
+          </Typography>
+          <Chip 
+            label={getErrorTypeLabel(error.errorType)}
+            size="small"
+            style={{ 
+              backgroundColor: getErrorTypeColor(error.errorType),
+              color: theme.palette.common.white
+            }}
+          />
+        </Box>
+        
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+          <Chip 
+            icon={<MemoryIcon />} 
+            label={`Component: ${error.component}`} 
+            size="small" 
+            variant="outlined"
+          />
+          <Chip 
+            icon={<LanIcon />} 
+            label={`Operation: ${error.operation}`} 
+            size="small" 
+            variant="outlined"
+          />
+          <Chip 
+            icon={<AccessTimeIcon />} 
+            label={`Time: ${formatTimestamp(error.timestamp)}`} 
+            size="small" 
+            variant="outlined"
+          />
+        </Box>
+        
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Button
+            size="small"
+            startIcon={expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            onClick={toggleExpanded}
+          >
+            {expanded ? "Hide Details" : "Show Details"}
+          </Button>
+          
+          <Typography variant="caption" color="text.secondary">
+            Error ID: {error.errorId}
+          </Typography>
+        </Box>
+      </CardContent>
+      
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
+          <Divider sx={{ my: 1 }} />
+          
           <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" color="text.secondary">
-                Operation: {error.operation}
-              </Typography>
-              <Typography variant="body2" paragraph>
-                ID: {error.errorId}
-              </Typography>
-            </Grid>
-
+            {/* Error Detail Section */}
             {error.details && (
-              <Grid item xs={12}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Details:
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" gutterBottom sx={{ color: theme.palette.text.secondary }}>
+                  Error Details
                 </Typography>
-                <TableContainer component={Paper} variant="outlined" sx={{ mb: 2 }}>
-                  <Table size="small">
-                    <TableBody>
-                      {Object.entries(error.details).map(([key, value]) => (
-                        <TableRow key={key}>
-                          <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', width: '30%' }}>
-                            {key}
-                          </TableCell>
-                          <TableCell>
-                            {Array.isArray(value) ? (
-                              <ul style={{ margin: 0, paddingLeft: 16 }}>
-                                {value.map((item, index) => (
-                                  <li key={index}>{String(item)}</li>
-                                ))}
-                              </ul>
-                            ) : typeof value === 'object' ? (
-                              <pre style={{ margin: 0 }}>{JSON.stringify(value, null, 2)}</pre>
-                            ) : (
-                              String(value)
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: theme.palette.background.default }}>
+                  <Typography variant="body2" component="pre" sx={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                    {typeof error.details === 'string' 
+                      ? error.details 
+                      : JSON.stringify(error.details, null, 2)}
+                  </Typography>
+                </Paper>
               </Grid>
             )}
-
-            {error.context && (
-              <Grid item xs={12}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  Context:
+            
+            {/* Error Context Section */}
+            {error.context && Object.keys(error.context).length > 0 && (
+              <Grid item xs={12} md={error.details ? 6 : 12}>
+                <Typography variant="subtitle2" gutterBottom sx={{ color: theme.palette.text.secondary }}>
+                  Error Context
                 </Typography>
-                <TableContainer component={Paper} variant="outlined" sx={{ mb: 2 }}>
-                  <Table size="small">
-                    <TableBody>
-                      {Object.entries(error.context).map(([key, value]) => (
-                        <TableRow key={key}>
-                          <TableCell component="th" scope="row" sx={{ fontWeight: 'bold', width: '30%' }}>
-                            {key}
-                          </TableCell>
-                          <TableCell>{String(value)}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: theme.palette.background.default }}>
+                  <Grid container spacing={1}>
+                    {Object.entries(error.context).map(([key, value]) => (
+                      <Grid item xs={12} key={key}>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {key}:
+                          </Typography>
+                          <Typography variant="body2">
+                            {value.toString()}
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Paper>
               </Grid>
             )}
-
+            
+            {/* Stack Trace Section */}
             {error.stackTrace && (
               <Grid item xs={12}>
-                <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    Stack Trace:
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  mb: 1
+                }}>
+                  <Typography variant="subtitle2" sx={{ color: theme.palette.text.secondary }}>
+                    Stack Trace
                   </Typography>
-                  <IconButton size="small" onClick={toggleStackTrace}>
-                    <CodeIcon />
-                  </IconButton>
+                  <Button
+                    size="small"
+                    variant="text"
+                    startIcon={stackTraceExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                    onClick={toggleStackTraceExpanded}
+                  >
+                    {stackTraceExpanded ? "Collapse" : "Expand"}
+                  </Button>
                 </Box>
-                <Collapse in={showStackTrace}>
+                <Collapse in={stackTraceExpanded} timeout="auto">
                   <Paper 
                     variant="outlined" 
                     sx={{ 
-                      p: 1, 
-                      bgcolor: 'grey.900', 
-                      color: 'grey.100', 
-                      fontFamily: 'monospace', 
-                      fontSize: '0.875rem',
-                      overflowX: 'auto'
+                      p: 2, 
+                      bgcolor: theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0.05)',
+                      maxHeight: 200,
+                      overflow: 'auto'
                     }}
                   >
-                    <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                    <Typography
+                      variant="body2"
+                      component="pre"
+                      sx={{
+                        whiteSpace: 'pre-wrap',
+                        fontFamily: 'monospace',
+                        fontSize: '0.8rem',
+                        m: 0
+                      }}
+                    >
                       {error.stackTrace}
-                    </pre>
+                    </Typography>
                   </Paper>
                 </Collapse>
               </Grid>

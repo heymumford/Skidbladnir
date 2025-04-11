@@ -1,0 +1,116 @@
+FROM alpine:3.18 as base
+
+# Base layer with essential dependencies only
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    nodejs \
+    npm \
+    bash \
+    curl \
+    tzdata \
+    dumb-init \
+    linux-headers \
+    build-base \
+    cmake \
+    git \
+    gcc \
+    g++ \
+    musl-dev \
+    openblas-dev
+
+# Create app directory and non-root user
+RUN mkdir -p /app/models /app/cache /app/logs
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN chown -R appuser:appgroup /app
+
+# Set timezone and locale
+ENV TZ=UTC
+ENV LANG=en_US.UTF-8
+
+# Dependencies stage
+FROM base as deps
+
+WORKDIR /app
+
+# Copy package files first
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production
+
+# Install Python dependencies
+COPY requirements.txt ./
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Install llama.cpp
+RUN git clone --branch master --depth 1 https://github.com/ggerganov/llama.cpp.git
+WORKDIR /app/llama.cpp
+RUN cmake -B build && cmake --build build --config Release -j8
+RUN cp build/bin/server /usr/local/bin/llama-server
+WORKDIR /app
+
+# Builder stage
+FROM base as builder
+
+WORKDIR /app
+
+# Copy dependencies
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /usr/local/bin/llama-server /usr/local/bin/llama-server
+COPY --from=deps /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+# Copy application code
+COPY . .
+
+# Build TypeScript code
+RUN npm run build
+
+# Final runtime stage
+FROM base as runner
+
+WORKDIR /app
+
+# Copy built application from builder stage
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /usr/local/bin/llama-server /usr/local/bin/llama-server
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+
+# Copy model watcher and other scripts
+COPY --from=builder /app/src/scripts/model-watcher.sh ./scripts/
+RUN chmod +x ./scripts/model-watcher.sh
+
+# Copy configuration files
+COPY --from=builder /app/config ./config
+
+# Setup environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+ENV MODEL_CACHE_SIZE=1000
+ENV USE_QUANTIZED_MODELS=true
+ENV MAX_MEMORY_USAGE_MB=2048
+ENV MODEL_PATH=/app/models
+ENV MODEL_CONFIG_PATH=/app/config/model-config.json
+ENV CACHE_DIRECTORY=/app/cache
+ENV LOG_LEVEL=info
+
+# Set memory management parameters
+ENV NODE_OPTIONS="--max-old-space-size=1536"
+
+# Expose port
+EXPOSE 3001
+
+# Setup volume mounts
+VOLUME ["/app/models", "/app/cache", "/app/logs"]
+
+# Switch to non-root user
+USER appuser
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:3001/health || exit 1
+
+# Command to run
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
+CMD ["node", "dist/server.js"]

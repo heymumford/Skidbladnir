@@ -151,9 +151,9 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Configure LLM models for containerized deployment (Medium)
 
 ## In Progress
-- [ ] Create adapter for Zephyr-to-qTest API type conversion (Critical)
 
 ## In Review
+- [x] Create adapter for Zephyr-to-qTest API type conversion (Critical)
 
 ## Completed
 - [x] Fix build errors for Operation Dependency Controller (Critical)

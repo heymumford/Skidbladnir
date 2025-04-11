@@ -23,6 +23,8 @@ interface LcarsStatusHeaderProps {
   endTime?: Date;
   lastTransactionName?: string;
   lastTransactionStatus?: TransactionStatus;
+  'data-testid'?: string;
+  className?: string;
 }
 
 const HeaderContainer = styled(Box)(({ theme }) => ({
@@ -183,12 +185,13 @@ const TransactionStatus = styled(Box, {
 export const LcarsStatusHeader: React.FC<LcarsStatusHeaderProps> = ({
   operationName,
   operationState,
-  percentComplete,
+  percentComplete = 0,
   estimatedTimeRemaining,
   startTime,
   endTime,
   lastTransactionName,
   lastTransactionStatus,
+  'data-testid': testId = 'lcars-status-header',
 }) => {
   // Calculate stardate (a fun Star Trek inspired date format)
   const calculateStardate = () => {
@@ -211,20 +214,20 @@ export const LcarsStatusHeader: React.FC<LcarsStatusHeaderProps> = ({
   };
 
   return (
-    <HeaderContainer>
+    <HeaderContainer data-testid={testId}>
       <TopRow>
         <ElbowSection />
         <Box sx={{ display: 'flex', alignItems: 'center', marginRight: '12px' }}>
           <LcarsStatusLight 
             state={operationState} 
             size="medium" 
-            data-testid="status-light"
+            data-testid={`${testId}-light`}
           />
         </Box>
-        <StatusSection state={operationState} data-testid="operation-state">
+        <StatusSection state={operationState} data-testid={`${testId}-state`}>
           {operationState.toUpperCase()}
         </StatusSection>
-        <OperationName variant="h6">
+        <OperationName variant="h6" data-testid={`${testId}-name`}>
           {operationName}
         </OperationName>
         <StardateDisplay variant="body2">
@@ -236,7 +239,7 @@ export const LcarsStatusHeader: React.FC<LcarsStatusHeaderProps> = ({
           {percentComplete !== undefined && (
             <MetricItem>
               <MetricLabel>COMPLETION:</MetricLabel>
-              <MetricValue>{percentComplete}%</MetricValue>
+              <MetricValue data-testid={`${testId}-percent`}>{percentComplete}%</MetricValue>
             </MetricItem>
           )}
           {estimatedTimeRemaining !== undefined && (

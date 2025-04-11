@@ -7,6 +7,9 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
+// Import Jest DOM for DOM testing utilities
+require('@testing-library/jest-dom');
+
 // Set default timeout for all tests
 jest.setTimeout(30000);
 

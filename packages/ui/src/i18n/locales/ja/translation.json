@@ -1,0 +1,204 @@
+{
+  "common": {
+    "source": "ソース",
+    "target": "ターゲット",
+    "connection": {
+      "test": "接続テスト",
+      "success": "接続成功",
+      "failure": "接続失敗",
+      "configuring": "接続設定中"
+    },
+    "actions": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "edit": "編集",
+      "start": "開始",
+      "pause": "一時停止",
+      "resume": "再開",
+      "back": "戻る",
+      "next": "次へ",
+      "confirm": "確認"
+    },
+    "status": {
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "error": "エラー",
+      "completed": "完了",
+      "inProgress": "進行中",
+      "paused": "一時停止",
+      "cancelled": "キャンセル済み"
+    },
+    "dateFormats": {
+      "short": "YYYY/MM/DD",
+      "long": "YYYY年MM月DD日",
+      "time": "HH:mm",
+      "dateTime": "YYYY/MM/DD HH:mm"
+    }
+  },
+  "providers": {
+    "common": {
+      "baseUrl": "ベースURL",
+      "apiKey": "APIキー",
+      "username": "ユーザー名",
+      "password": "パスワード",
+      "project": "プロジェクト",
+      "domain": "ドメイン",
+      "showPassword": "パスワードを表示",
+      "hidePassword": "パスワードを隠す",
+      "showApiKey": "APIキーを表示",
+      "hideApiKey": "APIキーを隠す",
+      "connectionDetails": "接続詳細",
+      "testingConnection": "接続テスト中...",
+      "connectionSuccess": "{{provider}}への接続に成功しました",
+      "connectionFailure": "{{provider}}への接続に失敗しました"
+    },
+    "zephyr": {
+      "name": "Zephyr Scale",
+      "projectKey": "プロジェクトキー",
+      "baseUrl": "ベースURL",
+      "apiKey": "APIキー"
+    },
+    "qtest": {
+      "name": "qTest",
+      "instanceUrl": "インスタンスURL",
+      "apiToken": "APIトークン",
+      "projectId": "プロジェクトID"
+    },
+    "testrail": {
+      "name": "TestRail",
+      "url": "URL",
+      "username": "ユーザー名/Eメール",
+      "apiKey": "APIキー",
+      "projectId": "プロジェクトID"
+    },
+    "hp-alm": {
+      "name": "Micro Focus ALM",
+      "url": "URL",
+      "username": "ユーザー名",
+      "password": "パスワード",
+      "domain": "ドメイン",
+      "project": "プロジェクト"
+    },
+    "jama": {
+      "name": "Jama",
+      "url": "URL",
+      "clientId": "クライアントID",
+      "clientSecret": "クライアントシークレット",
+      "projectId": "プロジェクトID"
+    },
+    "azure-devops": {
+      "name": "Azure DevOps",
+      "url": "組織URL",
+      "token": "個人アクセストークン",
+      "project": "プロジェクト"
+    },
+    "visure": {
+      "name": "Visure",
+      "url": "URL",
+      "apiKey": "APIキー",
+      "projectId": "プロジェクトID"
+    },
+    "rally": {
+      "name": "Rally",
+      "url": "URL",
+      "apiKey": "APIキー",
+      "workspace": "ワークスペース",
+      "project": "プロジェクト"
+    }
+  },
+  "migration": {
+    "title": "テスト資産移行",
+    "sourceProvider": "ソースプロバイダ",
+    "targetProvider": "ターゲットプロバイダ",
+    "selectSource": "ソースプロバイダを選択",
+    "selectTarget": "ターゲットプロバイダを選択",
+    "configureSource": "ソースプロバイダを設定",
+    "configureTarget": "ターゲットプロバイダを設定",
+    "selectAssets": "テスト資産を選択",
+    "configureMapping": "フィールドマッピングを設定",
+    "startMigration": "移行を開始",
+    "pauseMigration": "移行を一時停止",
+    "resumeMigration": "移行を再開",
+    "cancelMigration": "移行をキャンセル",
+    "migrationStatus": "移行ステータス",
+    "migrationSummary": "移行サマリー",
+    "confirm": {
+      "cancel": "この移行をキャンセルしますか？",
+      "cancelWarning": "進行状況は失われます。",
+      "confirmCancel": "はい、移行をキャンセルします",
+      "cancelAction": "いいえ、移行を続けます"
+    },
+    "metrics": {
+      "totalItems": "合計アイテム",
+      "successfulItems": "移行成功",
+      "failedItems": "失敗",
+      "warnings": "警告",
+      "duration": "所要時間",
+      "progress": "進捗"
+    }
+  },
+  "fieldMapping": {
+    "title": "フィールドマッピング",
+    "sourceField": "ソースフィールド",
+    "targetField": "ターゲットフィールド",
+    "transform": "変換",
+    "requiredField": "必須フィールド",
+    "optionalField": "オプションフィールド",
+    "transformations": {
+      "direct": "直接マッピング",
+      "concatenation": "連結",
+      "slice": "テキストスライス",
+      "prefix": "接頭辞追加",
+      "suffix": "接尾辞追加",
+      "replace": "検索と置換"
+    },
+    "preview": "プレビュー",
+    "original": "元の値",
+    "transformed": "変換後の値",
+    "saveMapping": "マッピングを保存",
+    "configureTransformations": "変換を設定"
+  },
+  "attachments": {
+    "title": "添付ファイル",
+    "filename": "ファイル名",
+    "fileType": "ファイルタイプ",
+    "fileSize": "ファイルサイズ",
+    "created": "作成日",
+    "options": {
+      "title": "添付ファイルオプション",
+      "migrateAll": "すべての添付ファイルを移行",
+      "sizeLimit": "サイズ制限",
+      "includeTypes": "含めるファイルタイプ",
+      "excludeTypes": "除外するファイルタイプ"
+    }
+  },
+  "errors": {
+    "title": "エラー",
+    "connectionFailed": "接続に失敗しました。資格情報を確認して、もう一度お試しください。",
+    "invalidCredentials": "無効な資格情報です。ログイン情報を確認してください。",
+    "serverError": "サーバーエラーが発生しました。後でもう一度お試しください。",
+    "timeoutError": "接続がタイムアウトしました。ネットワークを確認してもう一度お試しください。",
+    "permissionError": "この操作を実行するための十分な権限がありません。",
+    "remediation": {
+      "title": "推奨される解決策",
+      "checkCredentials": "APIキーが有効で期限切れでないことを確認してください",
+      "verifyUrl": "URLが正しく形式化されており、正しい環境を指していることを確認してください",
+      "checkPermissions": "ターゲットシステムで必要な権限があることを確認してください"
+    }
+  },
+  "ui": {
+    "language": "言語",
+    "theme": "テーマ",
+    "profile": "プロフィール",
+    "preferences": "設定",
+    "designSystem": "デザインシステム",
+    "featureFlags": "機能フラグ",
+    "about": "情報",
+    "lcars": {
+      "systemStatus": "システム状態",
+      "operations": "アクティブな操作",
+      "alerts": "システムアラート"
+    }
+  }
+}

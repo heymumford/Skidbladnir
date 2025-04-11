@@ -1,0 +1,199 @@
+{
+  "common": {
+    "source": "Source",
+    "target": "Cible",
+    "connection": {
+      "test": "Tester la connexion",
+      "success": "Connexion réussie",
+      "failure": "Échec de connexion",
+      "configuring": "Configuration de la connexion"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "delete": "Supprimer",
+      "edit": "Modifier",
+      "start": "Démarrer",
+      "pause": "Pause",
+      "resume": "Reprendre",
+      "back": "Retour",
+      "next": "Suivant",
+      "confirm": "Confirmer"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "error": "Erreur",
+      "completed": "Terminé",
+      "inProgress": "En cours",
+      "paused": "En pause",
+      "cancelled": "Annulé"
+    },
+    "dateFormats": {
+      "short": "DD/MM/YYYY",
+      "long": "D MMMM YYYY",
+      "time": "HH:mm",
+      "dateTime": "DD/MM/YYYY HH:mm"
+    }
+  },
+  "providers": {
+    "common": {
+      "baseUrl": "URL de base",
+      "apiKey": "Clé API",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "project": "Projet",
+      "domain": "Domaine",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "showApiKey": "Afficher la clé API",
+      "hideApiKey": "Masquer la clé API",
+      "connectionDetails": "Détails de connexion",
+      "testingConnection": "Test de connexion en cours...",
+      "connectionSuccess": "Connexion réussie à {{provider}}",
+      "connectionFailure": "Échec de connexion à {{provider}}"
+    },
+    "zephyr": {
+      "name": "Zephyr Scale",
+      "projectKey": "Clé de projet",
+      "baseUrl": "URL de base",
+      "apiKey": "Clé API"
+    },
+    "qtest": {
+      "name": "qTest",
+      "instanceUrl": "URL de l'instance",
+      "apiToken": "Jeton API",
+      "projectId": "ID du projet"
+    },
+    "testrail": {
+      "name": "TestRail",
+      "url": "URL",
+      "username": "Nom d'utilisateur/Email",
+      "apiKey": "Clé API",
+      "projectId": "ID du projet"
+    },
+    "hp-alm": {
+      "name": "Micro Focus ALM",
+      "url": "URL",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "domain": "Domaine",
+      "project": "Projet"
+    },
+    "jama": {
+      "name": "Jama",
+      "url": "URL",
+      "clientId": "ID client",
+      "clientSecret": "Secret client",
+      "projectId": "ID du projet"
+    },
+    "azure-devops": {
+      "name": "Azure DevOps",
+      "url": "URL de l'organisation",
+      "token": "Jeton d'accès personnel",
+      "project": "Projet"
+    },
+    "visure": {
+      "name": "Visure",
+      "url": "URL",
+      "apiKey": "Clé API",
+      "projectId": "ID du projet"
+    },
+    "rally": {
+      "name": "Rally",
+      "url": "URL",
+      "apiKey": "Clé API",
+      "workspace": "Espace de travail",
+      "project": "Projet"
+    }
+  },
+  "migration": {
+    "title": "Migration des éléments de test",
+    "sourceProvider": "Fournisseur source",
+    "targetProvider": "Fournisseur cible",
+    "selectSource": "Sélectionner le fournisseur source",
+    "selectTarget": "Sélectionner le fournisseur cible",
+    "configureSource": "Configurer le fournisseur source",
+    "configureTarget": "Configurer le fournisseur cible",
+    "selectAssets": "Sélectionner les éléments de test",
+    "configureMapping": "Configurer le mappage des champs",
+    "startMigration": "Démarrer la migration",
+    "pauseMigration": "Mettre en pause la migration",
+    "resumeMigration": "Reprendre la migration",
+    "cancelMigration": "Annuler la migration",
+    "migrationStatus": "État de la migration",
+    "migrationSummary": "Résumé de la migration",
+    "confirm": {
+      "cancel": "Êtes-vous sûr de vouloir annuler cette migration ?",
+      "cancelWarning": "Tout progrès sera perdu.",
+      "confirmCancel": "Oui, annuler la migration",
+      "cancelAction": "Non, continuer la migration"
+    },
+    "metrics": {
+      "totalItems": "Total des éléments",
+      "successfulItems": "Éléments migrés avec succès",
+      "failedItems": "Échecs",
+      "warnings": "Avertissements",
+      "duration": "Durée",
+      "progress": "Progression"
+    }
+  },
+  "fieldMapping": {
+    "title": "Mappage des champs",
+    "sourceField": "Champ source",
+    "targetField": "Champ cible",
+    "transform": "Transformation",
+    "requiredField": "Champ obligatoire",
+    "optionalField": "Champ facultatif",
+    "transformations": {
+      "direct": "Mappage direct",
+      "concatenation": "Concaténation",
+      "slice": "Découpe de texte",
+      "prefix": "Ajouter un préfixe",
+      "suffix": "Ajouter un suffixe",
+      "replace": "Rechercher et remplacer"
+    },
+    "preview": "Aperçu",
+    "original": "Valeur d'origine",
+    "transformed": "Valeur transformée",
+    "saveMapping": "Enregistrer le mappage",
+    "configureTransformations": "Configurer les transformations"
+  },
+  "attachments": {
+    "title": "Pièces jointes",
+    "filename": "Nom de fichier",
+    "fileType": "Type de fichier",
+    "fileSize": "Taille du fichier",
+    "created": "Créé le",
+    "options": {
+      "title": "Options des pièces jointes",
+      "migrateAll": "Migrer toutes les pièces jointes",
+      "sizeLimit": "Limite de taille",
+      "includeTypes": "Types de fichiers à inclure",
+      "excludeTypes": "Types de fichiers à exclure"
+    }
+  },
+  "errors": {
+    "title": "Erreur",
+    "connectionFailed": "Échec de la connexion. Vérifiez vos identifiants et réessayez.",
+    "invalidCredentials": "Identifiants invalides. Veuillez vérifier vos informations de connexion.",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+    "timeoutError": "Délai d'attente de connexion dépassé. Vérifiez votre réseau et réessayez.",
+    "permissionError": "Vous n'avez pas les permissions suffisantes pour effectuer cette action.",
+    "remediation": {
+      "title": "Solutions suggérées",
+      "checkCredentials": "Vérifiez que votre clé API est valide et n'a pas expiré",
+      "verifyUrl": "Vérifiez que l'URL est correctement formatée et pointe vers le bon environnement",
+      "checkPermissions": "Assurez-vous d'avoir les permissions nécessaires dans le système cible"
+    }
+  },
+  "ui": {
+    "language": "Langue",
+    "theme": "Thème",
+    "lcars": {
+      "systemStatus": "État du système",
+      "operations": "Opérations actives",
+      "alerts": "Alertes système"
+    }
+  }
+}

@@ -25,17 +25,55 @@ export interface SkidbladnirWorld extends World {
     testCase?: any;
     testCases?: any[];
     testSuite?: any;
+    availableTestAssets?: any[];
+    selectedTestAssets?: any[];
     
     // Providers
     sourceProvider?: string;
     targetProvider?: string;
+    currentProvider?: string;
+    providerConnections?: Record<string, any>;
+    connectionTestResults?: Record<string, any>;
     
     // Workflow state
     workflowId?: string;
     workflowStatus?: string;
+    migrationState?: any;
+    migrationSummary?: any;
+    
+    // UI state
+    currentPage?: string;
+    currentSection?: string;
+    currentView?: string;
+    showingConfirmationDialog?: boolean;
+    confirmationDialogType?: string;
+    userConfirmedAction?: boolean;
+    lastButtonClicked?: string;
+    
+    // Field mappings
+    fieldMappings?: any[];
+    selectedField?: string;
+    selectedFieldMapping?: any;
+    fieldPreview?: { original: any; transformed: any };
+    fieldMappingsSaved?: boolean;
+    readyForExecution?: boolean;
+    
+    // Attachments
+    viewedAttachments?: any[];
+    previewedAttachment?: any;
+    attachmentConfig?: any;
+    
+    // Internationalization
+    language?: string;
+    translatedErrorMessage?: string;
+    translatedDate?: string;
     
     // Authentication
     authToken?: string;
+    authenticated?: boolean;
+    
+    // Errors & Remediation
+    remediationSuggestions?: string[];
     
     // Other context
     scenarioContext: Record<string, any>;
@@ -206,11 +244,63 @@ export class CustomWorld extends World implements SkidbladnirWorld {
     const { apiClient } = this.context;
     
     this.context = {
+      // API Client
       apiClient,
       requestHeaders: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      
+      // Reset all other properties
+      apiResponse: undefined,
+      apiError: undefined,
+      responseData: undefined,
+      
+      testCase: undefined,
+      testCases: undefined,
+      testSuite: undefined,
+      availableTestAssets: undefined,
+      selectedTestAssets: undefined,
+      
+      sourceProvider: undefined,
+      targetProvider: undefined,
+      currentProvider: undefined,
+      providerConnections: undefined,
+      connectionTestResults: undefined,
+      
+      workflowId: undefined,
+      workflowStatus: undefined,
+      migrationState: undefined,
+      migrationSummary: undefined,
+      
+      currentPage: undefined,
+      currentSection: undefined,
+      currentView: undefined,
+      showingConfirmationDialog: undefined,
+      confirmationDialogType: undefined,
+      userConfirmedAction: undefined,
+      lastButtonClicked: undefined,
+      
+      fieldMappings: undefined,
+      selectedField: undefined,
+      selectedFieldMapping: undefined,
+      fieldPreview: undefined,
+      fieldMappingsSaved: undefined,
+      readyForExecution: undefined,
+      
+      viewedAttachments: undefined,
+      previewedAttachment: undefined,
+      attachmentConfig: undefined,
+      
+      language: undefined,
+      translatedErrorMessage: undefined,
+      translatedDate: undefined,
+      
+      authToken: undefined,
+      authenticated: undefined,
+      
+      remediationSuggestions: undefined,
+      
       scenarioContext: {},
     };
   }

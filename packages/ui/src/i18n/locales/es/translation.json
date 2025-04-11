@@ -1,0 +1,199 @@
+{
+  "common": {
+    "source": "Origen",
+    "target": "Destino",
+    "connection": {
+      "test": "Probar conexión",
+      "success": "Conexión exitosa",
+      "failure": "Error de conexión",
+      "configuring": "Configurando conexión"
+    },
+    "actions": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "delete": "Eliminar",
+      "edit": "Editar",
+      "start": "Iniciar",
+      "pause": "Pausar",
+      "resume": "Reanudar",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "confirm": "Confirmar"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "error": "Error",
+      "completed": "Completado",
+      "inProgress": "En progreso",
+      "paused": "Pausado",
+      "cancelled": "Cancelado"
+    },
+    "dateFormats": {
+      "short": "DD/MM/YYYY",
+      "long": "D \\de MMMM \\de YYYY",
+      "time": "HH:mm",
+      "dateTime": "DD/MM/YYYY HH:mm"
+    }
+  },
+  "providers": {
+    "common": {
+      "baseUrl": "URL base",
+      "apiKey": "Clave API",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "project": "Proyecto",
+      "domain": "Dominio",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "showApiKey": "Mostrar clave API",
+      "hideApiKey": "Ocultar clave API",
+      "connectionDetails": "Detalles de conexión",
+      "testingConnection": "Probando conexión...",
+      "connectionSuccess": "Conexión exitosa a {{provider}}",
+      "connectionFailure": "Error al conectar con {{provider}}"
+    },
+    "zephyr": {
+      "name": "Zephyr Scale",
+      "projectKey": "Clave de proyecto",
+      "baseUrl": "URL base",
+      "apiKey": "Clave API"
+    },
+    "qtest": {
+      "name": "qTest",
+      "instanceUrl": "URL de instancia",
+      "apiToken": "Token API",
+      "projectId": "ID de proyecto"
+    },
+    "testrail": {
+      "name": "TestRail",
+      "url": "URL",
+      "username": "Usuario/Email",
+      "apiKey": "Clave API",
+      "projectId": "ID de proyecto"
+    },
+    "hp-alm": {
+      "name": "Micro Focus ALM",
+      "url": "URL",
+      "username": "Nombre de usuario",
+      "password": "Contraseña",
+      "domain": "Dominio",
+      "project": "Proyecto"
+    },
+    "jama": {
+      "name": "Jama",
+      "url": "URL",
+      "clientId": "ID de cliente",
+      "clientSecret": "Secreto de cliente",
+      "projectId": "ID de proyecto"
+    },
+    "azure-devops": {
+      "name": "Azure DevOps",
+      "url": "URL de organización",
+      "token": "Token de acceso personal",
+      "project": "Proyecto"
+    },
+    "visure": {
+      "name": "Visure",
+      "url": "URL",
+      "apiKey": "Clave API",
+      "projectId": "ID de proyecto"
+    },
+    "rally": {
+      "name": "Rally",
+      "url": "URL",
+      "apiKey": "Clave API",
+      "workspace": "Espacio de trabajo",
+      "project": "Proyecto"
+    }
+  },
+  "migration": {
+    "title": "Migración de Elementos de Prueba",
+    "sourceProvider": "Proveedor de origen",
+    "targetProvider": "Proveedor de destino",
+    "selectSource": "Seleccionar proveedor de origen",
+    "selectTarget": "Seleccionar proveedor de destino",
+    "configureSource": "Configurar proveedor de origen",
+    "configureTarget": "Configurar proveedor de destino",
+    "selectAssets": "Seleccionar elementos de prueba",
+    "configureMapping": "Configurar mapeo de campos",
+    "startMigration": "Iniciar migración",
+    "pauseMigration": "Pausar migración",
+    "resumeMigration": "Reanudar migración",
+    "cancelMigration": "Cancelar migración",
+    "migrationStatus": "Estado de la migración",
+    "migrationSummary": "Resumen de la migración",
+    "confirm": {
+      "cancel": "¿Está seguro de que desea cancelar esta migración?",
+      "cancelWarning": "Se perderá todo el progreso.",
+      "confirmCancel": "Sí, cancelar migración",
+      "cancelAction": "No, continuar migración"
+    },
+    "metrics": {
+      "totalItems": "Total de elementos",
+      "successfulItems": "Migrados con éxito",
+      "failedItems": "Fallidos",
+      "warnings": "Advertencias",
+      "duration": "Duración",
+      "progress": "Progreso"
+    }
+  },
+  "fieldMapping": {
+    "title": "Mapeo de campos",
+    "sourceField": "Campo origen",
+    "targetField": "Campo destino",
+    "transform": "Transformación",
+    "requiredField": "Campo requerido",
+    "optionalField": "Campo opcional",
+    "transformations": {
+      "direct": "Mapeo directo",
+      "concatenation": "Concatenación",
+      "slice": "Corte de texto",
+      "prefix": "Añadir prefijo",
+      "suffix": "Añadir sufijo",
+      "replace": "Buscar y reemplazar"
+    },
+    "preview": "Vista previa",
+    "original": "Valor original",
+    "transformed": "Valor transformado",
+    "saveMapping": "Guardar mapeo",
+    "configureTransformations": "Configurar transformaciones"
+  },
+  "attachments": {
+    "title": "Archivos adjuntos",
+    "filename": "Nombre del archivo",
+    "fileType": "Tipo de archivo",
+    "fileSize": "Tamaño del archivo",
+    "created": "Creado",
+    "options": {
+      "title": "Opciones de archivos adjuntos",
+      "migrateAll": "Migrar todos los archivos adjuntos",
+      "sizeLimit": "Límite de tamaño",
+      "includeTypes": "Incluir tipos de archivo",
+      "excludeTypes": "Excluir tipos de archivo"
+    }
+  },
+  "errors": {
+    "title": "Error",
+    "connectionFailed": "Error de conexión. Compruebe sus credenciales e inténtelo de nuevo.",
+    "invalidCredentials": "Credenciales inválidas. Por favor, verifique sus datos de inicio de sesión.",
+    "serverError": "Error del servidor. Por favor, inténtelo más tarde.",
+    "timeoutError": "Tiempo de espera agotado. Compruebe su red e inténtelo de nuevo.",
+    "permissionError": "No tiene permisos suficientes para realizar esta acción.",
+    "remediation": {
+      "title": "Soluciones sugeridas",
+      "checkCredentials": "Compruebe que su clave API es válida y no ha caducado",
+      "verifyUrl": "Verifique que la URL está correctamente formateada y apunta al entorno correcto",
+      "checkPermissions": "Asegúrese de tener los permisos necesarios en el sistema de destino"
+    }
+  },
+  "ui": {
+    "language": "Idioma",
+    "theme": "Tema",
+    "lcars": {
+      "systemStatus": "Estado del sistema",
+      "operations": "Operaciones activas",
+      "alerts": "Alertas del sistema"
+    }
+  }
+}

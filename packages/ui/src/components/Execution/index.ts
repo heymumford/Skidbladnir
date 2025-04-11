@@ -8,3 +8,8 @@
  */
 
 export * from './ExecutionConfigForm';
+export * from './ExecutionControlPanel';
+export * from './ExecutionMonitor';
+export * from './MigrationDashboard';
+export * from './ExecutionControlInterface';
+export { default as MigrationWizard } from './MigrationWizard';

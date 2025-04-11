@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Run unit tests: `npm run test:unit`
 - Run integration tests: `npm run test:integration`
 - Run specific test: `npm test -- -t "test name pattern"`
+- Run UI tests: `npm test -- --env=jsdom packages/ui/src/path/to/test.tsx`
 - Run Python tests: `npm run test:py` or `npm run test:py:unit`
 - Run Go tests: `npm run test:go` or `cd cmd/binary-processor && go test ./...`
 - Run API tests: `npm run test:api`

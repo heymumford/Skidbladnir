@@ -61,9 +61,13 @@ For details on why we prioritize this migration path, see our [Migration Focus](
 - **API Operation Dependencies**: Ensures operations execute in the correct order based on dependencies
 - **Multi-Stage API Handling**: Sophisticated management of complex API flows and authentication
 - **Universal Provider Interface**: Standardized adapter system extensible to future platforms
+- **Network Resilience**: Comprehensive testing ensures stability under latency, packet loss, connection drops, and intermittent failures
+- **Connection Resilience**: Proven testing for all provider combinations under adverse network conditions
+- **Circuit Breaker Pattern**: Prevents cascading failures during service degradation
 - **Local LLM Advisor**: Llama-3 powered assistant for API troubleshooting and optimization
 - **Self-Healing Capabilities**: Automatic recovery from API errors and schema changes
 - **LCARS-inspired Interface**: Star Trek styled interface featuring asymmetric panels, blinking status indicators, distinctive color coding, wizard-based workflows, real-time operation monitoring, and intuitive migration controls
+- **Complete UI Workflow Testing**: Behavioral testing across all provider combinations
 - **Fully Containerized**: Optimized for minimal rebuild and recompile cycles using Podman
 - **Laptop-Friendly**: Memory-optimized containers that work well on 16GB laptops running Windows 10/11
 
@@ -231,11 +235,18 @@ Our testing strategy for the Zephyr→qTest migration includes:
 - **Unit Testing**: Components and functions have comprehensive unit tests
 - **Integration Testing**: Test interactions between components, especially between Zephyr extraction and qTest loading
 - **API Testing**: Validate provider API interactions with scripts like `test-zephyr-connectivity.js` and `test-qtest-connectivity.js`
+- **UI Workflow Testing**: BDD-style tests for complete user journeys across all provider combinations
 - **End-to-End Testing**: Full system tests for complete Zephyr→qTest migrations
 - **Performance Testing**: Verify system behavior under load with realistic Zephyr and qTest data volumes
 - **Architecture Validation**: Enforce clean architecture boundaries while allowing for provider-specific implementation details
 
-For more details, see [TDD Approach](docs/project/tdd-approach.md) and [API Testing Strategy](docs/adrs/0012-api-testing-validation-strategy.md).
+The UI workflow testing ensures that the LCARS-inspired interface correctly supports all provider combinations with robust error handling, field transformations, attachment handling, and internationalization.
+
+For more details, see:
+- [TDD Approach](docs/project/tdd-approach.md)
+- [API Testing Strategy](docs/adrs/0012-api-testing-validation-strategy.md)
+- [UI Workflow Testing Strategy](docs/adrs/0015-ui-workflow-testing-strategy.md)
+- [LCARS UI Implementation](docs/adrs/0014-lcars-ui-implementation.md)
 
 ## License
 

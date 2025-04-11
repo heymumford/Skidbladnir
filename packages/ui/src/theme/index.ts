@@ -8,3 +8,6 @@
  */
 
 export * from './lcarsTheme';
+export * from './darkTheme';
+export * from './lightTheme';
+export * from './ThemeContext';

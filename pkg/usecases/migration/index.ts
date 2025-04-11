@@ -10,3 +10,5 @@
 export * from './MigrateTestCases';
 export * from './DependencyAwareMigrationUseCase';
 export * from './DependencyAwareMigrationFactory';
+export * from './MigrationValidator';
+export * from './MigrationValidatorFactory';

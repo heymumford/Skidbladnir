@@ -95,6 +95,51 @@ class PerformanceTests {
     Karate testComprehensiveBenchmark() {
         return Karate.run("provider-benchmarking").tags("@comprehensive").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testConnectionResilience() {
+        return Karate.run("connection-resilience").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testNetworkLatency() {
+        return Karate.run("connection-resilience").tags("@network-latency").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testConnectionDrops() {
+        return Karate.run("connection-resilience").tags("@connection-drops").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testPacketLoss() {
+        return Karate.run("connection-resilience").tags("@packet-loss").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testIntermittentFailures() {
+        return Karate.run("connection-resilience").tags("@intermittent-failures").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testRateLimitResilience() {
+        return Karate.run("connection-resilience").tags("@rate-limiting").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testCombinedDegradation() {
+        return Karate.run("connection-resilience").tags("@combined-degradation").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testCircuitBreaker() {
+        return Karate.run("connection-resilience").tags("@circuit-breaker").relativeTo(getClass());
+    }
+    
+    @Karate.Test
+    Karate testLongRunningResilience() {
+        return Karate.run("connection-resilience").tags("@long-running").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);

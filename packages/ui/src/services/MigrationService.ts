@@ -150,13 +150,20 @@ export class MigrationService {
    * Pause a migration.
    * 
    * @param migrationId The ID of the migration to pause
+   * @param reason The reason for pausing the migration
    * @returns A promise that resolves to the updated migration status
    */
-  async pauseMigration(migrationId: string): Promise<MigrationStatus> {
+  async pauseMigration(migrationId: string, reason?: string): Promise<MigrationStatus> {
     try {
+      const requestBody = reason ? { reason } : {};
       const response = await fetch(`${this.apiBaseUrl}/migrations/${migrationId}/pause`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
       });
+      
       if (!response.ok) {
         throw new Error(`Failed to pause migration: ${response.statusText}`);
       }
@@ -178,8 +185,12 @@ export class MigrationService {
   async resumeMigration(migrationId: string): Promise<MigrationStatus> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/migrations/${migrationId}/resume`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
+      
       if (!response.ok) {
         throw new Error(`Failed to resume migration: ${response.statusText}`);
       }
@@ -196,13 +207,19 @@ export class MigrationService {
    * Cancel a migration.
    * 
    * @param migrationId The ID of the migration to cancel
+   * @param terminateResources Whether to terminate all resources associated with the migration
    * @returns A promise that resolves to the updated migration status
    */
-  async cancelMigration(migrationId: string): Promise<MigrationStatus> {
+  async cancelMigration(migrationId: string, terminateResources: boolean = true): Promise<MigrationStatus> {
     try {
       const response = await fetch(`${this.apiBaseUrl}/migrations/${migrationId}/cancel`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ terminateResources })
       });
+      
       if (!response.ok) {
         throw new Error(`Failed to cancel migration: ${response.statusText}`);
       }
@@ -568,7 +585,7 @@ export class MigrationService {
   /**
    * For development/demo purposes - generates error details based on type
    */
-  private generateErrorDetails(errorType: string): any {
+  generateErrorDetails(errorType: string): any {
     switch (errorType) {
       case 'validation':
         return {
@@ -618,7 +635,7 @@ export class MigrationService {
   /**
    * For development/demo purposes - generates error messages
    */
-  private generateErrorMessage(errorType: string, operation: string): string {
+  generateErrorMessage(errorType: string, operation: string): string {
     const messages: Record<string, string[]> = {
       auth: [
         `Authentication failed during ${operation}`,

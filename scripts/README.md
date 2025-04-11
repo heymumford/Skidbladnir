@@ -1,199 +1,119 @@
-# Scripts
+# Skidbladnir Scripts
 
-This directory contains scripts for development, building, and deployment of Skidbladnir.
+This directory contains scripts for building, testing, and managing the Skidbladnir project.
+
+## Unified CLI
+
+The main entry point for all scripts is the unified CLI:
+
+```bash
+./scripts/skidbladnir.sh [command] [subcommand] [options]
+```
+
+This CLI provides a consistent interface for all operations.
+
+## Commands
+
+- **build** - Build and package components
+  - Example: `./scripts/skidbladnir.sh build --env=qa`
+  
+- **test** - Run tests (unit, integration, etc.)
+  - Example: `./scripts/skidbladnir.sh test unit --verbose`
+  
+- **env** - Manage environments (dev, qa, prod)
+  - Example: `./scripts/skidbladnir.sh env start --env=dev`
+  
+- **version** - Manage version information
+  - Example: `./scripts/skidbladnir.sh version update patch`
+  
+- **xml** - XML validation and cleanup tools
+  - Example: `./scripts/skidbladnir.sh xml validate path/to/file.xml`
+
+## Consolidated Tools
+
+The implementation is organized into consolidated tool scripts in the `util/` directory:
+
+- `consolidated-build-tools.sh` - For building and packaging
+- `consolidated-test-tools.sh` - For running tests
+- `consolidated-env-tools.sh` - For environment management
+- `consolidated-version-tools.sh` - For version management
+- `xml-tools.sh` - For XML processing
+
+Each of these scripts can be run directly, but it's recommended to use the unified CLI.
 
 ## Directory Structure
 
-- **dev/**: Development scripts
-  - Scripts for setting up development environments
-  - Scripts for running development servers
+- **util/**: Consolidated utility scripts and tools
+  - Contains all the consolidated tool implementations
   
-- **build/**: Build scripts
-  - Scripts for building containers
-  - Scripts for compiling code
+- **git-hooks/**: Git hooks for automated quality checks
+  - Pre-commit and pre-push hooks
   
-- **deploy/**: Deployment scripts
-  - Scripts for deploying to various environments
-  - Scripts for managing deployments
-  
-- **util/**: Utility scripts
-  - Scripts for maintenance tasks
-  - Scripts for automation
-  
+- **github-migration/**: Scripts for GitHub migration
+  - Tools for migrating to GitHub and setting up Actions
+
 - **security/**: Security-related scripts
-  - Scripts for security scanning
-  - Scripts for generating security reports
-
-## Core Scripts
-
-Most scripts can be run directly from the command line:
-
-```bash
-./scripts/dev/setup.sh       # Set up development environment
-./scripts/build/containers.sh # Build containers
-./scripts/deploy/prod.sh      # Deploy to production
-```
+  - Scripts for security scanning and reports
 
 ## Provider API Testing Scripts
 
-### Zephyr Scale API Connectivity Test
+The following scripts are available for testing provider API connectivity:
 
-The `test-zephyr-connectivity.js` script verifies connectivity to the Zephyr Scale API and validates that your credentials can access test cases and execution data.
+- **test-zephyr-connectivity.js** - Tests connectivity to Zephyr Scale API
+- **test-qtest-parameters-connectivity.js** - Tests qTest Parameters API
+- **test-qtest-scenario-connectivity.js** - Tests qTest Scenario API
+- **test-qtest-data-export-connectivity.js** - Tests qTest Data Export API
 
-#### Prerequisites
-
-```bash
-npm install axios chalk
-```
-
-#### Usage
+### Usage Examples
 
 ```bash
-# Basic usage with npm script
+# Zephyr Scale API test
 npm run test:zephyr -- --token YOUR_API_TOKEN --project-key YOUR_PROJECT_KEY
 
-# Direct usage
-node scripts/test-zephyr-connectivity.js --token YOUR_API_TOKEN --project-key YOUR_PROJECT_KEY
-
-# With custom base URL
-node scripts/test-zephyr-connectivity.js --base-url https://api.zephyrscale.example.com/v2 --token YOUR_API_TOKEN --project-key YOUR_PROJECT_KEY
-
-# Verbose mode (shows full API responses)
-node scripts/test-zephyr-connectivity.js --token YOUR_API_TOKEN --project-key YOUR_PROJECT_KEY --verbose
-```
-
-#### What It Tests
-
-- Connection to Zephyr Scale API
-- Access to project metadata
-- Ability to retrieve test cases
-- Ability to fetch detailed test case information
-- Access to test cycles
-- Access to test executions
-
-This script confirms that your API token has the necessary permissions to extract all required test data for the migration process.
-
-### qTest Parameters API Connectivity Test
-
-The `test-qtest-parameters-connectivity.js` script verifies connectivity to the qTest Parameters API and validates that your credentials can access parameters and datasets.
-
-#### Prerequisites
-
-```bash
-npm install axios chalk
-```
-
-#### Usage
-
-```bash
-# Basic usage with npm script
+# qTest Parameters API test
 npm run test:qtest:parameters -- --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
 
-# Direct usage
-node scripts/test-qtest-parameters-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
-
-# With specific project ID
-node scripts/test-qtest-parameters-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --projectId 12345
-
-# Verbose mode (shows full API responses)
-node scripts/test-qtest-parameters-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --verbose
-
-# Bypass SSL verification (for development environments)
-node scripts/test-qtest-parameters-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --bypassSSL
-```
-
-#### What It Tests
-
-- Authentication with the qTest API
-- Access to project metadata
-- Ability to retrieve parameters
-- Ability to fetch parameter values
-- Access to datasets
-- Access to dataset rows
-- Creating test parameters and datasets (if none exist)
-
-This script confirms that your API token has the necessary permissions to access and manipulate parameters and datasets in qTest Parameters.
-
-### qTest Scenario API Connectivity Test
-
-The `test-qtest-scenario-connectivity.js` script verifies connectivity to the qTest Scenario API and validates that your credentials can access BDD features and steps.
-
-#### Prerequisites
-
-```bash
-npm install axios chalk
-```
-
-#### Usage
-
-```bash
-# Basic usage with npm script
+# qTest Scenario API test
 npm run test:qtest:scenario -- --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
 
-# Direct usage
-node scripts/test-qtest-scenario-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
-
-# With specific project ID
-node scripts/test-qtest-scenario-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --projectId 12345
-
-# Verbose mode (shows full API responses)
-node scripts/test-qtest-scenario-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --verbose
-
-# Bypass SSL verification (for development environments)
-node scripts/test-qtest-scenario-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --bypassSSL
-```
-
-#### What It Tests
-
-- Authentication with the qTest API
-- Access to project metadata
-- Ability to retrieve features
-- Ability to fetch feature details
-- Access to steps
-- Creating test features and steps (if none exist)
-- Updating steps
-
-This script confirms that your API token has the necessary permissions to access and manipulate BDD features and steps in qTest Scenario.
-
-### qTest Data Export API Connectivity Test
-
-The `test-qtest-data-export-connectivity.js` script verifies connectivity to the qTest Data Export API and validates that your credentials can access and download exported files.
-
-#### Prerequisites
-
-```bash
-npm install axios chalk
-```
-
-#### Usage
-
-```bash
-# Basic usage with npm script
+# qTest Data Export API test
 npm run test:qtest:data-export -- --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
-
-# Direct usage
-node scripts/test-qtest-data-export-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN
-
-# With specific project ID
-node scripts/test-qtest-data-export-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --projectId 12345
-
-# Verbose mode (shows full API responses)
-node scripts/test-qtest-data-export-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --verbose
-
-# Bypass SSL verification (for development environments)
-node scripts/test-qtest-data-export-connectivity.js --baseUrl https://instance.qtestnet.com/api/v3 --token YOUR_API_TOKEN --bypassSSL
 ```
 
-#### What It Tests
+## Adding New Scripts
 
-- Authentication with the qTest API
-- Access to project metadata
-- Ability to list files in the exports directory
-- Ability to fetch file metadata
-- Downloading files (if files exist and are small enough)
-- Downloading files as binary
-- Searching for files
+When adding new scripts:
 
-This script confirms that your API token has the necessary permissions to access and download exported files from qTest Data Export.
+1. Create your implementation in `util/` directory
+2. Make it executable with `chmod +x`
+3. Add a command handler in `skidbladnir.sh` if needed
 
-Check the individual scripts for specific usage instructions.
+## Script Standards
+
+- All scripts should:
+  - Include copyright and license header
+  - Handle errors gracefully
+  - Provide clear usage information with `--help`
+  - Use consistent logging patterns
+  - Follow bash best practices
+
+## Examples
+
+```bash
+# Build the project for production
+./scripts/skidbladnir.sh build --env=prod
+
+# Run all tests with verbose output
+./scripts/skidbladnir.sh test all --verbose
+
+# Start the development environment
+./scripts/skidbladnir.sh env start --env=dev
+
+# Update version
+./scripts/skidbladnir.sh version update minor
+
+# Validate an XML file
+./scripts/skidbladnir.sh xml validate tests/api-integration/pom.xml
+```
+
+Check the individual scripts for more detailed usage instructions.

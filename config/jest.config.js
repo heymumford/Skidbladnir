@@ -33,7 +33,9 @@ module.exports = {
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/__mocks__/fileMock.js',
     // Mock libxmljs2 dependency
-    'libxmljs2': '<rootDir>/__mocks__/libxmljs2.js'
+    'libxmljs2': '<rootDir>/__mocks__/libxmljs2.js',
+    // Mock react-json-tree
+    'react-json-tree': '<rootDir>/__mocks__/react-json-tree.js'
   },
   testMatch: [
     '**/*.test.ts',

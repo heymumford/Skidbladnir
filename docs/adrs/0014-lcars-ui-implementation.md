@@ -56,3 +56,4 @@ All components are designed for reusability, with clean separation of presentati
 ## Related 
 
 - [ADR 0006: Web Interface Architecture](0006-web-interface-architecture.md)
+- [ADR 0015: UI Workflow Testing Strategy](0015-ui-workflow-testing-strategy.md)
