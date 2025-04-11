@@ -62,7 +62,7 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 
 ##### System Tests (Validation)
 - [x] Test: Cross-provider migration with attachments between all providers (Critical)
-- [ ] Test: End-to-end migration workflows for all provider combinations (Critical)
+- [x] Test: End-to-end migration workflows for all provider combinations (Critical)
 - [ ] Test: Performance benchmarking across all provider adapters (Medium)
 - [ ] Test: Connection resiliency under network degradation (Medium)
 
@@ -151,12 +151,13 @@ Our primary "north star" for implementation is to use Zephyr Scale as our source
 - [x] Configure LLM models for containerized deployment (Medium)
 
 ## In Progress
-- [ ] Test: End-to-end migration workflows for all provider combinations (Critical)
+- [ ] Test: Connection resiliency under network degradation (Medium)
 
 ## In Review
-- [x] Test: Cross-provider migration with attachments between all providers (Critical)
+- [ ] Test: Performance benchmarking across all provider adapters (Medium)
 
 ## Completed
+- [x] Test: End-to-end migration workflows for all provider combinations (Critical)
 - [x] Test: Error propagation between adapters and orchestration layer (High)
 - [x] Test: Visure Solutions to TestRail migration workflow (High)
 - [x] Test: Rally provider respects rate limits (Medium)

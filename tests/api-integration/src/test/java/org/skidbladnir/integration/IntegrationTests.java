@@ -55,6 +55,11 @@ class IntegrationTests {
     Karate testCrossProviderAttachments() {
         return Karate.run("cross-provider-attachments").relativeTo(getClass());
     }
+    
+    @Karate.Test
+    Karate testE2EProviderCombinations() {
+        return Karate.run("e2e-provider-combinations").relativeTo(getClass());
+    }
 
     private void generateReport(String karateOutputPath) {
         Collection<File> jsonFiles = FileUtils.listFiles(new File(karateOutputPath), new String[] {"json"}, true);
