@@ -14,6 +14,7 @@ import { DependencyGraphVisualizer } from '../../../../pkg/interfaces/api/operat
 import { ProviderRegistry } from '../../../../packages/common/src/interfaces/provider';
 import { LoggerService } from '../../../../pkg/domain/services/LoggerService';
 import { OperationType, OperationDefinition, ValidationResult } from '../../../../pkg/interfaces/api/operations/types';
+import { OperationTypeAdapter } from '../../../../pkg/interfaces/api/operations/adapters';
 
 /**
  * Controller for API operations related to operation dependencies
@@ -43,10 +44,20 @@ export class OperationDependencyController {
           const contract = await provider.getApiContract();
           
           for (const [type, definition] of Object.entries(contract.operations)) {
+            // Convert the provider operation definition to the standardized format
+            // The controller expects OperationType enum values, but providers work with strings
+            const apiOperationType = OperationTypeAdapter.stringToOperationType(type);
+            
             operations.push({
-              type,
+              type: apiOperationType,  // Use the converted enum value
               provider: provider.id,
-              ...definition
+              dependencies: definition.dependencies.map(
+                dep => OperationTypeAdapter.stringToOperationType(dep)
+              ),
+              required: definition.required,
+              description: definition.description,
+              requiredParams: definition.requiredParams,
+              estimatedTimeCost: definition.estimatedTimeCost
             });
           }
         } catch (error) {
@@ -79,7 +90,11 @@ export class OperationDependencyController {
       for (const provider of providers) {
         try {
           const contract = await provider.getApiContract();
-          operations.push(...Object.values(contract.operations));
+          // Convert provider operation definitions to API operation definitions
+          const apiOperations = OperationTypeAdapter.toApiOperationDefinitions(
+            Object.values(contract.operations)
+          );
+          operations.push(...apiOperations);
         } catch (error) {
           this.logger?.warn(`Error fetching operations from provider ${provider.id}:`, error);
         }
@@ -113,22 +128,32 @@ export class OperationDependencyController {
       const { operations } = req.body;
       
       if (!operations || !Array.isArray(operations)) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Operations array is required'
         });
+        return;
       }
       
-      const graph = this.resolver.buildDependencyGraph(operations);
+      // Convert string operation types to API operation definitions if needed
+      const apiOperations = operations.map(op => {
+        // Check if this is already an API operation definition or needs conversion
+        if (typeof op.type === 'string' && !(op.type in OperationType)) {
+          return OperationTypeAdapter.toApiOperationDefinition(op);
+        }
+        return op;
+      });
+      
+      const graph = this.resolver.buildDependencyGraph(apiOperations);
       const validation = this.resolver.validateDependencies(graph);
       
       if (validation.valid) {
-        return res.status(200).json({
+        res.status(200).json({
           valid: true,
           executionOrder: this.resolver.resolveExecutionOrder(graph)
         });
       } else {
-        return res.status(400).json(validation);
+        res.status(400).json(validation);
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -148,38 +173,46 @@ export class OperationDependencyController {
       const { sourceSystem, targetSystem, format = 'html' } = req.body;
       
       if (!sourceSystem || !targetSystem) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Source and target systems are required'
         });
+        return;
       }
       
       const sourceProvider = this.providerRegistry.getProvider(sourceSystem);
       const targetProvider = this.providerRegistry.getProvider(targetSystem);
       
       if (!sourceProvider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Source provider not found',
           message: `Provider with id ${sourceSystem} not found`
         });
+        return;
       }
       
       if (!targetProvider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Target provider not found',
           message: `Provider with id ${targetSystem} not found`
         });
+        return;
       }
       
       // Get API contracts
       const sourceContract = await sourceProvider.getApiContract();
       const targetContract = await targetProvider.getApiContract();
       
+      // Convert provider operations to API operations
+      const sourceOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(sourceContract.operations)
+      );
+      const targetOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(targetContract.operations)
+      );
+      
       // Merge operations from both contracts
-      const operations = [
-        ...Object.values(sourceContract.operations),
-        ...Object.values(targetContract.operations)
-      ];
+      const operations = [...sourceOperations, ...targetOperations];
       
       // Create dependency graph
       const graph = this.resolver.buildDependencyGraph(operations);
@@ -201,7 +234,11 @@ export class OperationDependencyController {
           break;
         case 'html':
         default:
-          visualization = this.visualizer.generateHtmlReport(graph, executionOrder);
+          // Convert string[] to OperationType[] for the visualizer
+          const typedExecutionOrder = executionOrder.map(op => 
+            typeof op === 'string' ? OperationTypeAdapter.stringToOperationType(op) : op
+          );
+          visualization = this.visualizer.generateHtmlReport(graph, typedExecutionOrder);
           break;
       }
       
@@ -229,34 +266,41 @@ export class OperationDependencyController {
       const providerId = req.params.providerId;
       
       if (!providerId) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Provider ID is required'
         });
+        return;
       }
       
       const provider = this.providerRegistry.getProvider(providerId);
       
       if (!provider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Provider not found',
           message: `Provider with id ${providerId} not found`
         });
+        return;
       }
       
       // Get API contract
       const contract = await provider.getApiContract();
       
-      // Build the graph
-      const operations = Object.values(contract.operations);
-      const graph = this.resolver.buildDependencyGraph(operations);
+      // Convert provider operations to API operations
+      const apiOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(contract.operations)
+      );
+      
+      // Build the graph with converted operations
+      const graph = this.resolver.buildDependencyGraph(apiOperations);
       
       // Resolve execution order if possible
-      const executionOrder = graph.hasCycles() ? [] : this.resolver.resolveExecutionOrder(operations);
+      const executionOrder = graph.hasCycles() ? [] : this.resolver.resolveExecutionOrder(graph);
       
       res.status(200).json({
         providerId,
-        operations: Object.values(contract.operations),
+        // Return the API operations for consistent typing
+        operations: apiOperations,
         valid: !graph.hasCycles(),
         executionOrder
       });
@@ -279,30 +323,36 @@ export class OperationDependencyController {
       const format = req.query.format as string || 'html';
       
       if (!providerId) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Provider ID is required'
         });
+        return;
       }
       
       const provider = this.providerRegistry.getProvider(providerId);
       
       if (!provider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Provider not found',
           message: `Provider with id ${providerId} not found`
         });
+        return;
       }
       
       // Get API contract
       const contract = await provider.getApiContract();
       
-      // Build the graph
-      const operations = Object.values(contract.operations);
-      const graph = this.resolver.buildDependencyGraph(operations);
+      // Convert provider operations to API operations
+      const apiOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(contract.operations)
+      );
+      
+      // Build the graph with converted operations
+      const graph = this.resolver.buildDependencyGraph(apiOperations);
       
       // Resolve execution order if possible
-      const executionOrder = graph.hasCycles() ? [] : this.resolver.resolveExecutionOrder(operations);
+      const executionOrder = graph.hasCycles() ? [] : this.resolver.resolveExecutionOrder(graph);
       
       // Generate requested format
       let visualization: string;
@@ -315,17 +365,22 @@ export class OperationDependencyController {
           break;
         case 'html':
         default:
-          visualization = this.visualizer.generateHtmlReport(graph, executionOrder);
+          // Convert string[] to OperationType[] for the visualizer
+          const typedExecutionOrder = executionOrder.map(op => 
+            typeof op === 'string' ? OperationTypeAdapter.stringToOperationType(op) : op
+          );
+          visualization = this.visualizer.generateHtmlReport(graph, typedExecutionOrder);
           break;
       }
       
       // Content-Type header based on format
       if (format === 'html') {
         res.setHeader('Content-Type', 'text/html');
-        return res.status(200).send(visualization);
+        res.status(200).send(visualization);
       } else {
         res.status(200).send(visualization);
       }
+      return;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       this.logger?.error('Error visualizing provider dependency graph:', error);
@@ -344,10 +399,11 @@ export class OperationDependencyController {
       const { operations, parameters, providerId } = req.body;
       
       if (!operations || !Array.isArray(operations) || !parameters) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Operations array and parameters object are required'
         });
+        return;
       }
       
       let operationDefinitions: OperationDefinition[] = [];
@@ -357,30 +413,56 @@ export class OperationDependencyController {
         const provider = this.providerRegistry.getProvider(providerId);
         
         if (!provider) {
-          return res.status(404).json({
+          res.status(404).json({
             error: 'Provider not found',
             message: `Provider with id ${providerId} not found`
           });
+          return;
         }
         
         const contract = await provider.getApiContract();
         
         // Get the operation definitions for the specified operation types
         operationDefinitions = operations.map(opType => {
-          const definition = contract.operations[opType as OperationType];
-          if (!definition) {
+          // Convert the string operation type to OperationType enum
+          const operationType = OperationTypeAdapter.stringToOperationType(opType);
+          
+          // Find the operation in the contract
+          const providerDefinition = contract.operations[opType];
+          if (!providerDefinition) {
             throw new Error(`Operation ${opType} not found in provider ${providerId}`);
           }
-          return definition;
+          
+          // Convert the provider definition to API definition
+          return OperationTypeAdapter.toApiOperationDefinition(providerDefinition);
+        });
+      } else {
+        // If no providerId specified, convert the operations from the request
+        // This assumes the operations are already in the provider format
+        operationDefinitions = operations.map(op => {
+          if (typeof op === 'string') {
+            // If operation is just a string, create a minimal definition with just the type
+            return {
+              type: OperationTypeAdapter.stringToOperationType(op),
+              dependencies: [],
+              required: true,
+              description: `Operation ${op}`,
+              requiredParams: []
+            };
+          } else {
+            // If it's an object, convert it
+            return OperationTypeAdapter.toApiOperationDefinition(op);
+          }
         });
       }
       
       // Validate dependencies
       const graph = this.resolver.buildDependencyGraph(operationDefinitions);
-      const dependencyValidation = this.resolver.validateDependencies(operationDefinitions);
+      const dependencyValidation = this.resolver.validateDependencies(graph);
       
       if (!dependencyValidation.valid) {
-        return res.status(200).json(dependencyValidation);
+        res.status(200).json(dependencyValidation);
+        return;
       }
       
       // Check for missing parameters
@@ -428,47 +510,60 @@ export class OperationDependencyController {
       const { sourceSystem, targetSystem, goalOperation } = req.body;
       
       if (!sourceSystem || !targetSystem || !goalOperation) {
-        return res.status(400).json({
+        res.status(400).json({
           error: 'Invalid request',
           message: 'Source system, target system, and goal operation are required'
         });
+        return;
       }
       
       const sourceProvider = this.providerRegistry.getProvider(sourceSystem);
       const targetProvider = this.providerRegistry.getProvider(targetSystem);
       
       if (!sourceProvider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Source provider not found',
           message: `Provider with id ${sourceSystem} not found`
         });
+        return;
       }
       
       if (!targetProvider) {
-        return res.status(404).json({
+        res.status(404).json({
           error: 'Target provider not found',
           message: `Provider with id ${targetSystem} not found`
         });
+        return;
       }
       
       // Get API contracts
       const sourceContract = await sourceProvider.getApiContract();
       const targetContract = await targetProvider.getApiContract();
       
+      // Convert provider operations to API operations
+      const sourceOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(sourceContract.operations)
+      );
+      const targetOperations = OperationTypeAdapter.toApiOperationDefinitions(
+        Object.values(targetContract.operations)
+      );
+      
       // Merge operations from both contracts
-      const operations = [
-        ...Object.values(sourceContract.operations),
-        ...Object.values(targetContract.operations)
-      ];
+      const operations = [...sourceOperations, ...targetOperations];
       
       // Create dependency graph
       const graph = this.resolver.buildDependencyGraph(operations);
       
+      // Convert goal operation to enum type if it's a string
+      const goalOperationEnum = typeof goalOperation === 'string'
+        ? OperationTypeAdapter.stringToOperationType(goalOperation)
+        : goalOperation;
+      
       // Calculate minimal operation set
-      const minimalSet = this.resolver.calculateMinimalOperationSet(graph, goalOperation);
+      const minimalSet = this.resolver.calculateMinimalOperationSet(graph, goalOperationEnum);
       
       res.status(200).json({
-        goalOperation,
+        goalOperation: goalOperationEnum,
         operations: minimalSet,
         count: minimalSet.length
       });
