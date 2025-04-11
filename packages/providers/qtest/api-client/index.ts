@@ -31,27 +31,26 @@ export enum QTestProduct {
 /**
  * Get appropriate qTest client based on target qTest product
  */
-export function getQTestClient(product: QTestProduct, config: any) {
+export async function getQTestClient(product: QTestProduct, config: any) {
+  // Using dynamic import to avoid circular dependencies
+  let clientModule;
+  
   switch(product) {
     case QTestProduct.MANAGER:
-      // Import here to avoid circular dependencies
-      const { QTestManagerClient } = require('./manager-client');
-      return new QTestManagerClient(config);
+      clientModule = await import('./manager-client');
+      return new clientModule.QTestManagerClient(config);
     
     case QTestProduct.PARAMETERS:
-      // Import here to avoid circular dependencies
-      const { QTestParametersClient } = require('./parameters-client');
-      return new QTestParametersClient(config);
+      clientModule = await import('./parameters-client');
+      return new clientModule.QTestParametersClient(config);
     
     case QTestProduct.SCENARIO:
-      // Import here to avoid circular dependencies
-      const { QTestScenarioClient } = require('./scenario-client');
-      return new QTestScenarioClient(config);
+      clientModule = await import('./scenario-client');
+      return new clientModule.QTestScenarioClient(config);
     
     case QTestProduct.PULSE:
-      // Import here to avoid circular dependencies
-      const { QTestPulseClient } = require('./pulse-client');
-      return new QTestPulseClient(config);
+      clientModule = await import('./pulse-client');
+      return new clientModule.QTestPulseClient(config);
     
     case QTestProduct.DATA_EXPORT:
       // Will be implemented in future tasks
@@ -59,7 +58,7 @@ export function getQTestClient(product: QTestProduct, config: any) {
     
     default:
       // Fall back to standard client
-      const { QTestClient } = require('../api-client');
-      return new QTestClient(config);
+      clientModule = await import('../api-client');
+      return new clientModule.QTestClient(config);
   }
 }

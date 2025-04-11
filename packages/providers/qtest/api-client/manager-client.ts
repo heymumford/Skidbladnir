@@ -7,7 +7,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import { AxiosInstance as _AxiosInstance, AxiosResponse, AxiosError } from 'axios';
 import { QTestClient, QTestClientConfig, QTestError, QTestModule, QTestPaginationOptions } from '../api-client';
 
 /**

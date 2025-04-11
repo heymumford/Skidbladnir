@@ -13,7 +13,8 @@
  * Client for interacting with the qTest Scenario API for BDD features and steps.
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse } from 'axios';
+import * as https from 'https';
 import { ApiRateLimiter, ApiRateLimiterMetrics } from '../../../common/src/utils/http-client';
 import { QTestApiClientConfig } from './index';
 
@@ -127,7 +128,7 @@ export class QTestScenarioClient {
       headers,
       timeout: 30000,
       httpsAgent: config.bypassSSL 
-        ? new (require('https').Agent)({ rejectUnauthorized: false })
+        ? new https.Agent({ rejectUnauthorized: false })
         : undefined
     });
     

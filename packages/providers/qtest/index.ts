@@ -23,7 +23,7 @@
  */
 
 import {
-  TestManagementProvider,
+  TestManagementProvider as _TestManagementProvider,
   SourceProvider,
   TargetProvider,
   ProviderConfig,
@@ -42,16 +42,16 @@ import {
   TestCase,
   TestCycle,
   TestExecution,
-  Attachment
+  Attachment as _Attachment
 } from '../../common/src/models/entities';
 
 import { AttachmentContent } from '../../common/src/models/attachment';
 import { FieldDefinition } from '../../common/src/models/field-definition';
 import { PaginatedResult } from '../../common/src/models/paginated';
 
-import { QTestClient, QTestClientConfig, QTestError, QTestErrorCategory } from './api-client';
+import { QTestClient, QTestClientConfig as _QTestClientConfig, QTestError, QTestErrorCategory as _QTestErrorCategory } from './api-client';
 import { QTestMapper } from './models/mappers';
-import { DomainError, ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { DomainError as _DomainError, ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 
 /**
  * qTest provider configuration
@@ -245,7 +245,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       
       // qTest doesn't have a direct folders API, so we need to
       // fetch from modules, test-suites, and test-cycles
@@ -268,7 +268,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       
       const response = await this.client!.getTestCases(numericProjectId, {
         page: options?.page,
@@ -295,7 +295,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericTestCaseId = parseInt(testCaseId, 10);
       
       if (isNaN(numericTestCaseId)) {
@@ -319,7 +319,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       
       const response = await this.client!.getTestCycles(numericProjectId, {
         page: options?.page,
@@ -350,7 +350,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericTestCycleId = parseInt(testCycleId, 10);
       
       if (isNaN(numericTestCycleId)) {
@@ -383,7 +383,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericAttachmentId = parseInt(attachmentId, 10);
       
       if (isNaN(numericAttachmentId)) {
@@ -438,7 +438,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
    */
   async createFolder(
     projectId: string,
-    folder: Folder
+    _folder: Folder
   ): Promise<string> {
     try {
       this.ensureInitialized();
@@ -461,7 +461,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       
       // Convert testCase to qTest format
       const qTestTestCase = QTestMapper.fromTestCase(testCase);
@@ -491,7 +491,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
       // Steps are part of the test case object
       // We need to get the test case, update its steps, and update the test case
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericTestCaseId = parseInt(testCaseId, 10);
       
       if (isNaN(numericTestCaseId)) {
@@ -522,7 +522,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       
       // Convert testCycle to qTest format
       const qTestTestCycle = QTestMapper.fromTestCycle(testCycle);
@@ -548,7 +548,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericTestCycleId = parseInt(testCycleId, 10);
       
       if (isNaN(numericTestCycleId)) {
@@ -606,7 +606,7 @@ export class QTestProvider implements SourceProvider, TargetProvider {
     try {
       this.ensureInitialized();
       
-      const numericProjectId = this.getProjectId(projectId);
+      const _numericProjectId = this.getProjectId(projectId);
       const numericEntityId = parseInt(entityId, 10);
       
       if (isNaN(numericEntityId)) {
@@ -637,8 +637,8 @@ export class QTestProvider implements SourceProvider, TargetProvider {
    * Create a field definition in qTest
    */
   async createFieldDefinition(
-    projectId: string,
-    fieldDefinition: FieldDefinition
+    _projectId: string,
+    _fieldDefinition: FieldDefinition
   ): Promise<string> {
     // qTest doesn't support creating custom fields via API
     throw new Error('Creating custom fields is not supported by the qTest API');

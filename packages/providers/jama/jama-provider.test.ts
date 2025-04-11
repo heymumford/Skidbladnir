@@ -8,7 +8,7 @@
  */
 
 import axios from 'axios';
-import { JamaProvider, JamaError, JamaErrorCategory } from './index';
+import { JamaProvider, JamaError as _JamaError, JamaErrorCategory as _JamaErrorCategory } from './index';
 import { Identifier } from '../../../pkg/domain/value-objects/Identifier';
 
 // Mock axios and logger

@@ -7,14 +7,17 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import { OperationType, ProviderApiContract } from '../types';
+import { 
+  OperationType, 
+  ProviderApiContract,
+  OperationDefinition, 
+  ValidationRule 
+} from '../types';
 
 /**
  * API contract for the Zephyr Scale provider.
  * Defines the operations, their dependencies, and provider-specific validation rules.
  */
-// Import the correct types
-import { OperationDefinition, ValidationRule } from '../types';
 
 // Define mock implementations for all operations to satisfy TypeScript
 const defaultOperation: OperationDefinition = {

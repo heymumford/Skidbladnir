@@ -15,9 +15,9 @@
  */
 
 import {
-  ProviderConfig,
+  ProviderConfig as _ProviderConfig,
   ConnectionStatus,
-  SourceProvider
+  SourceProvider as _SourceProvider
 } from '../../common/src/interfaces/provider';
 
 import { PaginatedResult } from '../../common/src/models/paginated';
@@ -28,7 +28,7 @@ import {
   FileMetadata,
   FileQueryOptions
 } from './api-client/data-export-client';
-import { ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { ExternalServiceError as _ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 
 /**
  * Enhanced qTest Data Export provider configuration

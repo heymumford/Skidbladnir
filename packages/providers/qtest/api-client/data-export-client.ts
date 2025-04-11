@@ -15,6 +15,7 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import * as https from 'https';
 import { ApiRateLimiter, ApiRateLimiterMetrics } from '../../../common/src/utils/http-client';
 import { QTestApiClientConfig } from './index';
 
@@ -129,7 +130,7 @@ export class QTestDataExportClient {
       headers,
       timeout: 30000,
       httpsAgent: config.bypassSSL 
-        ? new (require('https').Agent)({ rejectUnauthorized: false })
+        ? new https.Agent({ rejectUnauthorized: false })
         : undefined
     });
     

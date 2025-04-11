@@ -134,6 +134,15 @@ export function demonstrateZephyrQTestAdapter() {
 }
 
 // For direct execution of this example
-if (require.main === module) {
+// Use a more TypeScript-friendly approach for detecting direct execution
+// This works for both Node.js and browser environments
+export function runExample() {
   demonstrateZephyrQTestAdapter();
+}
+
+// Call the function immediately in Node.js environment
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
+if (isNode) {
+  runExample();
 }

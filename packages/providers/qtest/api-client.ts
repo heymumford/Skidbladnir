@@ -7,8 +7,9 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig as _AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import * as FormData from 'form-data';
+import * as https from 'https';
 import { createResilientAxiosClient } from '../../common/src/utils/resilience/resilience-factory';
 
 /**
@@ -402,7 +403,7 @@ export class QTestClient {
     
     // Handle SSL bypass if needed
     if (config.bypassSSL) {
-      clientConfig.httpsAgent = new (require('https').Agent)({ rejectUnauthorized: false });
+      clientConfig.httpsAgent = new https.Agent({ rejectUnauthorized: false });
     }
     
     // Create resilient client for qTest

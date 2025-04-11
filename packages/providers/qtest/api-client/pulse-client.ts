@@ -14,7 +14,7 @@
  */
 
 import { QTestClient, QTestClientConfig } from '../api-client';
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig as _AxiosRequestConfig } from 'axios';
 import { ExternalServiceError } from '../../../../pkg/domain/errors/DomainErrors';
 
 /**

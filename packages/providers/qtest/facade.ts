@@ -40,12 +40,12 @@ import { AttachmentContent } from '../../common/src/models/attachment';
 import { FieldDefinition } from '../../common/src/models/field-definition';
 import { PaginatedResult } from '../../common/src/models/paginated';
 
-import { QTestProviderFactory, QTestProductType, QTestFactoryConfig } from './provider-factory';
+import { QTestProviderFactory, QTestProductType, QTestFactoryConfig as _QTestFactoryConfig } from './provider-factory';
 import { QTestManagerProvider } from './manager-provider';
 import { 
   QTestParametersProvider, 
   ParameterizedTestCase, 
-  ParameterSet 
+  ParameterSet as _ParameterSet 
 } from './parameters-provider';
 import { 
   Parameter, 
@@ -56,13 +56,13 @@ import {
 import {
   QTestScenarioProvider,
   BDDFeature,
-  GherkinScenario
+  GherkinScenario as _GherkinScenario
 } from './scenario-provider';
 import {
   Feature,
   FeatureStatus,
   Step,
-  StepType
+  StepType as _StepType
 } from './api-client/scenario-client';
 import {
   QTestDataExportProvider,
@@ -71,7 +71,7 @@ import {
 import {
   FileMetadata
 } from './api-client/data-export-client';
-import { ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
+import { ExternalServiceError as _ExternalServiceError } from '../../../pkg/domain/errors/DomainErrors';
 import { createErrorHandler } from '../../common/src/utils/resilience/error-handler';
 
 /**
@@ -500,8 +500,8 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
    * Create a field definition in qTest Manager (not supported)
    */
   async createFieldDefinition(
-    projectId: string,
-    fieldDefinition: FieldDefinition
+    _projectId: string,
+    _fieldDefinition: FieldDefinition
   ): Promise<string> {
     throw new Error('Creating custom fields is not supported by the qTest API');
   }
@@ -1168,15 +1168,6 @@ export class QTestFacadeProvider implements SourceProvider, TargetProvider {
           }
         }
       );
-    }
-  }
-  
-  /**
-   * Ensure the Scenario provider is initialized
-   */
-  private ensureScenarioProvider(): void {
-    if (!this.scenarioProvider) {
-      throw new Error('qTest Scenario provider not initialized');
     }
   }
   
