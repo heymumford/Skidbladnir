@@ -114,6 +114,7 @@ export class TestCaseRepositoryImpl implements TestCaseRepository {
     const sampleTestCases: TestCase[] = [
       {
         id: uuidv4(),
+        name: 'Verify user login with valid credentials',
         title: 'Verify user login with valid credentials',
         description: 'Test the user login functionality with valid credentials',
         status: TestCaseStatus.READY,
@@ -141,6 +142,7 @@ export class TestCaseRepositoryImpl implements TestCaseRepository {
       },
       {
         id: uuidv4(),
+        name: 'Verify user login with invalid credentials',
         title: 'Verify user login with invalid credentials',
         description: 'Test the user login functionality with invalid credentials',
         status: TestCaseStatus.READY,
@@ -168,6 +170,7 @@ export class TestCaseRepositoryImpl implements TestCaseRepository {
       },
       {
         id: uuidv4(),
+        name: 'User password reset',
         title: 'User password reset',
         description: 'Test the password reset functionality',
         status: TestCaseStatus.DRAFT,

@@ -40,11 +40,7 @@ export class MigrationValidatorFactoryImpl implements MigrationValidatorFactory 
     sourceProviderType: string,
     targetProviderType: string
   ): Promise<MigrationValidator> {
-    const logger = this.loggerService?.child?.({
-      module: 'MigrationValidatorFactory',
-      sourceProvider: sourceProviderType,
-      targetProvider: targetProviderType
-    }) || this.loggerService;
+    const logger = this.loggerService?.child?.('MigrationValidatorFactory') || this.loggerService;
     
     logger?.debug('Creating migration validator', {
       sourceProvider: sourceProviderType,

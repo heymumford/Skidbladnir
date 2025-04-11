@@ -15,13 +15,13 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ProviderConfig, SourceProvider, TargetProvider } from '../../../packages/common/src/interfaces/provider';
-import { ErrorResponse, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
-import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment, FieldDefinition } from '../../../packages/common/src/models/entities';
+import { ProviderConfig, SourceProvider, TargetProvider, ConnectionStatus, EntityType } from '../../../packages/common/src/interfaces/provider';
+import { Project, TestCase, Folder, TestCycle, TestExecution, Attachment } from '../../../packages/common/src/models/entities';
+import { FieldDefinition } from '../../../packages/common/src/models/field-definition';
 import { AttachmentContent } from '../../../packages/common/src/models/attachment';
 import { PaginatedResult } from '../../../packages/common/src/models/paginated';
 import { ResilientApiClient } from '../../../internal/typescript/api-bridge/clients/resilient-api-client';
-import * as logger from '../../../internal/typescript/common/logger/LoggerAdapter';
+import { defaultLogger as logger } from '../../../packages/common/src/utils/logger';
 
 // Enum for Rally error categories
 export enum RallyErrorCategory {
@@ -347,7 +347,7 @@ export class RallyClient {
     const useProxy = config.proxyUrl;
     let proxyConfig = undefined;
     
-    if (useProxy) {
+    if (useProxy && config.proxyUrl) {
       try {
         const proxyUrl = new URL(config.proxyUrl);
         proxyConfig = {
@@ -357,7 +357,7 @@ export class RallyClient {
         };
         logger.debug('Configured proxy', { proxy: proxyConfig });
       } catch (error) {
-        logger.warn('Invalid proxy URL format', { proxyUrl: config.proxyUrl, error });
+        logger.warn('Invalid proxy URL format', { proxyUrl: config.proxyUrl });
       }
     }
     

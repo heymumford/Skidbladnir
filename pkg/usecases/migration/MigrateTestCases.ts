@@ -606,14 +606,14 @@ export class MigrateTestCasesUseCase {
   /**
    * Generate a unique migration ID
    */
-  private generateMigrationId(): string {
+  protected generateMigrationId(): string {
     return `migration-${Date.now()}-${Identifier.createRandom().toString().substring(0, 8)}`;
   }
   
   /**
    * Notify all listeners of an event
    */
-  private notifyListeners(event: MigrationEventType, data: MigrationEventData): void {
+  protected notifyListeners(event: MigrationEventType, data: MigrationEventData): void {
     for (const listener of this.migrationListeners) {
       try {
         listener(event, data);

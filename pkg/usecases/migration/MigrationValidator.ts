@@ -561,7 +561,7 @@ export class MigrationValidator {
             if (targetCapabilities.formats.supportedAttachmentTypes.length > 0) {
               if (sourceCapabilities.formats.supportedAttachmentTypes.length > 0) {
                 const unsupportedFormats = sourceCapabilities.formats.supportedAttachmentTypes.filter(
-                  format => !targetCapabilities.formats.supportedAttachmentTypes.includes(format)
+                  (format: string) => !targetCapabilities.formats.supportedAttachmentTypes.includes(format)
                 );
                 
                 if (unsupportedFormats.length > 0) {
@@ -1028,9 +1028,9 @@ export class MigrationValidator {
     // Check if all source values are in target allowedValues
     // This is a strict check that ensures all possible source values can be directly mapped
     // to allowed target values without transformation
-    return sourceField.allowedValues.every(value => 
-      targetField.allowedValues.includes(value)
-    );
+    return sourceField.allowedValues?.every(value => 
+      targetField.allowedValues?.includes(value) ?? false
+    ) ?? true;
   }
   
   /**
@@ -1089,7 +1089,7 @@ export class MigrationValidator {
       {
         id: 'description',
         name: 'Description',
-        type: 'text',
+        type: 'string',
         required: false
       },
       {
