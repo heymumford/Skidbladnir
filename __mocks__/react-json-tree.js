@@ -25,7 +25,5 @@ const JSONTree = ({ data, theme, invertTheme, shouldExpandNode }) => {
   );
 };
 
-module.exports = {
-  __esModule: true,
-  default: JSONTree
-};
+module.exports = JSONTree;
+module.exports.default = JSONTree;

@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { TransformationPreviewComponent } from './TransformationPreviewComponent';
 import { transformationEngine } from '../../services';
@@ -137,7 +137,9 @@ describe('TransformationPreviewComponent', () => {
 
     // Find and change the input field
     const nameInput = screen.getByLabelText(/Name \(name\)/) as HTMLInputElement;
-    fireEvent.change(nameInput, { target: { value: 'test value' } });
+    await act(async () => {
+      fireEvent.change(nameInput, { target: { value: 'test value' } });
+    });
 
     // Wait for transformation to be applied and check that it was called
     await waitFor(() => {
@@ -151,7 +153,9 @@ describe('TransformationPreviewComponent', () => {
 
     // Switch to the simple view tab to see the result
     const simpleViewTab = screen.getByText('Simple View');
-    fireEvent.click(simpleViewTab);
+    await act(async () => {
+      fireEvent.click(simpleViewTab);
+    });
 
     // Check if the transformed value is displayed
     await waitFor(() => {
@@ -172,7 +176,9 @@ describe('TransformationPreviewComponent', () => {
 
     // Find and click the apply transformation button
     const applyButton = screen.getByText('Apply Transformation');
-    fireEvent.click(applyButton);
+    await act(async () => {
+      fireEvent.click(applyButton);
+    });
 
     // Check if transformation was applied
     await waitFor(() => {
@@ -196,33 +202,56 @@ describe('TransformationPreviewComponent', () => {
 
     // Switch to JSON View
     const jsonViewTab = screen.getByText('JSON View');
-    fireEvent.click(jsonViewTab);
+    await act(async () => {
+      fireEvent.click(jsonViewTab);
+    });
     
     // Check if JSON view is displayed
+    // In React 19, MUI uses a different rendering approach so we need to use a more specific selector
     await waitFor(() => {
-      expect(screen.getByText(/Source Value/)).toBeInTheDocument();
-      expect(screen.getByText(/Transformed Value/)).toBeInTheDocument();
-      expect(screen.getByTestId('json-tree')).toBeInTheDocument();
+      // Find the h6 element in the tabpanel for JSON View (tab index 1)
+      const jsonViewPanel = document.getElementById('preview-tabpanel-1');
+      if (!jsonViewPanel) {
+        throw new Error('JSON View panel not found');
+      }
+      const sourceValueHeading = within(jsonViewPanel).getByText('Source Value');
+      const transformedValueHeading = within(jsonViewPanel).getByText('Transformed Value');
+      
+      expect(sourceValueHeading).toBeInTheDocument();
+      expect(transformedValueHeading).toBeInTheDocument();
+      expect(within(jsonViewPanel).getByTestId('json-tree')).toBeInTheDocument();
     });
 
     // Switch to Visual Diff
     const visualDiffTab = screen.getByText('Visual Diff');
-    fireEvent.click(visualDiffTab);
+    await act(async () => {
+      fireEvent.click(visualDiffTab);
+    });
     
     // Check if Visual Diff view is displayed
     await waitFor(() => {
-      expect(screen.getByText(/Visual Comparison/)).toBeInTheDocument();
-      expect(screen.getByText(/Source: Name \(name\)/)).toBeInTheDocument();
-      expect(screen.getByText(/Target: Full Name \(fullName\)/)).toBeInTheDocument();
+      const visualDiffPanel = document.getElementById('preview-tabpanel-2');
+      if (!visualDiffPanel) {
+        throw new Error('Visual Diff panel not found');
+      }
+      expect(within(visualDiffPanel).getByText(/Visual Comparison/)).toBeInTheDocument();
+      expect(within(visualDiffPanel).getByText(/Source: Name \(name\)/)).toBeInTheDocument();
+      expect(within(visualDiffPanel).getByText(/Target: Full Name \(fullName\)/)).toBeInTheDocument();
     });
 
     // Switch to History tab
     const historyTab = screen.getByText('History');
-    fireEvent.click(historyTab);
+    await act(async () => {
+      fireEvent.click(historyTab);
+    });
     
     // Check if History tab is displayed
     await waitFor(() => {
-      expect(screen.getByText(/Transformation History/)).toBeInTheDocument();
+      const historyPanel = document.getElementById('preview-tabpanel-3');
+      if (!historyPanel) {
+        throw new Error('History panel not found');
+      }
+      expect(within(historyPanel).getByText(/Transformation History/)).toBeInTheDocument();
     });
   });
 

@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FieldMappingPanel } from './FieldMappingPanel';
 import { Field, FieldMapping } from '../../types';
@@ -55,13 +55,28 @@ describe('FieldMappingPanel', () => {
       />
     );
     
-    // Select source field
-    await user.click(screen.getByLabelText('Source Field'));
-    await user.click(screen.getByText('Summary'));
+    // In React 19, MUI select component behavior has changed
+    // First select source field - open dropdown
+    const sourceSelect = screen.getByLabelText('Source Field');
+    await user.click(sourceSelect);
     
-    // Select target field
-    await user.click(screen.getByLabelText('Target Field'));
-    await user.click(screen.getByText('Name'));
+    // Find the source option by looking up in the dropdown (which is rendered at the document root)
+    const summaryOption = document.querySelector('[data-value="summary"]');
+    if (!summaryOption) {
+      throw new Error('Source option with data-value="summary" not found');
+    }
+    await user.click(summaryOption);
+    
+    // Select target field - open dropdown
+    const targetSelect = screen.getByLabelText('Target Field');
+    await user.click(targetSelect);
+    
+    // Find the target option  
+    const nameOption = document.querySelector('[data-value="name"]');
+    if (!nameOption) {
+      throw new Error('Target option with data-value="name" not found');
+    }
+    await user.click(nameOption);
     
     // Click create mapping button
     await user.click(screen.getByText('Create Mapping'));
@@ -115,8 +130,11 @@ describe('FieldMappingPanel', () => {
       />
     );
     
-    // Click auto-map button
-    await user.click(screen.getByText('Auto-Map'));
+    // Find the Auto-Map button by looking for its icon first
+    const autoMapButton = screen.getByRole('button', { 
+      name: /auto-map/i 
+    });
+    await user.click(autoMapButton);
     
     // Verify that onMappingsChange was called with the auto-mapped fields
     expect(handleMappingsChange).toHaveBeenCalledWith([
@@ -142,8 +160,11 @@ describe('FieldMappingPanel', () => {
       />
     );
     
-    // Click clear button
-    await user.click(screen.getByText('Clear All'));
+    // Find the Clear All button by role and text
+    const clearButton = screen.getByRole('button', {
+      name: /clear all/i
+    });
+    await user.click(clearButton);
     
     // Verify that onMappingsChange was called with empty array
     expect(handleMappingsChange).toHaveBeenCalledWith([]);
