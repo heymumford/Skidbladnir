@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.skidbladnir</groupId>
   <artifactId>api-integration-tests</artifactId>
-  <version>1.0.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -11,7 +11,7 @@
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <karate.version>1.4.1</karate.version>
-    <skidbladnir.version>1.0.0</skidbladnir.version>
+    <skidbladnir.version>0.2.0</skidbladnir.version>
   </properties>
   <dependencies>
     <dependency>
