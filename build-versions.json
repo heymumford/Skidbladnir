@@ -1,16 +1,16 @@
 {
-  "version": "0.1.1-b53",
+  "version": "0.2.7-b52",
   "major": 0,
-  "minor": 1,
-  "patch": 1,
-  "build": 53,
-  "timestamp": "2025-04-13T17:46:54Z",
+  "minor": 2,
+  "patch": 7,
+  "build": 52,
+  "timestamp": "2025-04-13T18:02:31Z",
   "environment": "dev",
   "git": {
     "branch": "main",
-    "commit": "02645afc40780cdc3182030fd017a2f6fdf040bf",
-    "shortCommit": "02645af",
-    "timestamp": 1744566351,
-    "tag": "v0.3.1-86-g02645af"
+    "commit": "b329cc2c7cf16c77cc96d2a5ae554fc10a397ff2",
+    "shortCommit": "b329cc2",
+    "timestamp": 1744567328,
+    "tag": "v0.3.1-88-gb329cc2"
   }
 }

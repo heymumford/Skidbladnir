@@ -1,6 +1,6 @@
 # Skíðblaðnir
 
-[![Version](https://img.shields.io/badge/version-0.1.1-blue.svg)](https://github.com/heymumford/skidbladnir)
+[![Version](https://img.shields.io/badge/version-0.2.7-blue.svg)](https://github.com/heymumford/skidbladnir)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/heymumford/skidbladnir)
 
