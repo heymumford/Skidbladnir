@@ -11,8 +11,7 @@
 const path = require('path');
 
 module.exports = {
-  // Using babel-jest instead of ts-jest preset
-  // preset: 'ts-jest',
+  preset: 'ts-jest',
   testEnvironment: 'node',
   rootDir: path.resolve(__dirname, '..'),
   roots: [
@@ -35,7 +34,12 @@ module.exports = {
     // Mock libxmljs2 dependency
     'libxmljs2': '<rootDir>/__mocks__/libxmljs2.js',
     // Mock react-json-tree
-    'react-json-tree': '<rootDir>/__mocks__/react-json-tree.js'
+    'react-json-tree': '<rootDir>/__mocks__/react-json-tree.js',
+    // Mock domain entities
+    '.*\\/pkg\\/domain\\/entities\\/TestExecution': '<rootDir>/__mocks__/TestExecution.js',
+    // Handle cross-package imports
+    '.*\\/packages\\/common\\/src\\/utils\\/feature-flags': '<rootDir>/__mocks__/feature-flags.js',
+    '.*\\/packages\\/common\\/src\\/utils\\/excel-csv-handler': '<rootDir>/__mocks__/excel-csv-handler.js'
   },
   testMatch: [
     '**/*.test.ts',
@@ -72,15 +76,21 @@ module.exports = {
     '/dist/'
   ],
   transform: {
-    '^.+\\.(ts|tsx)$': ['babel-jest', {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: '<rootDir>/config/tsconfig.test.json',
+      isolatedModules: true
+    }],
+    '^.+\\.(js|jsx)$': ['babel-jest', {
       presets: [
         ['@babel/preset-env', { targets: { node: 'current' } }],
-        '@babel/preset-typescript',
         '@babel/preset-react'
       ],
       plugins: [
         '@babel/plugin-transform-modules-commonjs'
       ]
     }]
-  }
+  },
+  transformIgnorePatterns: [
+    "/node_modules/(?!react-json-tree)"
+  ]
 };

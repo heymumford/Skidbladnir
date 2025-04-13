@@ -19,10 +19,12 @@ import { HealthStatus } from '../index';
  */
 export interface ApiClientOptions {
   baseURL: string;
-  serviceName: string;
-  providerName: string;
+  serviceName?: string;
+  providerName?: string;
   defaultHeaders?: Record<string, string>;
-  authHandler: AuthenticationHandler;
+  authHandler?: AuthenticationHandler;
+  timeout?: number; // Add timeout property
+  maxRetries?: number; // Add maxRetries property
   resilience?: {
     retryOptions?: {
       maxAttempts?: number;
@@ -62,12 +64,21 @@ export class ResilientApiClient {
    * Create a new resilient API client
    */
   constructor(private readonly options: ApiClientOptions) {
-    this.serviceName = options.serviceName;
-    this.providerName = options.providerName;
-    this.authHandler = options.authHandler;
+    this.serviceName = options.serviceName || 'unknown';
+    this.providerName = options.providerName || 'unknown';
+    if (options.authHandler) {
+      this.authHandler = options.authHandler;
+    } else {
+      // Create a minimal auth handler for simple cases that don't need auth
+      // Use a simple mock implementation with only the methods we need
+      this.authHandler = {
+        authenticate: async () => ({ headers: {} }),
+        logout: async () => {}
+      } as unknown as AuthenticationHandler;
+    }
     
     // Initialize timeout
-    this.timeoutMs = options.resilience?.timeoutMs || 1000;
+    this.timeoutMs = options.timeout || options.resilience?.timeoutMs || 30000;
     
     // In test environments where axios might be fully mocked,
     // this.axios might not be initialized properly
@@ -75,6 +86,7 @@ export class ResilientApiClient {
       // Create axios instance
       this.axios = axios.create({
         baseURL: options.baseURL,
+        timeout: this.timeoutMs,
         ...options.requestDefaults,
         headers: {
           'Content-Type': 'application/json',
@@ -270,8 +282,14 @@ export class ResilientApiClient {
             }
           };
           
-          // Retry the request once with new token
-          return await this.axios.request<T>(refreshedConfig);
+          // Increment attempt count to prevent infinite loops
+          attempts++;
+          
+          // Only retry once with new token and if we haven't exceeded max attempts
+          if (attempts <= maxAttempts) {
+            return await this.axios.request<T>(refreshedConfig);
+          }
+          // Otherwise, let the error propagate
         }
         
         // Handle circuit breaker for server errors

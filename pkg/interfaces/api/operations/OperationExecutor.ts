@@ -153,6 +153,7 @@ export class OperationExecutor {
       };
     }
   }
+  }
 
   /**
    * Validates that all required parameters are present in the context.
@@ -163,7 +164,7 @@ export class OperationExecutor {
     const { requiredParams } = operation.definition;
     
     for (const param of requiredParams) {
-      if (context.input[param] === undefined) {
+      if (context.input[param] === undefined || context.input[param] === null) {
         throw new Error(`Missing required parameter: ${param} for operation ${operation.definition.type}`);
       }
     }
