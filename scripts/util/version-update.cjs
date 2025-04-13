@@ -3,6 +3,8 @@
  * Enhanced version update script for Skidbladnir.
  * Designed to work in harmony with the bash scripts to provide a unified
  * version management solution for the project.
+ * 
+ * CommonJS module version to avoid ESM/CJS compatibility issues.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,11 +24,11 @@ function readBuildVersions() {
     if (!fs.existsSync(BUILD_VERSION_PATH)) {
       console.warn(`Warning: ${BUILD_VERSION_PATH} not found, creating default version object`);
       return {
-        version: "0.3.0-b50",
+        version: "0.1.1",
         major: 0,
-        minor: 3,
-        patch: 0,
-        build: 50,
+        minor: 1,
+        patch: 1,
+        build: 51,
         timestamp: new Date().toISOString(),
         environment: "dev",
         git: getGitInfo()
@@ -268,6 +270,16 @@ function main() {
   console.log('Version update completed successfully');
 }
 
+// Execute when run directly
 if (require.main === module) {
   main();
 }
+
+// Export functions for module usage
+module.exports = {
+  updateVersion,
+  syncWithOtherFiles,
+  getGitInfo,
+  readBuildVersions,
+  saveBuildVersions
+};

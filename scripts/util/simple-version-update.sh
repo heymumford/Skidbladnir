@@ -135,10 +135,14 @@ step "Updating package files"
 if [ -f "$PROJECT_ROOT/package.json" ]; then
   prog "Updating package.json"
   
-  if ! sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${NEW_VERSION}\"/" "$PROJECT_ROOT/package.json"; then
+  # Extract base version (without build number)
+  BASE_VERSION="${VERSION_BASE}"
+  
+  # Use clean simple version without build number for package.json
+  if ! sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"${BASE_VERSION}\"/" "$PROJECT_ROOT/package.json"; then
     warn "Failed to update package.json"
   else
-    ok "Updated package.json"
+    ok "Updated package.json to ${BASE_VERSION}"
   fi
 else
   warn "package.json not found at $PROJECT_ROOT/package.json"
@@ -148,11 +152,11 @@ fi
 if [ -f "$PROJECT_ROOT/pyproject.toml" ]; then
   prog "Updating pyproject.toml"
   
-  # More reliable pattern for poetry version
-  if ! sed -i "s/^\(version = \)\"[^\"]*\"/\1\"${NEW_VERSION}\"/" "$PROJECT_ROOT/pyproject.toml"; then
+  # Use consistent base version for Python
+  if ! sed -i "s/^\(version = \)\"[^\"]*\"/\1\"${BASE_VERSION}\"/" "$PROJECT_ROOT/pyproject.toml"; then
     warn "Failed to update pyproject.toml"
   else
-    ok "Updated pyproject.toml"
+    ok "Updated pyproject.toml to ${BASE_VERSION}"
   fi
 fi
 

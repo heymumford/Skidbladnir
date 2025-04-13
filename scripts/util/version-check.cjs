@@ -8,7 +8,7 @@
  * it under the terms of the MIT License as published in the LICENSE file.
  */
 
-// Version consistency checker for Git hooks
+// Version consistency checker for Git hooks (CommonJS version)
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
